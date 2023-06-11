@@ -1,2 +1,2 @@
-# dapiya-docs
+# dapiya-front
 dapiya pages written by vue3.
