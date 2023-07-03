@@ -1,2 +1,2 @@
 # dapiya-front
-dapiya pages written by vue3.
+dapiya pages written with ~~vue3 (I'm writting now)~~ Bootstrap 3.
