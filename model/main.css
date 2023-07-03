@@ -1,0 +1,127 @@
+button,span,div {
+	align-items:center
+}
+div.ihour {
+	max-height:182px;
+	overflow-y:auto
+}
+@media screen and (min-width:768px) {
+	div.ihour {
+	    height:182px!important
+    }
+}
+button.ibtn {
+	border-radius:9999px;
+	border:1px solid;
+	border-color:#f4a460;
+	outline:0;
+	margin-right:6px;
+	margin-top:5px;
+	margin-bottom:2px;
+	padding-left:calc(1em + .25em);
+	padding-right:calc(1em + .25em);
+	padding-top:calc(.5em - 1px);
+	padding-bottom:calc(.5em - 1px);
+	color:#f4a460;
+	background-color:transparent;
+	white-space:nowrap;
+	justify-content:center;
+	transition:all .2s
+}
+button.ibtn:hover,button.ibtn:active,button.active {
+	background-color:#f4a460;
+	color:#fff
+}
+button.hbtn {
+	display:inline-flex;
+	width:3.85rem;
+	height:3.85rem;
+	border-radius:3.85rem;
+	border:1px solid;
+	border-color:#f4a460;
+	outline:0;
+	margin-right:6px;
+	margin-top:5px;
+	margin-bottom:2px;
+	justify-content:center;
+	color:#f4a460;
+	background-color:transparent;
+	white-space:nowrap;
+	text-align:center;
+	vertical-align:top;
+	transition:all .2s
+}
+button.hbtn:hover,button.hbtn:active,button.active {
+	background-color:#f4a460;
+	color:#fff
+}
+select.islt {
+	font-size:1em;
+	max-width:100%;
+	outline:0;
+	color:#f4a460;
+	font-size:13px;
+	background-color:transparent;
+	border:1px solid;
+	border-color:#f4a460;
+	border-radius:9999px;
+	margin-right:6px;
+	margin-top:5px;
+	margin-bottom:2px;
+	padding-left:1em;
+	padding-right:1em;
+	padding-top:calc(.5em - 1px);
+	padding-bottom:calc(.5em - 1px);
+	transition:all .2s
+}
+select.islt:hover,select.islt:active {
+	background-color:#f4a460;
+	color:#fff
+}
+select.islt option,optgroup {
+	background-color:#fff!important;
+	color:#333!important
+}
+input.rput {
+	font-size:1.2em;
+	border-radius:9999px;
+	border:1px solid;
+	border-color:#f4a460;
+	outline:0;
+	margin-right:6px;
+	margin-top:5px;
+	margin-bottom:2px;
+	padding-left:calc(1em + .25em);
+	padding-right:calc(1em + .25em);
+	padding-top:calc(.5em - 1px);
+	padding-bottom:calc(.5em - 1px);
+	color:#f4a460;
+	background-color:transparent;
+	white-space:nowrap;
+	justify-content:center;
+	transition:all .2s
+}
+input.rput::-webkit-input-placeholder {
+	font-size:13px
+}
+input.rput::-moz-placeholder {
+	font-size:13px
+}
+input.rput::-moz-placeholder {
+	font-size:13px
+}
+input.rput::-ms-input-placeholder {
+	font-size:13px
+}
+input.rput::-ms-input-placeholder {
+	font-size:13px
+}
+.small-icon {
+	font-size:16px;
+	margin-right:8px
+}
+.small-title {
+	color:#f4a460;
+	font-size:16px;
+	font-weight:650
+}

@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+        <meta name="viewport" content="width=device-width">
+        <meta name="description" content="ACE Realtime-update Page">
+        <meta name="author" content="Shuitai">
+        <meta name="keywords" content="Dapiya,大皮鸭,Typhoon,台风">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,Chrome=1">
+        <meta http-equiv="X-UA-Compatible" content="IE=9">
+        <meta http-equiv="Expires" content="0">
+        <meta http-equiv="Pragma" content="no-cache">
+        <meta http-equiv="Cache-control" content="no-cache">
+        <meta http-equiv="Cache" content="no-cache">
+        <title>Terms of Usage | 使用条款</title>
+        <link rel="stylesheet" href="//libs.dapiya.net:1234/css/bootstrap.min.css">
+        <link rel="shortcut icon" type="image" href="//libs.dapiya.net:1234/img/favicon.ico">
+        <script src="//libs.dapiya.net:1234/js/jquery.js" type="text/javascript"></script>
+        <script src="//libs.dapiya.net:1234/js/bootstrap.js" type="text/javascript"></script>
+        <script src="//libs.dapiya.net:1234/js/auto-notice.js" type="text/javascript"></script>
+        <script src="//libs.dapiya.net:1234/js/cookie.js" type="text/javascript"></script>
+        <script type="text/javascript">
+        $(document).ready(function() {
+            if (getCookie('ifDonate') != 'true') {
+                $("#myModal").modal('show');
+            }
+            autoNotice('//api.dapiya.net:1234', 'w', "#notice");
+        });
+        </script>
+        <style>
+            nav.navbar-default {
+                background-color: white;
+            }
+            @media screen and (max-width: 768px) {
+                body {
+                    padding-top: 63px;
+                }
+            }
+            @media screen and (min-width: 768px) {
+                body {
+                    padding-top: 126px;
+                }
+            }
+            @media screen and (min-width: 1200px) {
+                body {
+                    padding-top: 63px;
+                }
+            }
+            body {
+                font-family: "sans-serif";
+                box-sizing: inherit;
+            }
+            #main {
+                min-height: calc(84vh - 50px);
+            }
+            .dapiya-brand {
+                margin-top: -4px;
+                color: rgba(250,120,0,0.9);
+                font-weight: normal;
+                font-family: "consolas", "sans-serif";
+                font-size: 20px;
+            }
+            .footScript {
+                font-size: 1.21rem; 
+                text-align: center;
+                margin-top: 10px;
+                margin-bottom: 10px;
+                padding-bottom: 5px;
+            }
+            hr.nohr {
+                border-width: 0px;
+                margin-top: 7px;
+                margin-bottom: 7px;
+            }
+        </style>
+        <style>
+            div#tou-container #english, #chinese {
+                counter-reset: sections;
+            }
+            div#tou-container h4:before {
+                display: inline;
+                counter-increment: sections;
+                content: counter(sections) '. ';
+                position: relative;
+                left: 0;
+            }
+            div#tou-container h5:before {
+                display: inline;
+                counter-increment: firstItems;
+                content: counter(sections) '.' counters(firstItems, '.') '.';
+                position: relative;
+                left: -.3em;
+            }
+            div#tou-container h4 {
+                counter-reset: firstItems;
+                padding-left: 0;
+            }
+            div#tou-container h5 {
+                counter-reset: SecondItems;
+                padding-left: .3em;
+            }
+            div#tou-container ol {
+                list-style-type: none;
+            }
+            div#tou-container ol > li:before {
+                display: inline-block;
+                counter-increment: SecondItems;
+                content: counter(sections) '.' counters(firstItems, '.') '.' counters(SecondItems, '.') '.';
+                position: relative;
+                left: -.5em;
+            }
+            div#tou-container ol > li {
+                list-style-type: none;
+                padding-left: .5em;
+            }
+        </style>
+    </head>
+<body>
+    <div class="container" id="main">
+        <nav class="navbar navbar-default navbar-fixed-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <div class="navbar-brand">
+                        <a href="/">
+                            <img alt="Dapiya" width="112" class="img-responsive center-block dapiya-brand" src="//libs.dapiya.net:1234/Dapiya.png" title="Dapiya-brand">
+                        </a>
+                    </div>
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#collapse" aria-expanded="false">
+                        <span class="sr-only"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                </div>
+                <div class="collapse navbar-collapse" id="collapse">
+                    <ul class="nav navbar-nav">
+                        <li><a href="/">Current Storms</a></li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Satellite Imagery<span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="/satellite/floater/">Real-time Satellite Imagery</a></li>
+                                <li><a href="//roi.dapiya.net:1234/">ROI Satellite Imagery</a></li>
+                                <li><a href="//data.dapiya.net:1234/product/" target="_blank">Satellite Product</a></li>
+                                <li><a href="//data.dapiya.net:1234/history/" target="_blank">Satellite Imagery Archive of TCs</a></li>
+                                <li role="separator" class="divider"></li>
+                                <li><a href="//roi.dapiya.net:1234/zh/login.html" target="_blank">ROI Manager Login (中文)</a></li>
+                                <li><a href="//roi.dapiya.net:1234/en/login.html" target="_blank">ROI Manager Login (English)</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="/model/">Models</a></li>
+                        <li><a href="//data.dapiya.net:1234/Archive/" target="_blank">Cyclone Archive</a></li>
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Friend-link | 友链<span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="https://www.tybbs.org.cn/" target="_blank">BBS Typhoon | 台风论坛</a></li>
+                                <li><a href="https://weather-models.info/" target="_blank">Weather Models (Japan)</a></li>
+                                <li><a href="https://www.tropicaltidbits.com/" target="_blank">Tropical Tidbits</a></li>
+                                <li><a href="https://cyclonicwx.com/" target="_blank">CyclonicWx</a></li>
+                                <li><a href="https://www.easterlywave.com/" target="_blank">Easterlywave</a></li>
+                                <li><a href="https://www.storm-chasers.cn/" target="_blank">Storm Chasers CN | 追风者视界</a></li>
+                                <li><a href="https://mesovortices.com/" target="_blank">Mesovortices</a></li>
+                                <li><a href="https://www.natyphoon.top/" target="_blank">NaTyphoon</a></li>
+                                <li><a href="https://www.moexin.cn/" target="_blank">萌の新小窝</a></li>
+                                <li><a href="http://minhill.com/" target="_blank">HanchyHill | 小山</a></li>
+                            </ul>
+                        </li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Support us | 赞助我们<span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="https://ko-fi.com/dapiya" target="_blank">Ko-fi</a></li>
+                                <li><a href="https://www.patreon.com/dapiya" target="_blank">Patreon</a></li>
+                                <li><a href="#" data-toggle="modal" data-target="#myModal">Afdian | 爱发电</a></li>
+                            </ul>
+                        </li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Join us | 加入我们<span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="https://discord.gg/HY47h6w7Df" target="_blank">Dapiya Discord Server</a></li>
+                                <li><a href="https://jq.qq.com/?_wv=1027&k=TTA1qOej" target="_blank">Dapiya QQ Users Group</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <div id="notice"></div>
+        <div class="btn-group" data-toggle="buttons" id="language">
+            <label class="btn btn-default btn-sm active" id="eng" onclick="javascript: $('#chn').removeClass('active');
+        $('#eng').addClass('active'); $('#english').css('display', 'block'); $('#chinese').css('display', 'none'); return false;">
+                ENGLISH | 英语
+            </label>
+            <label class="btn btn-default btn-sm" id="chn" onclick="javascript: $('#eng').removeClass('active');
+        $('#chn').addClass('active'); $('#english').css('display', 'none'); $('#chinese').css('display', 'block'); return false;">
+                CHINESE | 简体中文
+            </label>
+        </div>
+        <div id="tou-container" >
+            <div id="english">
+                <h2>Term of Usage</h2>
+                
+                <hr>
+                
+                <p>By using Dapiya's services, you <b>AGREE</b> to the following Terms of Usage:</p>
+                
+                <h4><b>Clarifications</b></h4>
+                <ol>
+                    <h5><b>About this agreement</b></h5>
+                    <ol>
+                        <li>This agreement, or the Terms of Usage (TOU) in applicable context, refers to Dapiya's Terms of Usage (TOU).</li>
+                        <li>Site administrators refer to <b>@BigShuitai</b> and <b>@xiaoqianWX</b>, please contact us via our Discord server (Dapiya Community Server), QQ group (Dapiya.hub), or email: <a href="mailto:dapiya@qq.com">dapiya@qq.com</a>.</li>
+                    </ol>
+                    <h5><b>Updates to the Terms of Usage</b></h5>
+                    <ol>
+                        <li>Dapiya reserves the right to update this agreement at any time without any specific reason. However, Dapiya has the obligation of notifying all users with a reasonable amount of effort. Ultimately, it is the end user's responsibility to read and agree to the current TOU before using our services.</li>
+                    </ol>
+                    <h5><b>Announcements</b></h5>
+                    <ol>
+                        <li>All changes to Dapiya products should be listed in changelog whenever we release an update. If you have questions about certain changes, please contact us.</li>
+                    </ol>
+                </ol>
+                
+                <h4><b>Dapiya Webpage</b></h4>
+                <ol>
+                    <h5><b>Usage of products</b></h5>
+                    <ol>
+                        <li>Dapiya allows and encourages all non-commercial and commercial usage as long as it follows CC BY 4.0 and has a clear citation or hyperlink to Dapiya(See 2.2).</li>
+                        <li>Use of live updating embeds are allowed.</li>
+                    </ol>
+                    <h5><b>Citation and Watermarks</b></h5>
+                    <ol>
+                        <li>Please cite Dapiya as an organization if you need to make a citation.</li>
+                        <li>If there is no citation or hyperlink to Dapiya and it is not a personal/non-commercial usage, watermarks should not be erased / covered / blurred.</li>
+                    </ol>
+                    <h5><b>Removal of right to access</b></h5>
+                    <ol>
+                        <li>Dapiya reserves the right of removing the access of users that intentionally interferes with the normal operation of Dapiya and partnering / related / friend websites and services. Including attacking, spamming, and other behaviors that could threaten Dapiya and our services.</li>
+                    </ol>
+                </ol>
+                
+                <h4><b>User-requested ROI service (<a target="_blank" href="//roi.dapiya.net:1234/en/readme.txt">Documentation</a>)</b></h4>
+                <ol>
+                    <h5><b>Accounts</b></h5>
+                    <ol>
+                        <li>Dapiya reserves the right to terminate any account without prior notice for abuse, see section 3.2.</li>
+                    </ol>
+                    <h5><b>Responsible usage</b></h5>
+                    <ol>
+                        <li>As ROI service is still a part of Dapiya webpage, ROI service follows section 1 and 2.</li>
+                        <li>Please read ROI documentation before using this service.</li>
+                        <li>Behaviors that affect the normal operation of ROI service, such as spam or intentionally utilizing bugs / design flaws may result in account termination.</li>
+                    </ol>
+                </ol>
+                
+                <h4><b>Dapiya communities</b></h4>
+                <ol>
+                    <h5><b>Generic</b></h5>
+                    <ol>
+                        <li>Dapiya currently has an official community on QQ and Discord. We hope these communities can increase communication between users and let us hear the feedback and better understand the need of users.</li>
+                        <li>About more information of our community, please see the website notices.</li>
+                    </ol>
+                    <h5><b>Regulations</b></h5>
+                    <ol>
+                        <li>All users shall follow platform TOS and rules in the group / server.</li>
+                        <li>Dapiya reserves the right of banning / remove users that intentionally disrupt the community.</li>
+                    </ol>
+                </ol>
+                
+            </div>
+            <div id="chinese" style="display: none">
+                <h2>使用条款</h2>
+                
+                <hr>
+                
+                <p>使用Dapiya（以下简称“本网站”）的服务，即表示您<b>同意</b>以下使用条款（以下简称“本条款”）：</p>
+                
+                <h4><b>说明</b></h4>
+                <ol>
+                    <h5><b>关于本条款</b></h5>
+                    <ol>
+                        <li>本条款，或适用上下文中的使用条款，皆指本网站的使用条款。</li>
+                        <li>本网站管理员为<b>@BigShuitai</b>和<b>@xiaoqianWX</b>，如遇关于本网站的问题，请通过Discord服务器（Dapiya Community Server）、腾讯QQ群组（Dapiya.hub），或邮箱<a href="mailto:dapiya@qq.com">dapiya@qq.com</a>与我们取得联系。</li>
+                    </ol>
+                    <h5><b>使用条款内容之更新</b></h5>
+                    <ol>
+                        <li>本网站管理员保留随时更新本条款的权利，无需任何特定理由。但是，我们有义务尽可能地将本条款更新的信息告知每一个使用本网站的用户。用户有责任在使用我们的服务之前阅读并同意最新的使用条款。</li>
+                    </ol>
+                    <h5><b>通知或告示</b></h5>
+                    <ol>
+                        <li>本网站产品的所有更新皆会在更新日志内展示，并且通过各渠道（见4.1.1）发布。若您对该次更新持疑惑态度，请联系我们（见1.1.2）。</li>
+                    </ol>
+                </ol>
+                
+                <h4><b>本网站内容之使用</b></h4>
+                <ol>
+                    <h5><b>非商业或个人用途</b></h5>
+                    <ol>
+                        <li>本网站，在遵循CC BY 4.0协议（署名标示 4.0 国际）和不违反本章节其他规则的情况下，允许且鼓励所有与本网站相关的非商业和商业用途。（见2.2）</li>
+                        <li>本网站允许在<b>不违反当地法规</b>且<b>取得本网站管理员同意</b>的情况下在如网站首页的<b>尽可能明显</b>的位置嵌入本网站实时更新的产品。在嵌入此产品的HTML元素内，您需要注明本实时更新产品来源自<a href="https://www.dapiya.top/" target="_blank">https://www.dapiya.top/</a>。</li>
+                    </ol>
+                    <h5><b>引用和水印</b></h5>
+                    <ol>
+                        <li>引用时请注明Dapiya为一个组织。</li>
+                        <li>在没有注明来源的以及不是非商业/个人使用的情况下，Dapiya和@Shuitai水印不得被抹掉、遮盖、擦除。</li>
+                    </ol>
+                    <h5><b>取消访问本网站之权限</b></h5>
+                    <ol>
+                        <li>本网站保留取消用户访问故意干扰本网站及合作、相关网站和友站服务正常运营的权利。这包括攻击、发送垃圾邮件和其他可能威胁Dapiya和我们的服务的行为。</li>
+                    </ol>
+                </ol>
+                
+                <h4><b>用户自定义ROI之服务（<a target="_blank" href="//roi.dapiya.net:1234/zh/readme.txt">说明文档</a>）</b></h4>
+                <ol>
+                    <h5><b>关于账户</b></h5>
+                    <ol>
+                        <li>Dapiya保留终止任何帐户的权利。恕不另行通知滥用行为，请参阅3.2节之条款。</li>
+                    </ol>
+                    <h5><b>使用之注意事项</b></h5>
+                    <ol>
+                        <li>ROI作为本网站服务的一部分，仍然遵循本条款第1、2节之内容。</li>
+                        <li>在使用本服务前，<b>请您仔细阅读ROI使用文档（标题链接）</b>。</li>
+                        <li>影响ROI服务正常运行的行为，例如垃圾邮件或故意利用漏洞 / 设计缺陷的，可能导致您的账户被永久终止。</li>
+                    </ol>
+                </ol>
+                
+                <h4><b>Dapiya官方社区</b></h4>
+                <ol>
+                    <h5><b>概况</b></h5>
+                    <ol>
+                        <li>Dapiya目前在腾讯QQ及Discord平台上都有自己的官方社区。我们希望这些社区能够增进用户间的交流，并且能让我们听到反馈，更好地了解用户的需求。</li>
+                        <li>更多与Dapiya官方社区相关的信息，请见本网站的公告栏。</li>
+                    </ol>
+                    <h5><b>规定</b></h5>
+                    <ol>
+                        <li>所有用户均应遵守对应平台服务条款和本社区之规则。</li>
+                        <li>Dapiya社区保留禁止或移出用户的权利，包括但不限故意扰乱社区秩序等行为。</li>
+                    </ol>
+                </ol>
+                
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <div class="row">
+                <hr>
+                <div class='footScript'>
+                    <p>Copyright © 2020-2023 Dapiya Team. All Rights Reserved.</p>
+                    <p>Contact: <a href="mailto:dapiya@qq.com">dapiya@qq.com</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title" id="myModalLabel">Notice | 通知</h4>
+                </div>
+                <div class="modal-body">
+                    <p>由于本站国内外均有较多用户访问，为了给用户一个最快的访问速度，需要花费较多资金搭建并运维服务器。如果喜欢本站点，希望大家能够助我们一臂之力，度过这个难关，让这个站点能够正常运作，谢谢！ (赞赏方式在下方面板栏 ↓ )</p>
+                    <p><b>Hints: 您可以在本弹窗的最下方点击 "不再弹出" 按钮，这样就不会影响到您的浏览体验。</b></p>
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            Afdian - 爱发电平台
+                        </div>
+                        <div class="panel-body">
+                            <a href="https://afdian.net/a/dapiya?tab=home" target="_blank">平台链接</a>
+                            <img class="img-responsive center-block" src="//libs.dapiya.net:1234/img/afdian-Dapiya.jfif">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" onclick="javascript:setCookie('ifDonate', true)">不再弹出</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
