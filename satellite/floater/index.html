@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width">
         <meta name="description" content="ACE Realtime-update Page">
         <meta name="author" content="Shuitai">
-        <meta name="keywords" content="Dapiya,��ƤѼ,Typhoon,satellite,̨��,��ͼ,�ȴ�����ʵʱ��ͼ">
+        <meta name="keywords" content="Dapiya,大皮鸭,Typhoon,satellite,台风,云图,热带气旋实时云图">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,Chrome=1">
         <meta http-equiv="X-UA-Compatible" content="IE=9">
         <meta http-equiv="Expires" content="0">
@@ -282,10 +282,10 @@
                     $('#progressBarBlock').css('display', 'none');
                     if (pic_list.length == 0 && status == 0) {
                         $('#notLoadedNoticeENG').html('There is no imagery for sliding, please reload this page then retry');
-                        $('#notLoadedNoticeCN').html('���޿ɹ������ŵ�ͼƬ������ˢ��ҳ������');
+                        $('#notLoadedNoticeCN').html('暂无可滚动播放的图片，请您刷新页面重试');
                     } else {
                         $('#notLoadedNoticeENG').html('Encountered network error, please reload this page then retry');
-                        $('#notLoadedNoticeCN').html('�����������ˢ��ҳ������');
+                        $('#notLoadedNoticeCN').html('网络错误，请您刷新页面重试');
                     }
                     return false;
                 }
@@ -464,24 +464,24 @@
                                 $('#notLoadedWindow').modal('show');
                                 if (pic_list.length == 0) {
                                     $('#notLoadedNoticeENG').html('There is no imagery for sliding, please reload this page then retry');
-                                    $('#notLoadedNoticeCN').html('���޿ɹ������ŵ�ͼƬ������ˢ��ҳ������');
+                                    $('#notLoadedNoticeCN').html('暂无可滚动播放的图片，请您刷新页面重试');
                                 }
                                 if (status != 0) {
                                     switch (status) {
                                         case -1:
                                             $('#notLoadedNoticeENG').html('Encountered network error, please reload this page then retry');
-                                            $('#notLoadedNoticeCN').html('�����������ˢ��ҳ������');
+                                            $('#notLoadedNoticeCN').html('网络错误，请您刷新页面重试');
                                             break;
                                         case 1:
                                             $('#notLoadedNoticeENG').html('Data has not been loaded, please wait a minute');
-                                            $('#notLoadedNoticeCN').html('����δ������ɣ������Ե�Ƭ��');
+                                            $('#notLoadedNoticeCN').html('数据未加载完成，请您稍等片刻');
                                             break;
                                         default: break;
                                     }
                                 }
                                 if (imgLoaded.length != pic_list.length) {
                                     $('#notLoadedNoticeENG').html('The imagery has not been loaded, please wait a minute');
-                                    $('#notLoadedNoticeCN').html('ͼƬδ������ɣ������Ե�Ƭ��');
+                                    $('#notLoadedNoticeCN').html('图片未加载完成，请您稍等片刻');
                                     $('#progressBarBlock').css('display', 'block');
                                     if (!pgsBarTimer) {
                                         pgsBarTimer = setInterval(changeProgressBar, 500);
@@ -596,7 +596,7 @@
                             </form>\
                         </div>\
                         <div class="modal-footer">\
-                            <button type="button" class="btn btn-primary" data-dismiss="modal">�ر� | Close</button>\
+                            <button type="button" class="btn btn-primary" data-dismiss="modal">关闭 | Close</button>\
                         </div>';
             var GIFGeneratorHTML = '\
                         <div class="modal-header">\
@@ -606,16 +606,16 @@
                         </div>\
                         <div class="modal-body">\
                             <p id="GIFNoticeENG">GIF image is generating, please wait a minute</p>\
-                            <p id="GIFNoticeCN">GIFͼƬ���������������Ե�Ƭ��</p>\
+                            <p id="GIFNoticeCN">GIF图片正在制作，请您稍等片刻</p>\
                             <div style="display: none;" id="GIFprogressBarBlock">\
-                                <p>Latest progress of GIF generating: | ��ǰGIF�������ȣ�<span id="preloadImageNumber"></span></p>\
+                                <p>Latest progress of GIF generating: | 当前GIF制作进度：<span id="preloadImageNumber"></span></p>\
                                 <div class="progress"><div class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="min-width: 2em;" id="GIFprogress">0%</div></div>\
                             </div>\
                             <img class="img-responsive center-block" style="display: none; border: 1px solid" id="GIFplayer" src="">\
                         </div>\
                         <div class="modal-footer" style="text-align: left;">\
                             <p style="color: red;">NOTICE: In order to prevent the occurrence of bugs, we have prohibited the closing function of this modal box when the GIF image is generating.</p>\
-                            <p style="color: red;">ע��Ϊ��ֹBUG������������GIFͼƬ����ʱ��ֹ�˱�ģ̬��Ĺرչ��ܣ������½⡣</p>\
+                            <p style="color: red;">注：为防止BUG发生，我们在GIF图片生成时禁止了本模态框的关闭功能，敬请谅解。</p>\
                         </div>';
             function changeGroupPreload(obj) {
                 var preloadImages = $('#preloadImages').prop("checked");
@@ -650,7 +650,7 @@
                 // If the current browser supports creating animated GIFs from existing images (e.g. jpeg, png, gif)
                 if (!gifshot.isExistingImagesGIFSupported()) {
                     alert('Your browser does not support gitshot module, you will be rediected to a pre-made GIF link.\
-                            \n�����������֧��gifshotģ�飬����ת��Ԥ������GIF����');
+                            \n您的浏览器不支持gifshot模块，将跳转至预制作的GIF链接');
                     $('#CreateGIFButton').removeAttr('disabled');
                     window.open(GIFLink);
                     return false;
@@ -658,32 +658,32 @@
                 // check if option settings are right
                 if (isNaN(Number(NumberofFrames)) || isNaN(Number(IntervalSecond)) || isNaN(Number(SkipEvery)) || isNaN(Number(NumberofWorkers))) {
                     alert('All of settings should input number that larger than zero.\
-                            \n�������ý�Ӧ�������0������');
+                            \n所有设置皆应输入大于0的数字');
                     $('#CreateGIFButton').removeAttr('disabled');
                     return false;
                 } else if (Number(NumberofFrames) <= 0 || Number(IntervalSecond) <= 0 || Number(SkipEvery) < 0 || Number(NumberofWorkers) <= 0) {
                     alert('All of settings should input number that bigger than zero.\
-                            \n�������ý�Ӧ������ڻ����0������');
+                            \n所有设置皆应输入大于或等于0的数字');
                     $('#CreateGIFButton').removeAttr('disabled');
                     return false;
                 } else if (NumberofFrames.indexOf('.') != -1) {
                     alert('Settings of Number of Frames should input positive integer.\
-                            \nNumber of Frames����Ӧ����������');
+                            \nNumber of Frames设置应输入正整数');
                     $('#CreateGIFButton').removeAttr('disabled');
                     return false;
                 } else if (Number(IntervalSecond) < 0.1) {
                     alert('Settings of Interval should input a number that not smaller than 0.1.\
-                            \nInterval���ù�С�������벻С��0.1������');
+                            \nInterval设置过小，请输入不小于0.1的数字');
                     $('#CreateGIFButton').removeAttr('disabled');
                     return false;
                 } else if (SkipEvery.indexOf('.') != -1) {
                     alert('Settings of Skip Every should input positive integer.\
-                            \nSkip Every����Ӧ����������');
+                            \nSkip Every设置应输入正整数');
                     $('#CreateGIFButton').removeAttr('disabled');
                     return false;
                 } else if (NumberofWorkers.indexOf('.') != -1) {
                     alert('Settings of Number of Workers should input positive integer.\
-                            \nNumber of Workers����Ӧ����������');
+                            \nNumber of Workers设置应输入正整数');
                     $('#CreateGIFButton').removeAttr('disabled');
                     return false;
                 } else {
@@ -708,7 +708,7 @@
                     dataType: "text",
                     error: function() {
                         alert('Image list is not loaded due to your network issues, you will be rediected to a pre-made GIF link.\
-                            \n�����������⣬ͼ���б�δ�ܳɹ����أ�����ת��Ԥ������GIF����');
+                            \n由于网络问题，图像列表未能成功加载，将跳转至预制作的GIF链接');
                         window.open(GIFLink);
                         $('#CreateGIFButton').removeAttr('disabled');
                         $('#GIFWindow').modal('hide');
@@ -718,7 +718,7 @@
                 // check if number of frame lower than settings
                 if (__gpl.length < NumberofFrames) {
                     alert('The number of images is less than default settings expected (' + __gpl.length.toString() + '/' + NumberofFrames.toString() + '), will stop the generating progress of GIF.\
-                            \nͼƬ������������Ҫ��(' + __gpl.length.toString() + '/' + NumberofFrames.toString() + ')����ֹͣGIF������');
+                            \n图片数量少于设置要求(' + __gpl.length.toString() + '/' + NumberofFrames.toString() + ')，将停止GIF的制作');
                     $('#CreateGIFButton').removeAttr('disabled');
                     return false;
                 }
@@ -734,7 +734,7 @@
                 // check if number of frame less than the lowset settings
                 if (gif_pic_list.length < 5) {
                     alert('The number of images is less than the lowest expected (' + gif_pic_list.length.toString() + '/5), will stop the generating progress of GIF.\
-                            \nͼƬ�����������Ҫ��(' + gif_pic_list.length.toString() + '/5)����ֹͣGIF������');
+                            \n图片数量少于最低要求(' + gif_pic_list.length.toString() + '/5)，将停止GIF的制作');
                     $('#CreateGIFButton').removeAttr('disabled');
                     return false;
                 }
@@ -806,7 +806,7 @@
                             if (!lodash.isNil(blobURL)) blob2URL.revokeObjectURL(blobURL);
                         });
                         alert('Image is not loaded due to your network issues.\
-                            \n�����������⣬ͼ��δ�ܳɹ�����');
+                            \n由于网络问题，图像未能成功加载');
                         preloadWorkers = null;
                         $('#preloadImageNumber').html('');
                         $('#GIFWindow').modal('hide');
@@ -837,7 +837,7 @@
                     function assignHandler(index, imgSrc) {
                         if (!stopPreloadImage && !lodash.isNil(preloadWorkers[index])) {
                             downloadFile2blobURL(imgSrc, index, function (_index, _src) {
-                                if (!stopPreloadImage && !lodash.isNil(preloadWorkers[_index])) { // ˫���ж���ֹ�����޷���ֹxhr��������
+                                if (!stopPreloadImage && !lodash.isNil(preloadWorkers[_index])) { // 双重判定防止出现无法中止xhr请求的情况
                                     preloadWorkers[_index].src = _src;
                                     workersNumList[_index] = _index;
                                 }
@@ -913,8 +913,8 @@
                     for (var i = 0; i < parseInt(1 / IntervalSecond); i++) {
                         gif_pic_list.push(gif_pic_list[gif_pic_list.length - 1]);
                     }
-                    imageWidth = gif_pic_list[0].width * 0.8;
-                    imageHeight = gif_pic_list[0].height * 0.8;
+                    imageWidth = gif_pic_list[0].width * 0.6;
+                    imageHeight = gif_pic_list[0].height * 0.6;
                     gifshot.createGIF({
                         'gifWidth': imageWidth,
                         'gifHeight': imageHeight,
@@ -934,7 +934,7 @@
                         if (!obj.error) {
                             setTimeout(function() {
                                 $('#GIFNoticeENG').html('GIF image has generated, long press or right click can save it');
-                                $('#GIFNoticeCN').html('GIFͼƬ������ɣ��������Ҽ����ɱ���');
+                                $('#GIFNoticeCN').html('GIF图片制作完成，长按或右键即可保存');
                                 $('#GIFclose').css('display', 'block');
                                 $('#GIFplayer').css('display', 'block');
                                 $('#GIFprogress').css('width', '0%');
@@ -1107,7 +1107,7 @@
                                 <li><a href="//data.dapiya.net:1234/product/" target="_blank">Satellite Product</a></li>
                                 <li><a href="//data.dapiya.net:1234/history/" target="_blank">Satellite Imagery Archive of TCs</a></li>
                                 <li role="separator" class="divider"></li>
-                                <li><a href="//roi.dapiya.net:1234/zh/login.html" target="_blank">ROI Manager Login (中文)</a></li>
+                                <li><a href="//roi.dapiya.net:1234/zh/login.html" target="_blank">ROI Manager Login (涓枃)</a></li>
                                 <li><a href="//roi.dapiya.net:1234/en/login.html" target="_blank">ROI Manager Login (English)</a></li>
                             </ul>
                         </li>
@@ -1116,30 +1116,30 @@
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
                         <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Friend-link | 友链<span class="caret"></span></a>
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Friend-link | 鍙嬮摼<span class="caret"></span></a>
                             <ul class="dropdown-menu">
-                                <li><a href="https://www.tybbs.org.cn/" target="_blank">BBS Typhoon | 台风论坛</a></li>
+                                <li><a href="https://www.tybbs.org.cn/" target="_blank">BBS Typhoon | 鍙伴璁哄潧</a></li>
                                 <li><a href="https://weather-models.info/" target="_blank">Weather Models (Japan)</a></li>
                                 <li><a href="https://www.tropicaltidbits.com/" target="_blank">Tropical Tidbits</a></li>
                                 <li><a href="https://cyclonicwx.com/" target="_blank">CyclonicWx</a></li>
                                 <li><a href="https://www.easterlywave.com/" target="_blank">Easterlywave</a></li>
-                                <li><a href="https://www.storm-chasers.cn/" target="_blank">Storm Chasers CN | 追风者视�?</a></li>
+                                <li><a href="https://www.storm-chasers.cn/" target="_blank">Storm Chasers CN | 杩介鑰呰鐣?</a></li>
                                 <li><a href="https://mesovortices.com/" target="_blank">Mesovortices</a></li>
                                 <li><a href="https://www.natyphoon.top/" target="_blank">NaTyphoon</a></li>
-                                <li><a href="https://www.moexin.cn/" target="_blank">萌の新小�?</a></li>
-                                <li><a href="http://minhill.com/" target="_blank">HanchyHill | 小山</a></li>
+                                <li><a href="https://www.moexin.cn/" target="_blank">钀屻伄鏂板皬绐?</a></li>
+                                <li><a href="http://minhill.com/" target="_blank">HanchyHill | 灏忓北</a></li>
                             </ul>
                         </li>
                         <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Support us | 赞助我们<span class="caret"></span></a>
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Support us | 璧炲姪鎴戜滑<span class="caret"></span></a>
                             <ul class="dropdown-menu">
                                 <li><a href="https://ko-fi.com/dapiya" target="_blank">Ko-fi</a></li>
                                 <li><a href="https://www.patreon.com/dapiya" target="_blank">Patreon</a></li>
-                                <li><a href="#" data-toggle="modal" data-target="#myModal">Afdian | 爱发�?</a></li>
+                                <li><a href="#" data-toggle="modal" data-target="#myModal">Afdian | 鐖卞彂鐢?</a></li>
                             </ul>
                         </li>
                         <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Join us | 加入我们<span class="caret"></span></a>
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Join us | 鍔犲叆鎴戜滑<span class="caret"></span></a>
                             <ul class="dropdown-menu">
                                 <li><a href="https://discord.gg/HY47h6w7Df" target="_blank">Dapiya Discord Server</a></li>
                                 <li><a href="https://jq.qq.com/?_wv=1027&k=TTA1qOej" target="_blank">Dapiya QQ Users Group</a></li>
@@ -1210,7 +1210,7 @@
             <div class="row">
                 <hr>
                 <div class='footScript'>
-                    <p>Copyright © 2020-2023 Dapiya Team. All Rights Reserved.</p>
+                    <p>Copyright 漏 2020-2023 Dapiya Team. All Rights Reserved.</p>
                     <p>Contact: <a href="mailto:dapiya@qq.com">dapiya@qq.com</a></p>
                 </div>
             </div>
@@ -1220,26 +1220,26 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                    <h4 class="modal-title" id="myModalLabel">Notice | 通知</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">脳</button>
+                    <h4 class="modal-title" id="myModalLabel">Notice | 閫氱煡</h4>
                 </div>
                 <div class="modal-body">
-                    <p>由于本站国内外均有较多用户访问，为了给用户一个最快的访问速度，需要花费较多资金搭建并运维服务器。如果喜欢本站点，希望大家能够助我们一臂之力，度过这个难关，让这个站点能够正常运作，谢谢！ (赞赏方式在下方面板栏 �? )</p>
-                    <p><b>Hints: 您可以在本弹窗的最下方点击 "不再弹出" 按钮，这样就不会影响到您的浏览体验�?</b></p>
+                    <p>鐢变簬鏈珯鍥藉唴澶栧潎鏈夎緝澶氱敤鎴疯闂紝涓轰簡缁欑敤鎴蜂竴涓渶蹇殑璁块棶閫熷害锛岄渶瑕佽姳璐硅緝澶氳祫閲戞惌寤哄苟杩愮淮鏈嶅姟鍣ㄣ�傚鏋滃枩娆㈡湰绔欑偣锛屽笇鏈涘ぇ瀹惰兘澶熷姪鎴戜滑涓�鑷備箣鍔涳紝搴﹁繃杩欎釜闅惧叧锛岃杩欎釜绔欑偣鑳藉姝ｅ父杩愪綔锛岃阿璋紒 (璧炶祻鏂瑰紡鍦ㄤ笅鏂归潰鏉挎爮 鈫? )</p>
+                    <p><b>Hints: 鎮ㄥ彲浠ュ湪鏈脊绐楃殑鏈�涓嬫柟鐐瑰嚮 "涓嶅啀寮瑰嚭" 鎸夐挳锛岃繖鏍峰氨涓嶄細褰卞搷鍒版偍鐨勬祻瑙堜綋楠屻�?</b></p>
                     
                     <div class="panel panel-primary">
                         <div class="panel-heading">
-                            Afdian - 爱发电平�?
+                            Afdian - 鐖卞彂鐢靛钩鍙?
                         </div>
                         <div class="panel-body">
-                            <a href="https://afdian.net/a/dapiya?tab=home" target="_blank">平台链接</a>
+                            <a href="https://afdian.net/a/dapiya?tab=home" target="_blank">骞冲彴閾炬帴</a>
                             <img class="img-responsive center-block" src="//libs.dapiya.net:1234/img/afdian-Dapiya.jfif">
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal" onclick="javascript:setCookie('ifDonate', true)">不再弹出</button>
-                    <button type="button" class="btn btn-primary" data-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal" onclick="javascript:setCookie('ifDonate', true)">涓嶅啀寮瑰嚭</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">鍏抽棴</button>
                 </div>
             </div>
         </div>
@@ -1249,20 +1249,20 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title" id="notLoadedWindowLabel">Notice | 通知</h4>
+                    <h4 class="modal-title" id="notLoadedWindowLabel">Notice | 閫氱煡</h4>
                 </div>
                 <div class="modal-body">
                     <p id="notLoadedNoticeENG">There is no imagery for sliding or the imagery has not been loaded, please wait a minute or reload this page then retry</p>
-                    <p id="notLoadedNoticeCN">暂无可滚动播放的图片或图片未加载完成，请您稍等片刻或刷新页面重试</p>
+                    <p id="notLoadedNoticeCN">鏆傛棤鍙粴鍔ㄦ挱鏀剧殑鍥剧墖鎴栧浘鐗囨湭鍔犺浇瀹屾垚锛岃鎮ㄧ◢绛夌墖鍒绘垨鍒锋柊椤甸潰閲嶈瘯</p>
                     <div style="display: none;" id="progressBarBlock">
-                        <p>Latest images loaded: | 当前图片加载进度�?<span id="waitingTime"></span></p>
+                        <p>Latest images loaded: | 褰撳墠鍥剧墖鍔犺浇杩涘害锛?<span id="waitingTime"></span></p>
                         <div class="progress">
                             <div class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="min-width: 2em;" id="progress">0%</div>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">鍏抽棴</button>
                 </div>
             </div>
         </div>
