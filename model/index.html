@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width">
         <meta name="description" content="ACE Realtime-update Page">
         <meta name="author" content="Shuitai">
-        <meta name="keywords" content="Dapiya,大皮鸭,数值,数值预报,预报,GFS,ECMWF,GEFS,model">
+        <meta name="keywords" content="Dapiya,大皮鸭,数值,数值预报,预报,GFS,ECMWF,model">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,Chrome=1">
         <meta http-equiv="X-UA-Compatible" content="IE=9">
         <meta http-equiv="Expires" content="0">
@@ -169,7 +169,6 @@
                                 'fcsttime': fcsthour,
                                 'time': runtime
                             };
-                            if ($("#model").val() == 'GEFS')  __data['member'] = $("#members").val();
                             __ajaxRequestHistory = $.ajax({
                                 type: 'GET',
                                 url: url,
@@ -190,7 +189,6 @@
                                             'fpath': path[0],
                                             'spath': path[1]
                                         }
-                                        if ($("#model").val() == 'GEFS')  __data['member'] = $("#members").val();
                                         __ajaxRequestHistory = $.ajax({
                                             type: 'GET',
                                             url: '//api.dapiya.net:1234/' + model.toLowerCase() + '/mkpic',
@@ -382,9 +380,8 @@
                 <select class="islt" id="model">
                     <option value="GFS">GFS</option>
                     <option value="ECMWF">ECMWF</option>
-                    <!-- <option value="ICON">ICON</option>
                     <option value="CMC">CMC</option>
-                    <option value="GEFS">GEFS</option> -->
+                    <!-- <option value="ICON">ICON</option> -->
                 </select>
                 <select class="islt" style="display: none;" id="members"></select>
                 <hr class="nohr">
@@ -410,7 +407,7 @@
             <div class="row">
                 <hr>
                 <div class='footScript'>
-                    <p>Copyright © 2020-2023 Dapiya Team | All Rights Reserved.</p>
+                    <p>Copyright © 2020-2023 Dapiya Team. All Rights Reserved.</p>
                     <p>Contact: <a href="mailto:dapiya@qq.com">dapiya@qq.com</a></p>
                 </div>
             </div>
