@@ -144,7 +144,7 @@ function getModelForecastHours(model, runtime, plotType, isAllHours) {
             maxHour = 240;
         } else if (model == 'ICON') {
             let initHour = runtime.slice(runtime.length - 2, runtime.length);
-            offset = lodash.includes(['apcp', 'prate', 'tmax2 m', 'tmin2m'], plotType) ? 6 : 12;
+            offset = lodash.includes(['apcp', 'prate', 'tmax2m', 'tmin2m'], plotType) ? 6 : 12;
             minHour = lodash.includes(['apcp', 'prate', 'tmax2m', 'tmin2m'], plotType) ? 6 : 0;
             maxHour = lodash.includes(['06', '18'], initHour) ? 120 : 180;
         } else if (model == 'ECMWF') {
@@ -152,10 +152,6 @@ function getModelForecastHours(model, runtime, plotType, isAllHours) {
             offset = lodash.includes(['apcp'], plotType) ? 3 : lodash.includes(['06', '18'], initHour) ? 6 : 12;
             minHour = lodash.includes(['apcp'], plotType) ? 6 : 0;
             maxHour = lodash.includes(['06', '18'], initHour) ? 90 : 240;
-        } else if (model == 'GEFS') {
-            offset = lodash.includes(['apcp', 'prate'], plotType) ? 6 : 12;
-            minHour = lodash.includes(['apcp', 'prate'], plotType) ? 6 : 0;
-            maxHour = 384;
         }
         for (var i = minHour; i <= maxHour; i = i + offset) {
             hours.push(i);
@@ -183,19 +179,6 @@ function getModelForecastHours(model, runtime, plotType, isAllHours) {
                 hours.push(i);
             }
             for (var i = 81; i <= maxHour; i = i + 3) {
-                hours.push(i);
-            }
-        } else if (model == 'GEFS') {
-            let initHour = runtime.slice(runtime.length - 2, runtime.length);
-            minHour = 0;
-            maxHour = initHour == '00' ? 840 : 384;
-            for (var i = minHour; i < 240; i = i + 3) {
-                hours.push(i);
-            }
-            if (lodash.includes(['apcp', 'prate'], plotType)) {
-                hours.pop(0);
-            }
-            for (var i = 240; i <= maxHour; i = i + 6) {
                 hours.push(i);
             }
         } else if (model == 'ECMWF') {
@@ -303,23 +286,26 @@ function _getModelSettings(model) {
         img_prec = ['prate', 'apcp'];
         img_temp = ['t2m', 'dt2m', 't850w', 't700w', 'z500t850', 'z100t850', 'zw200', 'z10t10'];
         img_wp = ['pres', 'wp', 'w200pres', 'sh200-850pres'];
+        img_rhw = ['rhw850', 'rhw700', 'rhw1000'];
         img_anom = ['t2ma', 't850a', 'z500a', 'z10t10a'];
-        img_other = ['refc', 'sweat', 'tt', 'ki', 'cape', 'rhw850', 'rhw700'];
+        img_other = ['sweat', 'tt', 'ki', 'cape'];
         imgName_ir = ['Simulated IR-BW', 'Simulated IR-BD', 'Simulated IR-OTT'];
         imgName_prec = ['Precipitation Rate', 'Total Precipitation'];
         imgName_temp = ['2m Air Temp.', '2m DP Temp.', '850mb Temp. & Wind', '700mb Temp. & Wind', '500mb HGT & 850mb Temp.', '100mb HGT & 850mb Temp.', '200mb HGT & Wind', '10mb HGT & Temp.'];
         imgName_wp = ['Mean Sea Level Pressure', '10m Wind & MSLP', '200mb Wind & MSLP', '200-850mb Wind Shear & MSLP'];
+        imgName_rhw = ['850mb RH. & Wind', '700mb RH. & Wind', '1000mb RH. & Wind'];
         imgName_anom = ['2m Air Temp. Anomaly', '850mb Temp. Anomaly', '500mb HGT Anomaly', '10mb HGT & Temp. Anomaly'];
-        imgName_other = ['Composite Reflectivity', 'SWEAT Index', 'Total Index', 'K-Index', 'Convective Available Potential Energy', '850mb RH. & Wind', '700mb RH. & Wind'];
+        imgName_other = ['SWEAT Index', 'Total Index', 'K-Index', 'Convective Available Potential Energy'];
         img = [
             [img_temp, imgName_temp],
             [img_wp, imgName_wp],
             [img_ir, imgName_ir],
             [img_prec, imgName_prec],
+            [img_rhw, imgName_rhw],
             [img_anom, imgName_anom],
             [img_other, imgName_other]
         ];
-        imgTitle = ['Temperature', 'Wind / MSLP', 'Simulated IR', 'Precipitation', 'Anomalies', 'Others'];
+        imgTitle = ['Temperature', 'Wind / MSLP', 'Simulated IR', 'Precipitation', 'RH. & Wind', 'Anomalies', 'Others'];
         region = {
             'ir0': _region,
             'ir1': _region,
@@ -338,12 +324,12 @@ function _getModelSettings(model) {
             'z100t850': _region,
             'zw200': _region,
             'z500a': _region,
-            'refc': _region,
             'sweat': _region,
             'tt': _region,
             'ki': _region,
             'rhw850': _region,
             'rhw700': _region,
+            'rhw1000': _region,
             'apcp': _region,
             'prate': _region,
             'cape': _region,
@@ -407,54 +393,6 @@ function _getModelSettings(model) {
             'prate': _region,
             'cape': _region,
             'h0': _region
-        };
-    } else if (model == 'GEFS') {
-        file = 'runtimes_gefs.txt';
-        members = [
-            ['mean', 'gec00'],
-            ['Mean', 'Control']
-        ];
-        for (let i = 1; i <= 30; i++) {
-            members[0].push($.sprintf('gep%02d', i));
-            members[1].push($.sprintf('#%02d', i));
-        }
-        _region = [
-            ['china', 'sechina', 'schina', 'echina', 'wchina', 'nchina', 'mchina', 'eas', 'easia', 'asia', 'euroasia', 'indopeni', 'europe', 'namerica', 'us', 'japan', 'aus', 'northpolar', 'southpolar', 'wpac', 'swpac', 'sepac', 'epac', 'natl', 'cpac', 'nio', 'sio', 'seio', 'swio', 'customize'],
-            ['China', 'South-eastern China', 'Southern China', 'Eastern China', 'Western China', 'Northern China', 'Mid China', 'East Asian Seas', 'Eastern Asia', 'Asia', 'Europe-asia', 'Indochina Peninsula', 'Europe', 'Northern America', 'United States', 'Japan', 'Australia', 'Northern Hemisphere', 'Southern Hemisphere', 'Western Pacific', 'Southwestern Pacific', 'Southeastern Pacific', 'Eastern Pacific', 'Northern Atlantic Ocean', 'Central Pacific', 'N. Indian Ocean', 'S. Indian Ocean', 'SE. Indian Ocean', 'SW. Indian Ocean', 'Customize']
-        ];
-        img_prec = ['apcp'];
-        img_temp = ['t2m', 't850w', 'z500t850', 'z10t10'];
-        img_wp = ['pres', 'wp'];
-        img_anom = ['t2ma', 't850a', 'z500a', 'z10t10a'];
-        imgName_prec = ['Total Precipitation'];
-        imgName_temp = ['2m Air Temp.', '850mb Temp. & Wind', '500mb HGT & 850mb Temp.', '10mb HGT & Temp.'];
-        imgName_wp = ['Mean Sea Level Pressure', '10m Wind & MSLP'];
-        imgName_anom = ['2m Air Temp. Anomaly', '850mb Temp. Anomaly', '500mb HGT Anomaly', '10mb HGT & Temp. Anomaly'];
-        img = [
-            [img_temp, imgName_temp],
-            [img_wp, imgName_wp],
-            [img_prec, imgName_prec],
-            [img_anom, imgName_anom]
-        ];
-        imgTitle = ['Temperature', 'Wind / MSLP', 'Precipitation', 'Anomalies'];
-        region = {
-            't2m': _region,
-            't850w': _region,
-            't2ma': _region,
-            't850a': _region,
-            'pres': _region,
-            'wp': _region,
-            'z500t850': _region,
-            'z500a': _region,
-            'apcp': _region,
-            'z10t10': [
-                ['northpolar', 'southpolar'],
-                ['Northern Hemisphere', 'Southern Hemisphere']
-            ],
-            'z10t10a': [
-                ['northpolar', 'southpolar'],
-                ['Northern Hemisphere', 'Southern Hemisphere']
-            ],
         };
     } else if (model == 'ECMWF') {
         file = 'runtimes_ec.txt';
@@ -636,9 +574,6 @@ function getImageryCacheURL(model, runtime, fcsthour, imgType, area, protocol) {
             break;
         case 'CMC':
             format = $.sprintf('%s//data.dapiya.net:1234/satellite/%s/data/gem_%s_f%03d_%s_%s.png', protocol, model.toLowerCase(), fp[imgType], fcsthour, runtime, geoFormat, );
-            break;
-        case 'GEFS':
-            format = $.sprintf('%s//data.dapiya.net:1234/satellite/%s/data/%s_%s_%s_f%03d_%s_%s.png', protocol, model.toLowerCase(), model.toLowerCase(), $("#members").val() == 'mean' ? 'geavg' : $("#members").val(), fp[imgType], fcsthour, runtime, geoFormat, );
             break;
         case 'ECMWF':
             let initHour = runtime.slice(runtime.length - 2, runtime.length);
