@@ -62,27 +62,6 @@
             var GIFLink = ''; // record pre-made GIF link & GIF blob-link
             $(document).ready(function(){
                 autoNotice('//api.dapiya.net:1234', 'w', "#notice");
-                /*
-                if (getCookie('ifDonate') != 'true') {
-                    $("#myModal").modal('show');
-                }
-                // adding redirect query path automately
-                $("a[href!='#']").click(function() {
-                    let domain = window.location.hostname;
-                    let url = $(this).attr('href');
-                    let target = $(this).attr('target');
-                    // get full query string
-                    let query = window.location.search;
-                    if (!target && domain.indexOf('dapiya.net:1234') != -1) {
-                        if (query == '?r=0') url += '?r=0';
-                    } else if (target) {
-                        window.open(url);
-                        return false;
-                    }
-                    window.location.href = url;
-                    return false;
-                });
-                */
                 $.ajax({
                     type: 'GET',
                     url: '//api.dapiya.net:1234/typhoon/meso/all',
@@ -222,11 +201,8 @@
                 sTID = sT;
                 if ($("#image").html() != "<div class=\"ace-container\">Currently no active storms to watch.</div>") {
                     $("button.imagetype").removeClass("active");
-                    if (!sType) {
-                        $("#" + sType + "_TYPE").addClass("active");
-                    } else {
-                        $("#" + sT).addClass("active");
-                    }
+                    $("#" + sType + "_TYPE").addClass("active");
+                    $("#" + sT).addClass("active");
                     $("#loop").html("<button type=\"button\" class=\"imagetype transparent\" onclick=\"GIFOption();\"><ins>GIF Loop</ins></button>");
                     // $("#loop").html('<div style="text-align: center;color: rgba(0,0,0,0.4);font-size: 13px;font-family: \'consolas\', \'sans-serif\';">' + stormID + "_" + sT + '.gif</div><hr class="nohr">' + "<button type=\"button\" class=\"imagetype\" onclick=\"window.open('//data.dapiya.net:1234/satellite/data/" + stormID + "_" + sT + ".gif')\">GIF Loop</button>");
                     if (sT == 'models' || sT == 'gefs' || sT == 'geps' || sT == 'nvgs') {
