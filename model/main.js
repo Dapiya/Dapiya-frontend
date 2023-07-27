@@ -193,10 +193,9 @@ function getModelForecastHours(model, runtime, plotType, isAllHours) {
 }
 
 function _getModelSettings(model) {
-    let _region, img, imgTitle, region, file, members, img_ir, img_prec, img_temp, img_wp, img_vort, img_anom, img_other, imgName_ir, imgName_prec, imgName_temp, imgName_wp, imgName_vort, imgName_anom, imgName_other;
+    let _region, img, imgTitle, region, file, img_ir, img_prec, img_temp, img_wp, img_vort, img_anom, img_other, imgName_ir, imgName_prec, imgName_temp, imgName_wp, imgName_vort, imgName_anom, imgName_other;
     if (model == 'GFS') {
         file = 'runtimes.txt';
-        members = null;
         _region = [
             ['china', 'sechina', 'schina', 'echina', 'wchina', 'nchina', 'mchina', 'eas', 'easia', 'asia', 'euroasia', 'indopeni', 'europe', 'namerica', 'us', 'japan', 'aus', 'northpolar', 'southpolar', 'wpac', 'swpac', 'sepac', 'epac', 'natl', 'cpac', 'nio', 'sio', 'seio', 'swio', 'customize'],
             ['China', 'South-eastern China', 'Southern China', 'Eastern China', 'Western China', 'Northern China', 'Mid China', 'East Asian Seas', 'Eastern Asia', 'Asia', 'Europe-asia', 'Indochina Peninsula', 'Europe', 'Northern America', 'United States', 'Japan', 'Australia', 'Northern Hemisphere', 'Southern Hemisphere', 'Western Pacific', 'Southwestern Pacific', 'Southeastern Pacific', 'Eastern Pacific', 'Northern Atlantic Ocean', 'Central Pacific', 'N. Indian Ocean', 'S. Indian Ocean', 'SE. Indian Ocean', 'SW. Indian Ocean', 'Customize']
@@ -216,7 +215,7 @@ function _getModelSettings(model) {
         imgName_rhw = ['850mb RH. & Wind', '700mb RH. & Wind', '1000mb RH. & Wind'];
         imgName_vort = ['500mb HGT & 850mb Vort. & Wind', '700mb Vort. & Wind & MSLP', '500mb HGT & Vort. & 200mb Wind'];
         imgName_anom = ['2m Air Temp. Anomaly', '850mb Temp. Anomaly', '500mb HGT Anomaly', '10mb HGT & Temp. Anomaly'];
-        imgName_other = ['Composite Reflectivity', 'SWEAT Index', 'Total Index', 'K-Index', 'Convective Available Potential Energy', '850mb Okubo-Weiss', 'Total Cloud Cover'];
+        imgName_other = ['Composite Reflectivity', 'SWEAT Index', 'Total Totals Index', 'K-Index', 'Convective Available Potential Energy', '850mb Okubo-Weiss', 'Total Cloud Cover'];
         img = [
             [img_temp, imgName_temp],
             [img_wp, imgName_wp],
@@ -277,7 +276,6 @@ function _getModelSettings(model) {
         };
     } else if (model == 'CMC') {
         file = '/cmc/latest/runs';
-        members = null;
         _region = [
             ['china', 'sechina', 'schina', 'echina', 'wchina', 'nchina', 'mchina', 'eas', 'easia', 'asia', 'euroasia', 'indopeni', 'europe', 'namerica', 'us', 'japan', 'aus', 'northpolar', 'southpolar', 'wpac', 'swpac', 'sepac', 'epac', 'natl', 'cpac', 'nio', 'sio', 'seio', 'swio', 'customize'],
             ['China', 'South-eastern China', 'Southern China', 'Eastern China', 'Western China', 'Northern China', 'Mid China', 'East Asian Seas', 'Eastern Asia', 'Asia', 'Europe-asia', 'Indochina Peninsula', 'Europe', 'Northern America', 'United States', 'Japan', 'Australia', 'Northern Hemisphere', 'Southern Hemisphere', 'Western Pacific', 'Southwestern Pacific', 'Southeastern Pacific', 'Eastern Pacific', 'Northern Atlantic Ocean', 'Central Pacific', 'N. Indian Ocean', 'S. Indian Ocean', 'SE. Indian Ocean', 'SW. Indian Ocean', 'Customize']
@@ -295,7 +293,7 @@ function _getModelSettings(model) {
         imgName_wp = ['Mean Sea Level Pressure', '10m Wind & MSLP', '200mb Wind & MSLP', '200-850mb Wind Shear & MSLP'];
         imgName_rhw = ['850mb RH. & Wind', '700mb RH. & Wind', '1000mb RH. & Wind'];
         imgName_anom = ['2m Air Temp. Anomaly', '850mb Temp. Anomaly', '500mb HGT Anomaly', '10mb HGT & Temp. Anomaly'];
-        imgName_other = ['SWEAT Index', 'Total Index', 'K-Index', 'Convective Available Potential Energy'];
+        imgName_other = ['SWEAT Index', 'Total Totals Index', 'K-Index', 'Convective Available Potential Energy'];
         img = [
             [img_temp, imgName_temp],
             [img_wp, imgName_wp],
@@ -344,29 +342,33 @@ function _getModelSettings(model) {
         };
     } else if (model == 'ICON') {
         file = '/icon/latest/runs';
-        members = null;
         _region = [
             ['china', 'sechina', 'schina', 'echina', 'wchina', 'nchina', 'mchina', 'eas', 'easia', 'asia', 'euroasia', 'indopeni', 'europe', 'namerica', 'us', 'japan', 'aus', 'northpolar', 'southpolar', 'wpac', 'swpac', 'sepac', 'epac', 'natl', 'cpac', 'nio', 'sio', 'seio', 'swio', 'customize'],
             ['China', 'South-eastern China', 'Southern China', 'Eastern China', 'Western China', 'Northern China', 'Mid China', 'East Asian Seas', 'Eastern Asia', 'Asia', 'Europe-asia', 'Indochina Peninsula', 'Europe', 'Northern America', 'United States', 'Japan', 'Australia', 'Northern Hemisphere', 'Southern Hemisphere', 'Western Pacific', 'Southwestern Pacific', 'Southeastern Pacific', 'Eastern Pacific', 'Northern Atlantic Ocean', 'Central Pacific', 'N. Indian Ocean', 'S. Indian Ocean', 'SE. Indian Ocean', 'SW. Indian Ocean', 'Customize']
         ];
+        // img_prec = ['prate', 'apcp'];
         img_prec = ['apcp'];
         img_temp = ['t2m', 'tmax2m', 'tmin2m', 'dt2m', 't850w', 't700w', 'z500t850', 'z100t850', 'zw200', 'h0'];
         img_wp = ['pres', 'wp', 'w200pres', 'sh200-850pres'];
+        img_rhw = ['rhw850', 'rhw700', 'rhw1000'];
         img_anom = ['t2ma', 't850a', 'z500a'];
-        img_other = ['sweat', 'tt', 'ki', 'cape', 'rhw850', 'rhw700'];
+        img_other = ['sweat', 'tt', 'ki', 'cape'];
+        // imgName_prec = ['Precipitation Rate', 'Total Precipitation'];
         imgName_prec = ['Total Precipitation'];
-        imgName_temp = ['2m Air Temp.', '2m Max. Temp.', '2m Min. Temp.', '2m DP Temp.', '850mb Temp. & Wind', '700mb Temp. & Wind', '500mb HGT & 850mb Temp.', '100mb HGT & 850mb Temp.', '200mb HGT & Wind', 'Height of 0 Degree Celsius Isotherm'];
+        imgName_temp = ['2m Air Temp.', '2m Max. Temp.', '2m Min. Temp.', '2m DP Temp.', '850mb Temp. & Wind', '700mb Temp. & Wind', '500mb HGT & 850mb Temp.', '100mb HGT & 850mb Temp.', '200mb HGT & Wind'];
         imgName_wp = ['Mean Sea Level Pressure', '10m Wind & MSLP', '200mb Wind & MSLP', '200-850mb Wind Shear & MSLP'];
+        imgName_rhw = ['850mb RH. & Wind', '700mb RH. & Wind', '1000mb RH. & Wind'];
         imgName_anom = ['2m Air Temp. Anomaly', '850mb Temp. Anomaly', '500mb HGT Anomaly'];
-        imgName_other = ['SWEAT Index', 'Total Index', 'K-Index', 'Convective Available Potential Energy', '850mb RH. & Wind', '700mb RH. & Wind'];
+        imgName_other = ['SWEAT Index', 'Total Totals Index', 'K-Index', 'Convective Available Potential Energy'];
         img = [
             [img_temp, imgName_temp],
             [img_wp, imgName_wp],
             [img_prec, imgName_prec],
+            [img_rhw, imgName_rhw],
             [img_anom, imgName_anom],
             [img_other, imgName_other]
         ];
-        imgTitle = ['Temperature', 'Wind / MSLP', 'Precipitation', 'Anomalies', 'Others'];
+        imgTitle = ['Temperature', 'Wind / MSLP', 'Precipitation', 'RH. & Wind', 'Anomalies', 'Others'];
         region = {
             't2m': _region,
             'tmax2m': _region,
@@ -389,14 +391,13 @@ function _getModelSettings(model) {
             'ki': _region,
             'rhw850': _region,
             'rhw700': _region,
+            'rhw1000': _region,
             'apcp': _region,
             'prate': _region,
-            'cape': _region,
-            'h0': _region
+            'cape': _region
         };
     } else if (model == 'ECMWF') {
         file = 'runtimes_ec.txt';
-        members = null;
         _region = [
             ['china', 'sechina', 'schina', 'echina', 'wchina', 'nchina', 'mchina', 'eas', 'easia', 'asia', 'euroasia', 'indopeni', 'europe', 'namerica', 'us', 'japan', 'aus', 'northpolar', 'southpolar', 'wpac', 'swpac', 'sepac', 'epac', 'natl', 'cpac', 'nio', 'sio', 'seio', 'swio', 'customize'],
             ['China', 'South-eastern China', 'Southern China', 'Eastern China', 'Western China', 'Northern China', 'Mid China', 'East Asian Seas', 'Eastern Asia', 'Asia', 'Europe-asia', 'Indochina Peninsula', 'Europe', 'Northern America', 'United States', 'Japan', 'Australia', 'Northern Hemisphere', 'Southern Hemisphere', 'Western Pacific', 'Southwestern Pacific', 'Southeastern Pacific', 'Eastern Pacific', 'Northern Atlantic Ocean', 'Central Pacific', 'N. Indian Ocean', 'S. Indian Ocean', 'SE. Indian Ocean', 'SW. Indian Ocean', 'Customize']
@@ -414,7 +415,7 @@ function _getModelSettings(model) {
         imgName_rhw = ['850mb RH. & Wind', '700mb RH. & Wind', '1000mb RH. & Wind'];
         imgName_vort = ['500mb HGT & 850mb Vort. & Wind', '700mb Vort. & Wind & MSLP', '500mb HGT & Vort. & 200mb Wind'];
         imgName_anom = ['2m Air Temp. Anomaly', '850mb Temp. Anomaly', '500mb HGT Anomaly'];
-        imgName_other = ['SWEAT Index', 'Total Index', 'K-Index', '850mb Okubo-Weiss'];
+        imgName_other = ['SWEAT Index', 'Total Totals Index', 'K-Index', '850mb Okubo-Weiss'];
         img = [
             [img_temp, imgName_temp],
             [img_wp, imgName_wp],
@@ -455,8 +456,7 @@ function _getModelSettings(model) {
         'img': img,
         'imgTitle': imgTitle,
         'region': region,
-        'file': file,
-        'mwmbers': members
+        'file': file
     };
 }
 
@@ -466,8 +466,7 @@ function setModelsListener() {
             'img': img,
             'imgTitle': imgTitle,
             'region': region,
-            'file': file,
-            'mwmbers': members
+            'file': file
         } = _getModelSettings($("#model").val());
         $("#customize").css('display', 'none');
         $("#gfsimg").css('display', 'none');
@@ -483,41 +482,16 @@ function setModelsListener() {
         }
         submit_data($("#model").val(), $("#runtime").val(), $("#hourSelected").val(), $("#area").val(), $("#imgType").val());
     });
-    $("#members").on('change', () => {
-        var {
-            'img': img,
-            'imgTitle': imgTitle,
-            'region': region,
-            'file': file,
-            'mwmbers': members
-        } = _getModelSettings($("#model").val());
-        $("#customize").css('display', 'none');
-        $("#gfsimg").css('display', 'none');
-        $("#area").val(region[$("#imgType").val()][0][0]);
-        submit_data($("#model").val(), $("#runtime").val(), $("#hourSelected").val(), $("#area").val(), $("#imgType").val());
-    });
     $("#model").on('change', () => {
         var {
             'img': img,
             'imgTitle': imgTitle,
             'region': region,
-            'file': file,
-            'mwmbers': members
+            'file': file
         } = _getModelSettings($("#model").val());
         $("#customize").css('display', 'none');
         $("#gfsimg").css('display', 'none');
         $("#area").val(region[$("#imgType").val()][0][0]);
-        if (members) {
-            let html = '';
-            for (let i = 0; i < members[0].length; i++) {
-                html += "<option value=\"" + members[0][i] + "\">" + members[1][i] + "</option>";
-            }
-            $("#members").html(html);
-            $("#members").css('display', 'inline-block');
-        } else {
-            $("#members").html('');
-            $("#members").css('display', 'none');
-        }
         var url = file.indexOf('runtimes') != -1 ? ('//' + window.location.host.replace('www', 'data') + '/') : ('//' + window.location.host.replace('www', 'api'));
         $.ajax({
             type: 'GET',
