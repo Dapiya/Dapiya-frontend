@@ -62,6 +62,27 @@
             var GIFLink = ''; // record pre-made GIF link & GIF blob-link
             $(document).ready(function(){
                 autoNotice('//api.dapiya.net:1234', 'w', "#notice");
+                /*
+                if (getCookie('ifDonate') != 'true') {
+                    $("#myModal").modal('show');
+                }
+                // adding redirect query path automately
+                $("a[href!='#']").click(function() {
+                    let domain = window.location.hostname;
+                    let url = $(this).attr('href');
+                    let target = $(this).attr('target');
+                    // get full query string
+                    let query = window.location.search;
+                    if (!target && domain.indexOf('dapiya.net:1234') != -1) {
+                        if (query == '?r=0') url += '?r=0';
+                    } else if (target) {
+                        window.open(url);
+                        return false;
+                    }
+                    window.location.href = url;
+                    return false;
+                });
+                */
                 $.ajax({
                     type: 'GET',
                     url: '//api.dapiya.net:1234/typhoon/meso/all',
@@ -111,10 +132,29 @@
                 $("#satImageType").html('\
                     <div class="row">\
                         <div style="text-align: center;color: rgba(0,0,0,0.4);font-size: 13px;font-family: \'consolas\', \'sans-serif\';">SATELLITE IMAGE TYPES</div>\
-                        <div class="col-lg-12 col-md-12 col-sm-3 col-xs-3"><div class="row"><button type="button" class="imagetype" id="VIS_TYPE" onclick="javascript:cTM(\'VIS\', \'' + sT + '\')">VISIBLE</button></div></div>\
-                        <div class="col-lg-12 col-md-12 col-sm-3 col-xs-3"><div class="row"><button type="button" class="imagetype" id="IR_TYPE" onclick="javascript:cTM(\'IR\', \'' + sT + '\')">INFRARED</button></div></div>\
-                        <div class="col-lg-12 col-md-12 col-sm-3 col-xs-3"><div class="row"><button type="button" class="imagetype" id="WV_TYPE" onclick="javascript:cTM(\'WV\', \'' + sT + '\')">WV</button></div></div>\
-                        <div class="col-lg-12 col-md-12 col-sm-3 col-xs-3"><div class="row"><button type="button" class="imagetype" id="RGB_TYPE" onclick="javascript:cTM(\'RGB\', \'' + sT + '\')">RGB</button></div></div>\
+                        <div class="hidden-md hidden-lg">\
+                            <div class="col-lg-12 col-md-12 col-sm-3 col-xs-3"><div class="row"><button type="button" class="imagetype" id="VIS_TYPE" onclick="javascript:cTM(\'VIS\', \'' + sT + '\')">VISIBLE</button></div></div>\
+                            <div class="col-lg-12 col-md-12 col-sm-3 col-xs-3"><div class="row"><button type="button" class="imagetype" id="IR_TYPE" onclick="javascript:cTM(\'IR\', \'' + sT + '\')">INFRARED</button></div></div>\
+                            <div class="col-lg-12 col-md-12 col-sm-3 col-xs-3"><div class="row"><button type="button" class="imagetype" id="WV_TYPE" onclick="javascript:cTM(\'WV\', \'' + sT + '\')">WV</button></div></div>\
+                            <div class="col-lg-12 col-md-12 col-sm-3 col-xs-3"><div class="row"><button type="button" class="imagetype" id="RGB_TYPE" onclick="javascript:cTM(\'RGB\', \'' + sT + '\')">RGB</button></div></div>\
+                        </div>\
+                        <div class="hidden-xs hidden-sm">\
+                            <div class="col-lg-12 col-md-12 col-sm-3 col-xs-3"><div class="row"><button type="button" class="imagetype" id="VIS" onclick="javascript:cTW(\'VIS\', \'' + sT + '\')">VIS</button></div></div>\
+                            <div class="col-lg-12 col-md-12 col-sm-3 col-xs-3"><div class="row"><button type="button" class="imagetype" id="EVIS" onclick="javascript:cTW(\'EVIS\', \'' + sT + '\')">EVIS</button></div></div>\
+                            <div class="col-lg-12 col-md-12 col-sm-3 col-xs-3"><div class="row"><button type="button" class="imagetype" id="RGB" onclick="javascript:cTW(\'RGB\', \'' + sT + '\')">RGB</button></div></div>\
+                            <div class="col-lg-12 col-md-12 col-sm-3 col-xs-3"><div class="row"><button type="button" class="imagetype" id="TRUECOLOR" onclick="javascript:cTW(\'TRUECOLOR\', \'' + sT + '\')">TRUE COLOR</button></div></div>\
+                            <div class="col-lg-12 col-md-12 col-sm-3 col-xs-3"><div class="row"><button type="button" class="imagetype" id="AIRMASS" onclick="javascript:cTW(\'AIRMASS\', \'' + sT + '\')">AIRMASS</button></div></div>\
+                            <div class="col-lg-12 col-md-12 col-sm-3 col-xs-3"><div class="row"><button type="button" class="imagetype" id="BW" onclick="javascript:cTW(\'BW\', \'' + sT + '\')">IR-BW</button></div></div>\
+                            <div class="col-lg-12 col-md-12 col-sm-3 col-xs-3"><div class="row"><button type="button" class="imagetype" id="BD" onclick="javascript:cTW(\'BD\', \'' + sT + '\')">IR-BD</button></div></div>\
+                            <div class="col-lg-12 col-md-12 col-sm-3 col-xs-3"><div class="row"><button type="button" class="imagetype" id="CC" onclick="javascript:cTW(\'CC\', \'' + sT + '\')">IR-CC</button></div></div>\
+                            <div class="col-lg-12 col-md-12 col-sm-3 col-xs-3"><div class="row"><button type="button" class="imagetype" id="RAMMB" onclick="javascript:cTW(\'RAMMB\', \'' + sT + '\')">IR-RAMMB</button></div></div>\
+                            <div class="col-lg-12 col-md-12 col-sm-3 col-xs-3"><div class="row"><button type="button" class="imagetype" id="OTT" onclick="javascript:cTW(\'OTT\', \'' + sT + '\')">IR-OTT</button></div></div>\
+                            <div class="col-lg-12 col-md-12 col-sm-3 col-xs-3"><div class="row"><button type="button" class="imagetype" id="RBTOP" onclick="javascript:cTW(\'RBTOP\', \'' + sT + '\')">IR-RBTOP</button></div></div>\
+                            <div class="col-lg-12 col-md-12 col-sm-3 col-xs-3"><div class="row"><button type="button" class="imagetype" id="CA" onclick="javascript:cTW(\'CA\', \'' + sT + '\')">IR-CA</button></div></div>\
+                            <div class="col-lg-12 col-md-12 col-sm-3 col-xs-3"><div class="row"><button type="button" class="imagetype" id="AWV" onclick="javascript:cTW(\'AWV\', \'' + sT + '\')">AVG-WV</button></div></div>\
+                            <div class="col-lg-12 col-md-12 col-sm-3 col-xs-3"><div class="row"><button type="button" class="imagetype" id="WV" onclick="javascript:cTW(\'WV\', \'' + sT + '\')">WV-SSD</button></div></div>\
+                            <div class="col-lg-12 col-md-12 col-sm-3 col-xs-3"><div class="row"><button type="button" class="imagetype" id="DIAS" onclick="javascript:cTW(\'DIAS\', \'' + sT + '\')">IR-DIAS</button></div></div>\
+                        </div>\
                     </div>\
                     <hr class="nohr">\
                     <div class="row">\
@@ -182,14 +222,17 @@
                 sTID = sT;
                 if ($("#image").html() != "<div class=\"ace-container\">Currently no active storms to watch.</div>") {
                     $("button.imagetype").removeClass("active");
+                    if (!sType) {
+                        $("#" + sType + "_TYPE").addClass("active");
+                    } else {
+                        $("#" + sT).addClass("active");
+                    }
                     $("#loop").html("<button type=\"button\" class=\"imagetype transparent\" onclick=\"GIFOption();\"><ins>GIF Loop</ins></button>");
                     // $("#loop").html('<div style="text-align: center;color: rgba(0,0,0,0.4);font-size: 13px;font-family: \'consolas\', \'sans-serif\';">' + stormID + "_" + sT + '.gif</div><hr class="nohr">' + "<button type=\"button\" class=\"imagetype\" onclick=\"window.open('//data.dapiya.net:1234/satellite/data/" + stormID + "_" + sT + ".gif')\">GIF Loop</button>");
                     if (sT == 'models' || sT == 'gefs' || sT == 'geps' || sT == 'nvgs') {
-                        $("#" + sT).addClass("active");
                         $("#image").html("<img class=\"img-responsive center-block\" src=\"//data.dapiya.net:1234/satellite/data/" + stormID + "_" + sT + ".png\" alt=\"No data\">");
                         $('#imageLoopButton button').attr("disabled", "disabled");
                     } else {
-                        $("#" + sType + "_TYPE").addClass("active");
                         $("#image").html("<img class=\"img-responsive center-block\" src=\"//data.dapiya.net:1234/history/" + stormID + '/' + sT + '/' + stormID + "_" + sT + ".png\" alt=\"No data\">");
                         $('#imageLoopButton button').removeAttr("disabled");
                         GIFLink = '//data.dapiya.net:1234/satellite/data/' + stormID + "_" + sT + '.gif';
