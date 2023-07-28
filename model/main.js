@@ -348,7 +348,7 @@ function _getModelSettings(model) {
         ];
         // img_prec = ['prate', 'apcp'];
         img_prec = ['apcp'];
-        img_temp = ['t2m', 'tmax2m', 'tmin2m', 'dt2m', 't850w', 't700w', 'z500t850', 'z100t850', 'zw200', 'h0'];
+        img_temp = ['t2m', 'tmax2m', 'tmin2m', 'dt2m', 't850w', 't700w', 'z500t850', 'z100t850', 'zw200'];
         img_wp = ['pres', 'wp', 'w200pres', 'sh200-850pres'];
         img_rhw = ['rhw850', 'rhw700', 'rhw1000'];
         img_anom = ['t2ma', 't850a', 'z500a'];
