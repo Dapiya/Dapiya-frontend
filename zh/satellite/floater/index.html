@@ -112,10 +112,10 @@
                     <div class="row">\
                         <div style="text-align: center;color: rgba(0,0,0,0.4);font-size: 13px;font-family: \'consolas\', \'sans-serif\';">卫星云图类型</div>\
                         <div class="hidden-md hidden-lg">\
-                            <div class="col-lg-12 col-md-12 col-sm-3 col-xs-3"><div class="row"><button type="button" class="imagetype" id="VIS_TYPE" onclick="javascript:cTM(\'VIS\', \'' + sT + '\')">可见光云图</button></div></div>\
-                            <div class="col-lg-12 col-md-12 col-sm-3 col-xs-3"><div class="row"><button type="button" class="imagetype" id="IR_TYPE" onclick="javascript:cTM(\'IR\', \'' + sT + '\')">红外云图</button></div></div>\
-                            <div class="col-lg-12 col-md-12 col-sm-3 col-xs-3"><div class="row"><button type="button" class="imagetype" id="WV_TYPE" onclick="javascript:cTM(\'WV\', \'' + sT + '\')">水汽云图</button></div></div>\
-                            <div class="col-lg-12 col-md-12 col-sm-3 col-xs-3"><div class="row"><button type="button" class="imagetype" id="RGB_TYPE" onclick="javascript:cTM(\'RGB\', \'' + sT + '\')">彩色云图</button></div></div>\
+                            <div class="col-lg-12 col-md-12 col-sm-3 col-xs-3"><div class="row"><button type="button" class="imagetype" id="VIS_TYPE" onclick="javascript:cTM(\'VIS\', \'' + sT + '\')">可见光</button></div></div>\
+                            <div class="col-lg-12 col-md-12 col-sm-3 col-xs-3"><div class="row"><button type="button" class="imagetype" id="IR_TYPE" onclick="javascript:cTM(\'IR\', \'' + sT + '\')">红外</button></div></div>\
+                            <div class="col-lg-12 col-md-12 col-sm-3 col-xs-3"><div class="row"><button type="button" class="imagetype" id="WV_TYPE" onclick="javascript:cTM(\'WV\', \'' + sT + '\')">水蒸汽</button></div></div>\
+                            <div class="col-lg-12 col-md-12 col-sm-3 col-xs-3"><div class="row"><button type="button" class="imagetype" id="RGB_TYPE" onclick="javascript:cTM(\'RGB\', \'' + sT + '\')">彩色</button></div></div>\
                         </div>\
                         <div class="hidden-xs hidden-sm">\
                             <div class="col-lg-12 col-md-12 col-sm-3 col-xs-3"><div class="row"><button type="button" class="imagetype" id="VIS" onclick="javascript:cTW(\'VIS\', \'' + sT + '\')">VIS</button></div></div>\
@@ -1179,7 +1179,7 @@
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Language | 语言<span class="caret"></span></a>
                                 <ul class="dropdown-menu">
                                     <li><a href="/zh/satellite/floater/">简体中文</a></li>
-                                    <li><a href="/en/satellite/floater/">English</a></li>
+                                    <li><a href="/satellite/floater/">English</a></li>
                                 </ul>
                             </li>
                         </ul>
@@ -1314,7 +1314,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                        <h4 class="modal-title" id="SatelliteImageryTypeWindowLabel">Satellite Imagery Types</h4>
+                        <h4 class="modal-title" id="SatelliteImageryTypeWindowLabel">卫星云图类型</h4>
                     </div>
                     <div class="modal-body">
                         <div id="imageType" style="text-align: center;"></div>
@@ -1325,13 +1325,5 @@
                 </div>
             </div>
         </div>
-        <!-- Google tag (gtag.js) -->
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-22JTJ6RYJH"></script>
-        <script>
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'G-22JTJ6RYJH');
-        </script>
     </body>
 </html>
