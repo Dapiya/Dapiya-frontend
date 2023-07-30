@@ -115,6 +115,10 @@ var fp = {
     'z10t10': 'z10t10',
     'z10t10a': 'z10t10a',
 };
+var _region = [
+    ['china', 'sechina', 'schina', 'echina', 'wchina', 'nchina', 'mchina', 'eas', 'easia', 'asia', 'euroasia', 'indopeni', 'europe', 'namerica', 'us', 'japan', 'aus', 'northpolar', 'southpolar', 'wpac', 'swpac', 'sepac', 'epac', 'natl', 'cpac', 'nio', 'sio', 'seio', 'swio', 'customize'],
+    ['China', 'South-eastern China', 'Southern China', 'Eastern China', 'Western China', 'Northern China', 'Mid China', 'East Asian Seas', 'Eastern Asia', 'Asia', 'Europe-asia', 'Indochina Peninsula', 'Europe', 'Northern America', 'United States', 'Japan', 'Australia', 'Northern Hemisphere', 'Southern Hemisphere', 'Western Pacific', 'Southwestern Pacific', 'Southeastern Pacific', 'Eastern Pacific', 'Northern Atlantic Ocean', 'Central Pacific', 'N. Indian Ocean', 'S. Indian Ocean', 'SE. Indian Ocean', 'SW. Indian Ocean', 'Customize']
+];
 
 function changeFcstHourValue(value, isfull) {
     if (!isfull) {
@@ -193,13 +197,9 @@ function getModelForecastHours(model, runtime, plotType, isAllHours) {
 }
 
 function _getModelSettings(model) {
-    let _region, img, imgTitle, region, file, img_ir, img_prec, img_temp, img_wp, img_vort, img_anom, img_other, imgName_ir, imgName_prec, imgName_temp, imgName_wp, imgName_vort, imgName_anom, imgName_other;
+    let img, imgTitle, region, file, img_ir, img_prec, img_temp, img_wp, img_vort, img_anom, img_other, imgName_ir, imgName_prec, imgName_temp, imgName_wp, imgName_vort, imgName_anom, imgName_other;
     if (model == 'GFS') {
         file = 'runtimes.txt';
-        _region = [
-            ['china', 'sechina', 'schina', 'echina', 'wchina', 'nchina', 'mchina', 'eas', 'easia', 'asia', 'euroasia', 'indopeni', 'europe', 'namerica', 'us', 'japan', 'aus', 'northpolar', 'southpolar', 'wpac', 'swpac', 'sepac', 'epac', 'natl', 'cpac', 'nio', 'sio', 'seio', 'swio', 'customize'],
-            ['China', 'South-eastern China', 'Southern China', 'Eastern China', 'Western China', 'Northern China', 'Mid China', 'East Asian Seas', 'Eastern Asia', 'Asia', 'Europe-asia', 'Indochina Peninsula', 'Europe', 'Northern America', 'United States', 'Japan', 'Australia', 'Northern Hemisphere', 'Southern Hemisphere', 'Western Pacific', 'Southwestern Pacific', 'Southeastern Pacific', 'Eastern Pacific', 'Northern Atlantic Ocean', 'Central Pacific', 'N. Indian Ocean', 'S. Indian Ocean', 'SE. Indian Ocean', 'SW. Indian Ocean', 'Customize']
-        ];
         img_ir = ['ir0', 'ir1', 'ir2', 'ir3'];
         img_prec = ['prate', 'apcp'];
         img_temp = ['t2m', 'dt2m', 't850w', 't700w', 'z500t850', 'z100t850', 'zw200', 'z10t10', 'ttropo', 'h0'];
@@ -276,10 +276,6 @@ function _getModelSettings(model) {
         };
     } else if (model == 'CMC') {
         file = '/cmc/latest/runs';
-        _region = [
-            ['china', 'sechina', 'schina', 'echina', 'wchina', 'nchina', 'mchina', 'eas', 'easia', 'asia', 'euroasia', 'indopeni', 'europe', 'namerica', 'us', 'japan', 'aus', 'northpolar', 'southpolar', 'wpac', 'swpac', 'sepac', 'epac', 'natl', 'cpac', 'nio', 'sio', 'seio', 'swio', 'customize'],
-            ['China', 'South-eastern China', 'Southern China', 'Eastern China', 'Western China', 'Northern China', 'Mid China', 'East Asian Seas', 'Eastern Asia', 'Asia', 'Europe-asia', 'Indochina Peninsula', 'Europe', 'Northern America', 'United States', 'Japan', 'Australia', 'Northern Hemisphere', 'Southern Hemisphere', 'Western Pacific', 'Southwestern Pacific', 'Southeastern Pacific', 'Eastern Pacific', 'Northern Atlantic Ocean', 'Central Pacific', 'N. Indian Ocean', 'S. Indian Ocean', 'SE. Indian Ocean', 'SW. Indian Ocean', 'Customize']
-        ];
         img_ir = ['ir0', 'ir1', 'ir2'];
         img_prec = ['prate', 'apcp'];
         img_temp = ['t2m', 'dt2m', 't850w', 't700w', 'z500t850', 'z100t850', 'zw200', 'z10t10'];
@@ -342,10 +338,6 @@ function _getModelSettings(model) {
         };
     } else if (model == 'ICON') {
         file = '/icon/latest/runs';
-        _region = [
-            ['china', 'sechina', 'schina', 'echina', 'wchina', 'nchina', 'mchina', 'eas', 'easia', 'asia', 'euroasia', 'indopeni', 'europe', 'namerica', 'us', 'japan', 'aus', 'northpolar', 'southpolar', 'wpac', 'swpac', 'sepac', 'epac', 'natl', 'cpac', 'nio', 'sio', 'seio', 'swio', 'customize'],
-            ['China', 'South-eastern China', 'Southern China', 'Eastern China', 'Western China', 'Northern China', 'Mid China', 'East Asian Seas', 'Eastern Asia', 'Asia', 'Europe-asia', 'Indochina Peninsula', 'Europe', 'Northern America', 'United States', 'Japan', 'Australia', 'Northern Hemisphere', 'Southern Hemisphere', 'Western Pacific', 'Southwestern Pacific', 'Southeastern Pacific', 'Eastern Pacific', 'Northern Atlantic Ocean', 'Central Pacific', 'N. Indian Ocean', 'S. Indian Ocean', 'SE. Indian Ocean', 'SW. Indian Ocean', 'Customize']
-        ];
         // img_prec = ['prate', 'apcp'];
         img_prec = ['apcp'];
         img_temp = ['t2m', 'tmax2m', 'tmin2m', 'dt2m', 't850w', 't700w', 'z500t850', 'z100t850', 'zw200'];
@@ -398,10 +390,6 @@ function _getModelSettings(model) {
         };
     } else if (model == 'ECMWF') {
         file = 'runtimes_ec.txt';
-        _region = [
-            ['china', 'sechina', 'schina', 'echina', 'wchina', 'nchina', 'mchina', 'eas', 'easia', 'asia', 'euroasia', 'indopeni', 'europe', 'namerica', 'us', 'japan', 'aus', 'northpolar', 'southpolar', 'wpac', 'swpac', 'sepac', 'epac', 'natl', 'cpac', 'nio', 'sio', 'seio', 'swio', 'customize'],
-            ['China', 'South-eastern China', 'Southern China', 'Eastern China', 'Western China', 'Northern China', 'Mid China', 'East Asian Seas', 'Eastern Asia', 'Asia', 'Europe-asia', 'Indochina Peninsula', 'Europe', 'Northern America', 'United States', 'Japan', 'Australia', 'Northern Hemisphere', 'Southern Hemisphere', 'Western Pacific', 'Southwestern Pacific', 'Southeastern Pacific', 'Eastern Pacific', 'Northern Atlantic Ocean', 'Central Pacific', 'N. Indian Ocean', 'S. Indian Ocean', 'SE. Indian Ocean', 'SW. Indian Ocean', 'Customize']
-        ];
         img_prec = ['apcp'];
         img_temp = ['t2m', 't850w', 't700w', 'z500t850', 'zw200'];
         img_wp = ['pres', 'wp', 'w200pres', 'sh200-850pres'];
@@ -470,7 +458,7 @@ function setModelsListener() {
         } = _getModelSettings($("#model").val());
         $("#customize").css('display', 'none');
         $("#gfsimg").css('display', 'none');
-        $("#area").val(region[$("#imgType").val()][0][0]);
+        // $("#area").val(region[$("#imgType").val()][0][0]);
         if (lodash.includes(['ECMWF', 'ICON'], $("#model").val())) {
             let html = '';
             let hours = getModelForecastHours($("#model").val(), $("#runtime").val(), fp[$("#imgType").val()], false);
@@ -491,7 +479,7 @@ function setModelsListener() {
         } = _getModelSettings($("#model").val());
         $("#customize").css('display', 'none');
         $("#gfsimg").css('display', 'none');
-        $("#area").val(region[$("#imgType").val()][0][0]);
+        // $("#area").val(region[$("#imgType").val()][0][0]);
         var url = file.indexOf('runtimes') != -1 ? ('//' + window.location.host.replace('www', 'data') + '/') : ('//' + window.location.host.replace('www', 'api'));
         $.ajax({
             type: 'GET',
@@ -520,10 +508,6 @@ function setModelsListener() {
                 $("#imgType").html(html);
                 $("#imgType").val(img[0][0][0]);
                 html = '';
-                for (let i = 0; i < region[$("#imgType").val()][0].length; i++) {
-                    html += "<option value=\"" + region[$("#imgType").val()][0][i] + "\">" + region[$("#imgType").val()][1][i] + "</option>";
-                }
-                $("#area").html(html);
                 changeFcstHourValue(hours[0], false);
                 submit_data($("#model").val(), $("#runtime").val(), $("#hourSelected").val(), $("#area").val(), $("#imgType").val());
             },
@@ -585,8 +569,8 @@ function setFullForecastTimeInModalBox(boxID) {
     html += '</div>';
     html += '<input type="text" class="rput" style="display: none;" id="hourSelectedFull">';
     $("#" + boxID + "Content").html(html);
-    html = '<button type="button" class="btn btn-primary" id="checkButton">Choose | 选择</button>\
-            <button type="button" class="btn btn-primary" id="uncheckButton">Close | 关闭</button>';
+    html = '<button type="button" class="btn btn-primary" id="checkButton">Choose</button>\
+            <button type="button" class="btn btn-primary" id="uncheckButton">Close</button>';
     $("#" + boxID + "Footer").html(html);
     $("#checkButton").attr('disabled', 'disabled');
     $("#checkButton").click(function() {
