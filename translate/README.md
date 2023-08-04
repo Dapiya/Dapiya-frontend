@@ -114,7 +114,7 @@
 * 找到`Data not found.`，并将其翻译为对应语言。
 * 找到`$("#" + boxID + "Title").html("Select Forecast Time");`，并将其内的`Select Forecast Time`翻译为对应语言。
 * 找到`id="checkButton">Choose</button>`，并将其内的`Choose`翻译为对应语言。
-* 找到`id="uncheckButton">Close</button>n`，并将其内的`Close`翻译为对应语言。
+* 找到`id="uncheckButton">Close</button>`，并将其内的`Close`翻译为对应语言。
 
 #### 6. 站内提及的链接的转换
 
