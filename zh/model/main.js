@@ -525,18 +525,18 @@ function getImageryCacheURL(model, runtime, fcsthour, imgType, area, protocol) {
     let geoFormat = lodash.includes(['chinamerc', 'northpolar', 'southpolar', 'euroasia', 'europe', 'northamerica'], area) ? georange[area].split(',').join("_") : $.sprintf('%.1f_%.1f_%.1f_%.1f', geo[0], geo[1], geo[2], geo[3]);
     switch (model) {
         case 'GFS':
-            format = $.sprintf('%s//data.dapiya.net:1234/satellite/%s/data/%s_%s_f%03d_%s_%s.png', protocol, model.toLowerCase(), model.toLowerCase(), fp[imgType], fcsthour, runtime, geoFormat, );
+            format = $.sprintf('%s//data.dapiya.top/satellite/%s/data/%s_%s_f%03d_%s_%s.png', protocol, model.toLowerCase(), model.toLowerCase(), fp[imgType], fcsthour, runtime, geoFormat, );
             break;
         case 'ICON':
-            format = $.sprintf('%s//data.dapiya.net:1234/satellite/%s/data/%s_%s_f%03d_%s_%s.png', protocol, model.toLowerCase(), model.toLowerCase(), fp[imgType], fcsthour, runtime, geoFormat, );
+            format = $.sprintf('%s//data.dapiya.top/satellite/%s/data/%s_%s_f%03d_%s_%s.png', protocol, model.toLowerCase(), model.toLowerCase(), fp[imgType], fcsthour, runtime, geoFormat, );
             break;
         case 'CMC':
-            format = $.sprintf('%s//data.dapiya.net:1234/satellite/%s/data/gem_%s_f%03d_%s_%s.png', protocol, model.toLowerCase(), fp[imgType], fcsthour, runtime, geoFormat, );
+            format = $.sprintf('%s//data.dapiya.top/satellite/%s/data/gem_%s_f%03d_%s_%s.png', protocol, model.toLowerCase(), fp[imgType], fcsthour, runtime, geoFormat, );
             break;
         case 'ECMWF':
             let initHour = runtime.slice(runtime.length - 2, runtime.length);
             let mode = lodash.includes(['06', '18'], initHour) ? 'scda' : 'oper';
-            format = $.sprintf('%s//data.dapiya.net:1234/satellite/%s/data/%s0000_%dh_%s_fc_%s_%s.png', protocol, model.toLowerCase(), runtime, fcsthour, mode, fp[imgType], geoFormat, );
+            format = $.sprintf('%s//data.dapiya.top/satellite/%s/data/%s0000_%dh_%s_fc_%s_%s.png', protocol, model.toLowerCase(), runtime, fcsthour, mode, fp[imgType], geoFormat, );
             break;
         default:
             format = '';
