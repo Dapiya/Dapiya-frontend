@@ -13,21 +13,21 @@
         <meta http-equiv="Cache-control" content="no-cache">
         <meta http-equiv="Cache" content="no-cache">
         <title>Dapiya - Models Page</title>
-        <link rel="stylesheet" href="//libs.dapiya.net:1234/css/bootstrap.min.css">
-        <link rel="shortcut icon" type="image" href="//libs.dapiya.net:1234/img/favicon.ico">
-        <script src="//libs.dapiya.net:1234/js/jquery.min.js" type="text/javascript"></script>
-        <script src="//libs.dapiya.net:1234/js/jquery.sprintf.js" type="text/javascript"></script>
-        <script src="//libs.dapiya.net:1234/js/bootstrap.min.js" type="text/javascript"></script>
-        <script src="//libs.dapiya.net:1234/js/lodash.min.js" type="text/javascript"></script>
-        <script src="//libs.dapiya.net:1234/js/auto-notice.js" type="text/javascript"></script>
+        <link rel="stylesheet" href="//libs.dapiya.top/css/bootstrap.min.css">
+        <link rel="shortcut icon" type="image" href="//libs.dapiya.top/img/favicon.ico">
+        <script src="//libs.dapiya.top/js/jquery.min.js" type="text/javascript"></script>
+        <script src="//libs.dapiya.top/js/jquery.sprintf.js" type="text/javascript"></script>
+        <script src="//libs.dapiya.top/js/bootstrap.min.js" type="text/javascript"></script>
+        <script src="//libs.dapiya.top/js/lodash.min.js" type="text/javascript"></script>
+        <script src="//libs.dapiya.top/js/auto-notice.js" type="text/javascript"></script>
         <link rel="stylesheet" href="main.css">
         <script src="main.js" type="text/javascript"></script>
         <script type="text/javascript">
             // TODO
             $(document).ready(function(){
-                autoNotice('//api.dapiya.net:1234', 'w', "#notice");
+                autoNotice('//api.dapiya.top', 'w', "#notice");
                 var {'img': img, 'imgTitle': imgTitle, 'region': region, 'file': file} = _getModelSettings($("#model").val());
-                var url = file.indexOf('runtimes') != -1 ? '//data.dapiya.net:1234/' : '//api.dapiya.net:1234';
+                var url = file.indexOf('runtimes') != -1 ? '//data.dapiya.top/' : '//api.dapiya.top';
                 $.ajax({
                     type: 'GET',
                     url: url + file,
@@ -121,9 +121,9 @@
                     cmap = 'NONE';
                 }
                 var cache_url = getImageryCacheURL(model, runtime, fcsthour, imgType, area, window.location.protocol);
-                // var _cacheQueryResult = loadImageryData('//api.dapiya.net:1234/model/checkFile', cache_url);
+                // var _cacheQueryResult = loadImageryData('//api.dapiya.top/model/checkFile', cache_url);
                 __ajaxRequestHistory = $.ajax({
-                    url: '//api.dapiya.net:1234/model/checkFile',
+                    url: '//api.dapiya.top/model/checkFile',
                     data: {'url': cache_url},
                     type: 'GET',
                     success: function(data) {
@@ -133,7 +133,7 @@
                         } else {
                             let lola__ = area == 'customize' ? ar[area]() : ar[area];
                             $("#image").html("<div class=\"ace-container\">Downloading imagery...</div>");
-                            url += $.sprintf('//api.dapiya.net:1234/%s/dwn', model.toLowerCase());
+                            url += $.sprintf('//api.dapiya.top/%s/dwn', model.toLowerCase());
                             let __data = {
                                 'type': fp[imgType],
                                 'lonlat': lola__,
@@ -147,7 +147,7 @@
                                 data: __data,
                                 success: function(data) {
                                     if (data == ',' || data == '/satellite/' + model.toLowerCase() + '/404.png') {
-                                        $("#image").html("<img class=\"img-responsive center-block\" src=\"//data.dapiya.net:1234/satellite/" + model.toLowerCase() + "/404.png\" alt=\"No data\">");
+                                        $("#image").html("<img class=\"img-responsive center-block\" src=\"//data.dapiya.top/satellite/" + model.toLowerCase() + "/404.png\" alt=\"No data\">");
                                         $("#gfsimg").removeAttr('disabled');
                                     } else {
                                         var path = data.split(',');
@@ -162,11 +162,11 @@
                                         }
                                         __ajaxRequestHistory = $.ajax({
                                             type: 'GET',
-                                            url: '//api.dapiya.net:1234/' + model.toLowerCase() + '/mkpic',
+                                            url: '//api.dapiya.top/' + model.toLowerCase() + '/mkpic',
                                             data: __data,
                                             timeout: 300000,
                                             success: function(data) {
-                                                $("#image").html("<img class=\"img-responsive center-block\" src=\"//data.dapiya.net:1234" + data + "\" alt=\"No data\">");
+                                                $("#image").html("<img class=\"img-responsive center-block\" src=\"//data.dapiya.top" + data + "\" alt=\"No data\">");
                                                 $("#gfsimg").removeAttr('disabled');
                                             },
                                             dataType: "text",
@@ -268,7 +268,7 @@
                     <div class="navbar-header">
                         <div class="navbar-brand">
                             <a href="/">
-                                <img alt="Dapiya" width="112" class="img-responsive center-block dapiya-brand" src="//libs.dapiya.net:1234/Dapiya.png" title="Dapiya-brand">
+                                <img alt="Dapiya" width="112" class="img-responsive center-block dapiya-brand" src="//libs.dapiya.top/Dapiya.png" title="Dapiya-brand">
                             </a>
                         </div>
                         <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#collapse" aria-expanded="false">
@@ -285,19 +285,19 @@
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Satellite Imagery<span class="caret"></span></a>
                                 <ul class="dropdown-menu">
                                     <li><a href="/satellite/floater/">Real-time Satellite Imagery</a></li>
-                                    <li><a href="//roi.dapiya.net:1234/">ROI Satellite Imagery</a></li>
-                                    <li><a href="//data.dapiya.net:1234/product/" target="_blank">Satellite Product</a></li>
+                                    <li><a href="//roi.dapiya.top/">ROI Satellite Imagery</a></li>
+                                    <li><a href="//data.dapiya.top/product/" target="_blank">Satellite Product</a></li>
                                     <li role="separator" class="divider"></li>
-                                    <li><a href="//roi.dapiya.net:1234/en/login.html" target="_blank">ROI Manager Login (English)</a></li>
+                                    <li><a href="//roi.dapiya.top/en/login.html" target="_blank">ROI Manager Login (English)</a></li>
                                 </ul>
                             </li>
                             <li class="active"><a href="/model/">Models</a></li>
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Archive<span class="caret"></span></a>
                                 <ul class="dropdown-menu">
-                                    <li><a href="//data.dapiya.net:1234/history/" target="_blank">Active TCs Imagery</a></li>
-                                    <li><a href="//archive.dapiya.net:1234/" target="_blank">Cyclone Archive Project</a></li>
-                                    <li><a href="//data.dapiya.net:1234/Archive/" target="_blank">Best Track Archive</a></li>
+                                    <li><a href="//data.dapiya.top/history/" target="_blank">Active TCs Imagery</a></li>
+                                    <li><a href="//archive.dapiya.top/" target="_blank">Cyclone Archive Project</a></li>
+                                    <li><a href="//data.dapiya.top/Archive/" target="_blank">Best Track Archive</a></li>
                                 </ul>
                             </li>
                         </ul>
@@ -411,7 +411,7 @@
                             </div>
                             <div class="panel-body">
                                 <a href="https://afdian.net/a/dapiya?tab=home" target="_blank">平台链接</a>
-                                <img class="img-responsive center-block" src="//libs.dapiya.net:1234/img/afdian-Dapiya.jfif">
+                                <img class="img-responsive center-block" src="//libs.dapiya.top/img/afdian-Dapiya.jfif">
                             </div>
                         </div>
                     </div>
