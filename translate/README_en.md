@@ -1,3 +1,8 @@
+## Completed Translations:
+
+1. English
+2. Simplified Chinese(简体中文)
+
 ## Introduction
 
 As Dapiya gains a bigger user base, the previous mixed Chinese/English webpage is no longer suitable for our users, thus we rolled out multi-language support in July. However, we quickly realized that since our front end is open source anyways, anyone in the community can submit their own translations to any language.
