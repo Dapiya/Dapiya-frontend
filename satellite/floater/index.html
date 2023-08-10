@@ -224,7 +224,6 @@
             var status = 0; // 0 - done, 1 - getting, -1 - error
             var hasFirstLoad = {};
             var pic_list = [];
-            var img;
             var imgLoaded_arr = [];
             var imgSrcLoaded_arr = [];
             var timeDelta = [];
@@ -242,7 +241,7 @@
                 $("#loopReset-button").html('Loading...');
                 $.ajax({
                     type: 'GET',
-                    url: '//api.dapiya.top/typhoon/' + stormID + '/piclist/' + sT + '/' + location.protocol + '/' + location.host + '/42',
+                    url: '//api.dapiya.net:1234/typhoon/' + stormID + '/piclist/' + sT + '/' + location.protocol + '/' + location.host + '/42',
                     data: {},
                     async: false,
                     success: function(data) {
@@ -270,6 +269,8 @@
             }
             // preload images
             function preloadImage(src_arr) {
+                var img;
+                var j = 0;
                 function loadHandler() {
                     if (imgSrcLoaded_arr.indexOf(this.src) == -1) {
                         var _time = new Date();
@@ -277,16 +278,16 @@
                         imgSrcLoaded_arr.push(this.src);
                         timeDelta.push(parseInt(_time - time_start) / 1000);
                     }
-                    i++;
-                    if (i >= src_arr.length) return false;
-                    this.src = src_arr[i];
+                    j++;
+                    if (j >= src_arr.length) return false;
+                    this.src = src_arr[j];
                     return false;
                 }
                 function loadErrorHandler() {
-                    if (img.removeEventListener) {
-                        img.removeEventListener("load", loadHandler);
+                    if (this.removeEventListener) {
+                        this.removeEventListener("load", loadHandler);
                     } else {
-                        img.detachEvent("onload", loadHandler);
+                        this.detachEvent("onload", loadHandler);
                     }
                     time_start = null;
                     hasFirstLoad = {};
@@ -295,7 +296,7 @@
                     waitTimeTimeout = 0;
                     pastLength = 0;
                     pastWaitTimeTimeout = [];
-                    img = null;
+                    // img = null;
                     imgLoaded_arr = [];
                     imgSrcLoaded_arr = [];
                     if (pgsBarTimer) clearInterval(pgsBarTimer); pgsBarTimer = null;
@@ -313,21 +314,22 @@
                     }
                     return false;
                 }
-                var i = 0;
-                img = new Image();
-                img.className = 'img-responsive center-block';
-                img.alt = 'No data';
-                if (img.addEventListener) {
-                    img.addEventListener("load", loadHandler, false);
-                    img.addEventListener("error", loadErrorHandler, false);
-                } else if (img.attachEvent) {
-                    img.attachEvent("onload", loadHandler);
-                    img.attachEvent("onerror", loadErrorHandler);
-                } else {
-                    img["onload"] = loadHandler;
-                    img["onerror"] = loadErrorHandler;
+                for (var i = 0; i < src_arr.length; i++) {
+                    img = new Image();
+                    img.className = 'img-responsive center-block';
+                    img.alt = 'No data';
+                    if (img.addEventListener) {
+                        img.addEventListener("load", loadHandler, false);
+                        img.addEventListener("error", loadErrorHandler, false);
+                    } else if (img.attachEvent) {
+                        img.attachEvent("onload", loadHandler);
+                        img.attachEvent("onerror", loadErrorHandler);
+                    } else {
+                        img["onload"] = loadHandler;
+                        img["onerror"] = loadErrorHandler;
+                    }
+                    img.src = src_arr[i];
                 }
-                img.src = src_arr[i];
             }
             // slider changed function
             function _slider(id){
