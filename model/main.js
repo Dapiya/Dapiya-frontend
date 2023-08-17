@@ -1,6 +1,8 @@
 var lodash = _;
 var __ajaxRequestHistory;
 var __region = () => $("#region").val();
+var __hours;
+var __modelHourPlayTimer;
 var georange = {
     'china': '15,55,70,140',
     'eas': '0,30,100,145',
@@ -462,6 +464,7 @@ function setModelsListener() {
         if (lodash.includes(['ECMWF', 'ICON'], $("#model").val())) {
             let html = '';
             let hours = getModelForecastHours($("#model").val(), $("#runtime").val(), fp[$("#imgType").val()], false);
+            __hours = hours;
             for (let i = 0; i < hours.length; i++) {
                 html += '<button type="button" class="hbtn" onclick="changeFcstHourValue(\'' + hours[i].toString() + '\', false);" value=' + hours[i].toString() + '>' + hours[i].toString() + '</button>';
             }
@@ -493,6 +496,7 @@ function setModelsListener() {
                 $("#runtime").html(html);
                 html = '';
                 let hours = getModelForecastHours($("#model").val(), latest[0], fp[img[0][0][0]], false);
+                __hours = hours;
                 for (let i = 0; i < hours.length; i++) {
                     html += '<button type="button" class="hbtn" onclick="changeFcstHourValue(\'' + hours[i].toString() + '\', false);" value=' + hours[i].toString() + '>' + hours[i].toString() + '</button>';
                 }
@@ -516,6 +520,33 @@ function setModelsListener() {
                 $("#image").html("<div class=\"ace-container\">Data not found.</div>");
             }
         });
+    });
+    $("#modelHourBack").on('click', () => {
+        let index = __hours.findIndex((value) => value == $("#hourSelected").val());
+        if (index == 0) return false;
+        if (index == -1) index = 1;
+        changeFcstHourValue(__hours[index - 1], false);
+    });
+    $("#modelHourForward").on('click', () => {
+        let index = __hours.findIndex((value) => value == $("#hourSelected").val());
+        if (index == __hours.length - 1) index = -1;
+        changeFcstHourValue(__hours[index + 1], false);
+    });
+    $("#modelHourPlay").on('click', () => {
+        $("#modelHourPlayIcon").toggleClass("glyphicon-play");
+        $("#modelHourPlayIcon").toggleClass("glyphicon-pause");
+        let status = $("#modelHourPlayStatus").text();
+        if (status == 'stop') {
+            __modelHourPlayTimer = setInterval(() => {
+                let index = __hours.findIndex((value) => value == $("#hourSelected").val());
+                if (index == __hours.length - 1) index = -1;
+                changeFcstHourValue(__hours[index + 1], false);
+            }, 500);
+            $("#modelHourPlayStatus").text('start');
+        } else {
+            clearInterval(__modelHourPlayTimer);
+            $("#modelHourPlayStatus").text('stop');
+        }
     });
 }
 
