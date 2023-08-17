@@ -105,8 +105,7 @@
 
 **（以下部分需要您了解数值预报的含义，可参考中文翻译）**
 
-* 找到`Select FCST Time`，并将其翻译为对应语言（`FCST`为`Forecast`）。
-* 找到`data-cf-modified-="">More</button>`，并将其内的`More`翻译为对应语言。
+* 找到`>More</button>`，并将其内的`More`翻译为对应语言。
 * 找到`Select Model`，并将其翻译为对应语言。
 * 找到`Select Runtime`，并将其翻译为对应语言。
 * 找到`Select Area`，并将其翻译为对应语言。
