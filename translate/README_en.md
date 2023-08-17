@@ -104,8 +104,7 @@ This section does not mention the navigation bar section.
 
 **(The following part requires you to understand the meaning of numerical forecasting, you can refer to the Chinese translation)**
 
-* Find `Select FCST Time` and translate it into the corresponding language (`FCST` stands for `Forecast`).
-* Find `data-cf-modified-="">More</button>` and translate `More` into the corresponding language.
+* Find `>More</button>` and translate `More` into the corresponding language.
 * Find `Select Model` and translate it into the corresponding language.
 * Find `Select Runtime` and translate it into the corresponding language.
 * Find `Select Area` and translate it into the corresponding language.
