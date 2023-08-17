@@ -40,6 +40,7 @@
                         $("#runtime").html(html);
                         html = '';
                         var hours = getModelForecastHours($("#model").val(), latest[0], fp[img[0][0][0]], false);
+                        __hours = hours;
                         for (var i = 0; i < hours.length; i++) {
                             html += '<button type="button" class="hbtn" onclick="changeFcstHourValue(\'' + hours[i].toString() + '\', false);" value=' + hours[i].toString() + '>' + hours[i].toString() + '</button>';
                         }
@@ -63,6 +64,7 @@
                             var html = '';
                             var {'img': img, 'imgTitle': imgTitle, 'region': region, 'file': file} = _getModelSettings($("#model").val());
                             var hours = getModelForecastHours($("#model").val(), $("#runtime").val(), fp[$("#imgType").val()], false);
+                            __hours = hours;
                             for (var i = 0; i < hours.length; i++) {
                                 html += '<button type="button" class="hbtn" onclick="changeFcstHourValue(\'' + hours[i].toString() + '\', false);" value=' + hours[i].toString() + '>' + hours[i].toString() + '</button>';
                             }
@@ -351,10 +353,20 @@
             </div>
             <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12" id="imageType">
                 <div class="row">
-                    <div class="small-title">
-                        <span class="glyphicon glyphicon-send small-icon"></span>
-                        预报时间步长
-                        <button type="button" class="ibtn btn-sm" id="more" onclick="javascript:setFullForecastTimeInModalBox('selfModal');" data-cf-modified-="">更多</button>
+                    <div class="text-center">
+                        <button type="button" class="hbtn" value="" id="modelHourBack">
+                            <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+                        </button>
+                        <button type="button" class="hbtn" id="modelHourPlay">
+                            <span class="glyphicon glyphicon-play" aria-hidden="true" id="modelHourPlayIcon"></span>
+                            <span style="display: none;" id="modelHourPlayStatus">stop</span>
+                        </button>
+                        <button type="button" class="hbtn" value="" id="modelHourForward">
+                            <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span>
+                        </button>
+                    </div>
+                    <div class="text-center">
+                        <button type="button" class="ibtn btn-sm" id="more" onclick="javascript:setFullForecastTimeInModalBox('selfModal');">更多</button>
                     </div>
                     <div id="hours" class="ihour"></div>
                     <input type="text" class="rput" style="display: none;" id="hourSelected">
