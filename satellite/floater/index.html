@@ -125,6 +125,7 @@
                             <div class="col-lg-12 col-md-12 col-sm-3 col-xs-3"><div class="row"><button type="button" class="imagetype" id="SANDWICH" onclick="javascript:cTW(\'SANDWICH\', \'' + sT + '\')">SANDWICH</button></div></div>\
                             <div class="col-lg-12 col-md-12 col-sm-3 col-xs-3"><div class="row"><button type="button" class="imagetype" id="AIRMASS" onclick="javascript:cTW(\'AIRMASS\', \'' + sT + '\')">AIRMASS</button></div></div>\
                             <div class="col-lg-12 col-md-12 col-sm-3 col-xs-3"><div class="row"><button type="button" class="imagetype" id="BW" onclick="javascript:cTW(\'BW\', \'' + sT + '\')">IR-BW</button></div></div>\
+                            <div class="col-lg-12 col-md-12 col-sm-3 col-xs-3"><div class="row"><button type="button" class="imagetype" id="BDL" onclick="javascript:cTW(\'BDL\', \'' + sT + '\')">IR-BDL</button></div></div>\
                             <div class="col-lg-12 col-md-12 col-sm-3 col-xs-3"><div class="row"><button type="button" class="imagetype" id="BD" onclick="javascript:cTW(\'BD\', \'' + sT + '\')">IR-BD</button></div></div>\
                             <div class="col-lg-12 col-md-12 col-sm-3 col-xs-3"><div class="row"><button type="button" class="imagetype" id="CC" onclick="javascript:cTW(\'CC\', \'' + sT + '\')">IR-CC</button></div></div>\
                             <div class="col-lg-12 col-md-12 col-sm-3 col-xs-3"><div class="row"><button type="button" class="imagetype" id="RAMMB" onclick="javascript:cTW(\'RAMMB\', \'' + sT + '\')">IR-RAMMB</button></div></div>\
@@ -156,6 +157,7 @@
                 } else if (sType == 'IR') {
                     $("#imageType").html('\
                         <div class="col-12"><div class="row"><button type="button" class="imagetype" id="BW" onclick="javascript:cTW(\'BW\', \'' + sT + '\', \'' + sType + '\')">IR-BW</button></div></div>\
+                        <div class="col-12"><div class="row"><button type="button" class="imagetype" id="BDL" onclick="javascript:cTW(\'BDL\', \'' + sT + '\', \'' + sType + '\')">IR-BDL</button></div></div>\
                         <div class="col-12"><div class="row"><button type="button" class="imagetype" id="BD" onclick="javascript:cTW(\'BD\', \'' + sT + '\', \'' + sType + '\')">IR-BD</button></div></div>\
                         <div class="col-12"><div class="row"><button type="button" class="imagetype" id="CC" onclick="javascript:cTW(\'CC\', \'' + sT + '\', \'' + sType + '\')">IR-CC</button></div></div>\
                         <div class="col-12"><div class="row"><button type="button" class="imagetype" id="RAMMB" onclick="javascript:cTW(\'RAMMB\', \'' + sT + '\', \'' + sType + '\')">IR-RAMMB</button></div></div>\
@@ -241,7 +243,7 @@
                 $("#loopReset-button").html('Loading...');
                 $.ajax({
                     type: 'GET',
-                    url: '//api.dapiya.net:1234/typhoon/' + stormID + '/piclist/' + sT + '/' + location.protocol + '/' + location.host + '/42',
+                    url: '//api.dapiya.top/typhoon/' + stormID + '/piclist/' + sT + '/' + location.protocol + '/' + location.host + '/42',
                     data: {},
                     async: false,
                     success: function(data) {
