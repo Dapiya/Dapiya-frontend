@@ -111,6 +111,7 @@ var fp = {
     'prate': 'prate',
     'cape': 'cape',
     'ow': 'ow',
+    'thetae': 'thetae',
     'h0': 'h0',
     'ttropo': 'ttropo',
     'tcdc': 'tcdc',
@@ -209,7 +210,7 @@ function _getModelSettings(model) {
         img_rhw = ['rhw850', 'rhw700', 'rhw1000'];
         img_vort = ['z500rvw850', 'rvw700_pres', 'zrv500w200'];
         img_anom = ['t2ma', 't850a', 'z500a', 'z10t10a'];
-        img_other = ['refc', 'sweat', 'tt', 'ki', 'cape', 'ow', 'tcdc'];
+        img_other = ['refc', 'sweat', 'tt', 'ki', 'thetae', 'cape', 'ow', 'tcdc'];
         imgName_ir = ['Simulated IR-BW', 'Simulated IR-BD', 'Simulated IR-OTT', 'Simulated IR-CA'];
         imgName_prec = ['Precipitation Rate', 'Total Precipitation'];
         imgName_temp = ['2m Air Temp.', '2m DP Temp.', '850mb Temp. & Wind', '700mb Temp. & Wind', '500mb HGT & 850mb Temp.', '100mb HGT & 850mb Temp.', '200mb HGT & Wind', '10mb HGT & Temp.', 'Tropopause Temperature', 'Highest Tropospheric Freezing Level'];
@@ -217,7 +218,7 @@ function _getModelSettings(model) {
         imgName_rhw = ['850mb RH. & Wind', '700mb RH. & Wind', '1000mb RH. & Wind'];
         imgName_vort = ['500mb HGT & 850mb Vort. & Wind', '700mb Vort. & Wind & MSLP', '500mb HGT & Vort. & 200mb Wind'];
         imgName_anom = ['2m Air Temp. Anomaly', '850mb Temp. Anomaly', '500mb HGT Anomaly', '10mb HGT & Temp. Anomaly'];
-        imgName_other = ['Composite Reflectivity', 'SWEAT Index', 'Total Totals Index', 'K-Index', 'Convective Available Potential Energy', '850mb Okubo-Weiss', 'Total Cloud Cover'];
+        imgName_other = ['Composite Reflectivity', 'SWEAT Index', 'Total Totals Index', 'K-Index', '850mb Theta-E', 'Convective Available Potential Energy', '850mb Okubo-Weiss', 'Total Cloud Cover'];
         img = [
             [img_temp, imgName_temp],
             [img_wp, imgName_wp],
@@ -255,6 +256,7 @@ function _getModelSettings(model) {
             'sweat': _region,
             'tt': _region,
             'ki': _region,
+            'thetae': _region,
             'rhw850': _region,
             'rhw700': _region,
             'rhw1000': _region,
@@ -555,18 +557,18 @@ function getImageryCacheURL(model, runtime, fcsthour, imgType, area, protocol) {
     let geoFormat = lodash.includes(['chinamerc', 'northpolar', 'southpolar', 'euroasia', 'europe', 'northamerica'], area) ? georange[area].split(',').join("_") : $.sprintf('%.1f_%.1f_%.1f_%.1f', geo[0], geo[1], geo[2], geo[3]);
     switch (model) {
         case 'GFS':
-            format = $.sprintf('%s//data.dapiya.top/satellite/%s/data/%s_%s_f%03d_%s_%s.png', protocol, model.toLowerCase(), model.toLowerCase(), fp[imgType], fcsthour, runtime, geoFormat, );
+            format = $.sprintf('%s//data.dapiya.net:1234/satellite/%s/data/%s_%s_f%03d_%s_%s.png', protocol, model.toLowerCase(), model.toLowerCase(), fp[imgType], fcsthour, runtime, geoFormat, );
             break;
         case 'ICON':
-            format = $.sprintf('%s//data.dapiya.top/satellite/%s/data/%s_%s_f%03d_%s_%s.png', protocol, model.toLowerCase(), model.toLowerCase(), fp[imgType], fcsthour, runtime, geoFormat, );
+            format = $.sprintf('%s//data.dapiya.net:1234/satellite/%s/data/%s_%s_f%03d_%s_%s.png', protocol, model.toLowerCase(), model.toLowerCase(), fp[imgType], fcsthour, runtime, geoFormat, );
             break;
         case 'CMC':
-            format = $.sprintf('%s//data.dapiya.top/satellite/%s/data/gem_%s_f%03d_%s_%s.png', protocol, model.toLowerCase(), fp[imgType], fcsthour, runtime, geoFormat, );
+            format = $.sprintf('%s//data.dapiya.net:1234/satellite/%s/data/gem_%s_f%03d_%s_%s.png', protocol, model.toLowerCase(), fp[imgType], fcsthour, runtime, geoFormat, );
             break;
         case 'ECMWF':
             let initHour = runtime.slice(runtime.length - 2, runtime.length);
             let mode = lodash.includes(['06', '18'], initHour) ? 'scda' : 'oper';
-            format = $.sprintf('%s//data.dapiya.top/satellite/%s/data/%s0000_%dh_%s_fc_%s_%s.png', protocol, model.toLowerCase(), runtime, fcsthour, mode, fp[imgType], geoFormat, );
+            format = $.sprintf('%s//data.dapiya.net:1234/satellite/%s/data/%s0000_%dh_%s_fc_%s_%s.png', protocol, model.toLowerCase(), runtime, fcsthour, mode, fp[imgType], geoFormat, );
             break;
         default:
             format = '';
