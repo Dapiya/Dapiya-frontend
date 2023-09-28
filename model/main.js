@@ -206,7 +206,7 @@ function _getModelSettings(model) {
         img_ir = ['ir0', 'ir1', 'ir2', 'ir3'];
         img_prec = ['prate', 'apcp'];
         img_temp = ['t2m', 'dt2m', 't850w', 't700w', 'z500t850', 'z100t850', 'zw200', 'z10t10', 'ttropo', 'h0'];
-        img_wp = ['pres', 'wp', 'sgust', 'w200pres', 'sh200-850pres'];
+        img_wp = ['pres', 'wp', 'sgust', 'z500_mslp', 'w200pres', 'sh200-850pres'];
         img_rhw = ['rhw850', 'rhw700', 'rhw1000'];
         img_vort = ['z500rvw850', 'rvw700_pres', 'zrv500w200'];
         img_anom = ['t2ma', 't850a', 'z500a', 'z10t10a'];
@@ -214,7 +214,7 @@ function _getModelSettings(model) {
         imgName_ir = ['Simulated IR-BW', 'Simulated IR-BD', 'Simulated IR-OTT', 'Simulated IR-CA'];
         imgName_prec = ['Precipitation Rate', 'Total Precipitation'];
         imgName_temp = ['2m Air Temp.', '2m DP Temp.', '850mb Temp. & Wind', '700mb Temp. & Wind', '500mb HGT & 850mb Temp.', '100mb HGT & 850mb Temp.', '200mb HGT & Wind', '10mb HGT & Temp.', 'Tropopause Temperature', 'Highest Tropospheric Freezing Level'];
-        imgName_wp = ['Mean Sea Level Pressure', '10m Wind & MSLP', 'Surface Wind Gust', '200mb Wind & MSLP', '200-850mb Wind Shear & MSLP'];
+        imgName_wp = ['Mean Sea Level Pressure', '10m Wind & MSLP', 'Surface Wind Gust', '500mb HGT & MSLP', '200mb Wind & MSLP', '200-850mb Wind Shear & MSLP'];
         imgName_rhw = ['850mb RH. & Wind', '700mb RH. & Wind', '1000mb RH. & Wind'];
         imgName_vort = ['500mb HGT & 850mb Vort. & Wind', '700mb Vort. & Wind & MSLP', '500mb HGT & Vort. & 200mb Wind'];
         imgName_anom = ['2m Air Temp. Anomaly', '850mb Temp. Anomaly', '500mb HGT Anomaly', '10mb HGT & Temp. Anomaly'];
@@ -248,6 +248,7 @@ function _getModelSettings(model) {
             'z500rvw850': _region,
             'rvw700_pres': _region,
             'zrv500w200': _region,
+            'z500_mslp': _region,
             'z500t850': _region,
             'z100t850': _region,
             'zw200': _region,
@@ -283,17 +284,17 @@ function _getModelSettings(model) {
         img_ir = ['ir0', 'ir1', 'ir2'];
         img_prec = ['prate', 'apcp'];
         img_temp = ['t2m', 'dt2m', 't850w', 't700w', 'z500t850', 'z100t850', 'zw200', 'z10t10'];
-        img_wp = ['pres', 'wp', 'w200pres', 'sh200-850pres'];
+        img_wp = ['pres', 'wp', 'z500_mslp', 'w200pres', 'sh200-850pres'];
         img_rhw = ['rhw850', 'rhw700', 'rhw1000'];
         img_anom = ['t2ma', 't850a', 'z500a', 'z10t10a'];
-        img_other = ['sweat', 'tt', 'ki', 'cape'];
+        img_other = ['sweat', 'tt', 'ki', 'thetae', 'cape'];
         imgName_ir = ['Simulated IR-BW', 'Simulated IR-BD', 'Simulated IR-OTT'];
         imgName_prec = ['Precipitation Rate', 'Total Precipitation'];
         imgName_temp = ['2m Air Temp.', '2m DP Temp.', '850mb Temp. & Wind', '700mb Temp. & Wind', '500mb HGT & 850mb Temp.', '100mb HGT & 850mb Temp.', '200mb HGT & Wind', '10mb HGT & Temp.'];
-        imgName_wp = ['Mean Sea Level Pressure', '10m Wind & MSLP', '200mb Wind & MSLP', '200-850mb Wind Shear & MSLP'];
+        imgName_wp = ['Mean Sea Level Pressure', '10m Wind & MSLP', '500mb HGT & MSLP', '200mb Wind & MSLP', '200-850mb Wind Shear & MSLP'];
         imgName_rhw = ['850mb RH. & Wind', '700mb RH. & Wind', '1000mb RH. & Wind'];
         imgName_anom = ['2m Air Temp. Anomaly', '850mb Temp. Anomaly', '500mb HGT Anomaly', '10mb HGT & Temp. Anomaly'];
-        imgName_other = ['SWEAT Index', 'Total Totals Index', 'K-Index', 'Convective Available Potential Energy'];
+        imgName_other = ['SWEAT Index', 'Total Totals Index', 'K-Index', '850mb Theta-E', 'Convective Available Potential Energy'];
         img = [
             [img_temp, imgName_temp],
             [img_wp, imgName_wp],
@@ -318,6 +319,7 @@ function _getModelSettings(model) {
             'wp': _region,
             'w200pres': _region,
             'sh200-850pres': _region,
+            'z500_mslp': _region,
             'z500t850': _region,
             'z100t850': _region,
             'zw200': _region,
@@ -325,6 +327,7 @@ function _getModelSettings(model) {
             'sweat': _region,
             'tt': _region,
             'ki': _region,
+            'thetae': _region,
             'rhw850': _region,
             'rhw700': _region,
             'rhw1000': _region,
@@ -345,17 +348,17 @@ function _getModelSettings(model) {
         // img_prec = ['prate', 'apcp'];
         img_prec = ['apcp'];
         img_temp = ['t2m', 'tmax2m', 'tmin2m', 'dt2m', 't850w', 't700w', 'z500t850', 'z100t850', 'zw200'];
-        img_wp = ['pres', 'wp', 'w200pres', 'sh200-850pres'];
+        img_wp = ['pres', 'wp', 'z500_mslp', 'w200pres', 'sh200-850pres'];
         img_rhw = ['rhw850', 'rhw700', 'rhw1000'];
         img_anom = ['t2ma', 't850a', 'z500a'];
-        img_other = ['sweat', 'tt', 'ki', 'cape'];
+        img_other = ['sweat', 'tt', 'ki', 'thetae', 'cape'];
         // imgName_prec = ['Precipitation Rate', 'Total Precipitation'];
         imgName_prec = ['Total Precipitation'];
         imgName_temp = ['2m Air Temp.', '2m Max. Temp.', '2m Min. Temp.', '2m DP Temp.', '850mb Temp. & Wind', '700mb Temp. & Wind', '500mb HGT & 850mb Temp.', '100mb HGT & 850mb Temp.', '200mb HGT & Wind'];
-        imgName_wp = ['Mean Sea Level Pressure', '10m Wind & MSLP', '200mb Wind & MSLP', '200-850mb Wind Shear & MSLP'];
+        imgName_wp = ['Mean Sea Level Pressure', '10m Wind & MSLP', '500mb HGT & MSLP', '200mb Wind & MSLP', '200-850mb Wind Shear & MSLP'];
         imgName_rhw = ['850mb RH. & Wind', '700mb RH. & Wind', '1000mb RH. & Wind'];
         imgName_anom = ['2m Air Temp. Anomaly', '850mb Temp. Anomaly', '500mb HGT Anomaly'];
-        imgName_other = ['SWEAT Index', 'Total Totals Index', 'K-Index', 'Convective Available Potential Energy'];
+        imgName_other = ['SWEAT Index', 'Total Totals Index', 'K-Index', '850mb Theta-E', 'Convective Available Potential Energy'];
         img = [
             [img_temp, imgName_temp],
             [img_wp, imgName_wp],
@@ -378,6 +381,7 @@ function _getModelSettings(model) {
             'wp': _region,
             'w200pres': _region,
             'sh200-850pres': _region,
+            'z500_mslp': _region,
             'z500t850': _region,
             'z100t850': _region,
             'zw200': _region,
@@ -385,6 +389,7 @@ function _getModelSettings(model) {
             'sweat': _region,
             'tt': _region,
             'ki': _region,
+            'thetae': _region,
             'rhw850': _region,
             'rhw700': _region,
             'rhw1000': _region,
@@ -396,18 +401,18 @@ function _getModelSettings(model) {
         file = 'runtimes_ec.txt';
         img_prec = ['apcp'];
         img_temp = ['t2m', 't850w', 't700w', 'z500t850', 'zw200'];
-        img_wp = ['pres', 'wp', 'w200pres', 'sh200-850pres'];
+        img_wp = ['pres', 'wp', 'z500_mslp', 'w200pres', 'sh200-850pres'];
         img_rhw = ['rhw850', 'rhw700', 'rhw1000'];
         img_vort = ['z500rvw850', 'rvw700_pres', 'zrv500w200'];
         img_anom = ['t2ma', 't850a', 'z500a'];
-        img_other = ['sweat', 'tt', 'ki', 'ow'];
+        img_other = ['sweat', 'tt', 'ki', 'thetae', 'ow'];
         imgName_prec = ['Total Precipitation'];
         imgName_temp = ['2m Air Temp.', '850mb Temp. & Wind', '700mb Temp. & Wind', '500mb HGT & 850mb Temp.', '200mb HGT & Wind'];
-        imgName_wp = ['Mean Sea Level Pressure', '10m Wind & MSLP', '200mb Wind & MSLP', '200-850mb Wind Shear & MSLP'];
+        imgName_wp = ['Mean Sea Level Pressure', '10m Wind & MSLP', '500mb HGT & MSLP', '200mb Wind & MSLP', '200-850mb Wind Shear & MSLP'];
         imgName_rhw = ['850mb RH. & Wind', '700mb RH. & Wind', '1000mb RH. & Wind'];
         imgName_vort = ['500mb HGT & 850mb Vort. & Wind', '700mb Vort. & Wind & MSLP', '500mb HGT & Vort. & 200mb Wind'];
         imgName_anom = ['2m Air Temp. Anomaly', '850mb Temp. Anomaly', '500mb HGT Anomaly'];
-        imgName_other = ['SWEAT Index', 'Total Totals Index', 'K-Index', '850mb Okubo-Weiss'];
+        imgName_other = ['SWEAT Index', 'Total Totals Index', 'K-Index', '850mb Theta-E', '850mb Okubo-Weiss'];
         img = [
             [img_temp, imgName_temp],
             [img_wp, imgName_wp],
@@ -431,12 +436,14 @@ function _getModelSettings(model) {
             'z500rvw850': _region,
             'rvw700_pres': _region,
             'zrv500w200': _region,
+            'z500_mslp': _region,
             'z500t850': _region,
             'zw200': _region,
             'z500a': _region,
             'sweat': _region,
             'tt': _region,
             'ki': _region,
+            'thetae': _region,
             'rhw850': _region,
             'rhw700': _region,
             'rhw1000': _region,
