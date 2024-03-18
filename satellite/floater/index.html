@@ -209,12 +209,12 @@
                     $("#" + sT).addClass("active");
                     $("#loop").html("<button type=\"button\" class=\"imagetype transparent\" onclick=\"GIFOption();\"><ins>GIF Loop</ins></button>");
                     if (sT == 'models' || sT == 'gefs' || sT == 'geps' || sT == 'nvgs') {
-                        $("#image").html("<img class=\"img-responsive center-block\" src=\"//data.dapiya.top/satellite/data/" + stormID + "_" + sT + ".png\" alt=\"No data\">");
+                        $("#image").html("<img class=\"img-responsive center-block\" src=\"//data.dapiya.top/history/" + sT1.substr(0,3) + '/' + stormID + "_" + sT + ".png\" alt=\"No data\">");
                         $('#imageLoopButton button').attr("disabled", "disabled");
                     } else {
                         $("#image").html("<img class=\"img-responsive center-block\" src=\"//data.dapiya.top/history/" + stormID + '/' + sT + '/' + stormID + "_" + sT + ".png\" alt=\"No data\">");
                         $('#imageLoopButton button').removeAttr("disabled");
-                        GIFLink = '//data.dapiya.top/satellite/data/' + stormID + "_" + sT + '.gif';
+                        GIFLink = '//data.dapiya.top/history/' + stormID + '/' + stormID + "_" + sT + '.gif';
                     }
                 }
             }
