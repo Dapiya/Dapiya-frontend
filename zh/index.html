@@ -42,13 +42,6 @@
                         for (var i = 0; i < storms.length; i++) {
                             if (i <= 1) $("#list").html($("#list").html() + storms[i]);
                         }
-                        var tag = document.getElementsByTagName("img");
-                        for (var i = 0; i < tag.length; i++) {
-                            if (tag[i].src.indexOf("wiki") != -1) {
-                                var tagPath = tag[i].src.split('/');
-                                tag[i].src = '//data.dapiya.top/wiki/' + tagPath[tagPath.length - 1];
-                            }
-                        }
                         if (page) $("#nextPage").css('display', 'block');
                     },
                     dataType: "html",
@@ -90,13 +83,6 @@
                 $("#list").html('');
                 for (var i = finalLoc - 1; i <= finalLoc; i++) {
                     $("#list").html($("#list").html() + storms[i]);
-                }
-                var tag = document.getElementsByTagName("img");
-                for (var i = 0; i < tag.length; i++) {
-                    if (tag[i].src.indexOf("wiki") != -1) {
-                        var tagPath = tag[i].src.split('/');
-                        tag[i].src = '//data.dapiya.top/wiki/' + tagPath[tagPath.length - 1];
-                    }
                 }
             }
             /* fdUpdate.js */
