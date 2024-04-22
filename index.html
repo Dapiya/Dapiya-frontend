@@ -88,6 +88,7 @@
             /* fdUpdate.js */
             // TODO
             function changeType(value) {
+                // <select class="form-control input-sm" id="image_selector" onchange="changeType(image_selector.value);"></select>
                 var name = '';
                 $("#type_selector").html('');
                 for (var i = 0; i < typeSelector['name'][value].length; i++) {
@@ -97,6 +98,7 @@
                 changeImage(typeSelector['html'][value][typeSelector['name'][value][0]])
             }
             function changeImage(value) {
+                // <select class="form-control input-sm" id="type_selector" onchange="changeImage(typeSelector['html'][image_selector.value][type_selector.value]);"></select>
                 if (type_selector.value == 'msg-io') {
                     value = value.replace('MSG_IO', MSG_HEAD['A']);
                 }
@@ -339,7 +341,8 @@
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Models<span class="caret"></span></a>
                                 <ul class="dropdown-menu">
                                     <li><a href="/model/">Numerical Models</a></li>
-                                    <li><a href="https://pangu.dapiya.top/" target="_blank">Pangu-Weather Model</a></li>
+                                    <li><a href="https://pangu.dapiya.top/" target="_blank">Pangu-Weather Model (Huawei)</a></li>
+                                    <li><a href="https://graphcast.dapiya.top/" target="_blank">GraphCast Model (Google)</a></li>
                                 </ul>
                             </li>
                             <li class="dropdown">
@@ -355,7 +358,7 @@
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Friend-link<span class="caret"></span></a>
                                 <ul class="dropdown-menu">
-                                    <li><a href="https://www.tybbs.org.cn/" target="_blank">BBS Typhoon | 台风论坛</a></li>
+                                    <li><a href="https://www.tyboard.net/" target="_blank">TY Board</a></li>
                                     <li><a href="https://weather-models.info/" target="_blank">Weather Models (Japan)</a></li>
                                     <li><a href="https://www.tropicaltidbits.com/" target="_blank">Tropical Tidbits</a></li>
                                     <li><a href="https://cyclonicwx.com/" target="_blank">CyclonicWx</a></li>
@@ -446,11 +449,16 @@
                 <div class="row">
                     <hr>
                     <div class='footScript'>
-                        <p>Copyright © 2020-2023 Dapiya Team. All Rights Reserved.</p>
+                        <p>Copyright © 2020-<span id="c_year"></span> Dapiya Team. All Rights Reserved.</p>
                         <p>Contact: <a href="mailto:dapiya@qq.com">dapiya@qq.com</a></p>
                     </div>
                 </div>
             </div>
         </div>
+        <!-- Set year on copyright -->
+        <script>
+            var d = new Date();
+            document.getElementById("c_year").innerHTML = d.getFullYear();
+        </script>
     </body>
 </html>
