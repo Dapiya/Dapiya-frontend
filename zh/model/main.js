@@ -1,8 +1,36 @@
+// utils
 var lodash = _;
-var __ajaxRequestHistory;
-var __region = () => $("#region").val();
-var __hours;
+var blob2URL = window.URL || window.webkitURL;
+var Base64toBlob = function(base64){
+    var base64Arr = base64.split(',');
+    var imgtype = '';
+    var base64String = '';
+    if (base64Arr.length > 1) {
+        base64String = base64Arr[1];
+        imgtype = base64Arr[0].substring(base64Arr[0].indexOf(':')+1, base64Arr[0].indexOf(';'));
+    }
+    var bytes = window.atob(base64String);
+    var bytesCode = new ArrayBuffer(bytes.length);
+    var byteArray = new Uint8Array(bytesCode);
+    for (var i = 0; i < bytes.length; i++) {
+        byteArray[i] = bytes.charCodeAt(i);
+    }
+    return new Blob([bytesCode], {type: imgtype});
+};
+// key-value caches
+var blobList = {};
+var intervalList = {};
+// pics player
+var __hours, __hoursFull;
 var __modelHourPlayTimer;
+// gif maker
+var gif_blobList = {};
+var openWindowStatus = false;
+var loadImageStatus = false;
+// whether to realtime update
+var __ignore_auto_update = false;
+// regions selector
+var __region = () => $("#region").val();
 var georange = {
     'china': '15,55,70,140',
     'eas': '0,30,100,145',
@@ -76,10 +104,10 @@ var img_cmap = {
     'ir3': 'ca',
 };
 var fp = {
-    'ir0': 'irbwd',
-    'ir1': 'irbd',
-    'ir2': 'irott',
-    'ir3': 'irca',
+    'ir0': 'ir',
+    'ir1': 'ir',
+    'ir2': 'ir',
+    'ir3': 'ir',
     't2m': 't2m',
     'tmax2m': 'tmax2m',
     'tmin2m': 'tmin2m',
@@ -92,6 +120,7 @@ var fp = {
     'z500rvw850': 'z500rvw850',
     'rvw700_pres': 'rvw700_pres',
     'zrv500w200': 'zrv500w200',
+    'z500_mslp': 'z500_mslp',
     'z500t850': 'z500t850',
     'z100t850': 'z100t850',
     'zw200': 'zw200',
@@ -125,12 +154,16 @@ var _region = [
 
 function changeFcstHourValue(value, isfull) {
     if (!isfull) {
-        $("#more").html('更多');
+        $("#more").html('More');
         $("#more").removeClass('active');
         $("button.hbtn").removeClass("active");
         $("#hourSelected").val(value);
         $("button.hbtn[value=" + value + "]").addClass("active");
-        submit_data($("#model").val(), $("#runtime").val(), $("#hourSelected").val(), $("#area").val(), $("#imgType").val());
+        if (__ignore_auto_update && $("#region").val()) {
+            $("#update-image").addClass('blinking_button');
+            setTimeout(function() {$("#update-image").removeClass('blinking_button')}, 3000);
+        }
+        if (!__ignore_auto_update) submit_data($("#model").val(), $("#runtime").val(), $("#hourSelected").val(), $("#area").val(), $("#imgType").val());
     } else {
         $("button.hbtn").removeClass("active");
         $("#hourSelectedFull").val(value);
@@ -461,6 +494,7 @@ function _getModelSettings(model) {
 
 function setModelsListener() {
     $("#runtime").on('change', () => {
+        ClearLoadImagesStatus();
         var {
             'img': img,
             'imgTitle': imgTitle,
@@ -468,21 +502,27 @@ function setModelsListener() {
             'file': file
         } = _getModelSettings($("#model").val());
         $("#customize").css('display', 'none');
-        $("#gfsimg").css('display', 'none');
+        $("#update-image").css('display', 'none');
         // $("#area").val(region[$("#imgType").val()][0][0]);
         if (lodash.includes(['ECMWF', 'ICON'], $("#model").val())) {
             let html = '';
             let hours = getModelForecastHours($("#model").val(), $("#runtime").val(), fp[$("#imgType").val()], false);
             __hours = hours;
+            __hoursFull = getModelForecastHours($("#model").val(), $("#runtime").val(), fp[$("#imgType").val()], true);
             for (let i = 0; i < hours.length; i++) {
                 html += '<button type="button" class="hbtn" onclick="changeFcstHourValue(\'' + hours[i].toString() + '\', false);" value=' + hours[i].toString() + '>' + hours[i].toString() + '</button>';
             }
             $("#hours").html(html);
             changeFcstHourValue(hours[0], false);
         }
-        submit_data($("#model").val(), $("#runtime").val(), $("#hourSelected").val(), $("#area").val(), $("#imgType").val());
+        if (__ignore_auto_update && $("#region").val()) {
+            $("#update-image").addClass('blinking_button');
+            setTimeout(function() {$("#update-image").removeClass('blinking_button')}, 3000);
+        }
+        if (!__ignore_auto_update) submit_data($("#model").val(), $("#runtime").val(), $("#hourSelected").val(), $("#area").val(), $("#imgType").val());
     });
     $("#model").on('change', () => {
+        ClearLoadImagesStatus();
         var {
             'img': img,
             'imgTitle': imgTitle,
@@ -490,7 +530,7 @@ function setModelsListener() {
             'file': file
         } = _getModelSettings($("#model").val());
         $("#customize").css('display', 'none');
-        $("#gfsimg").css('display', 'none');
+        $("#update-image").css('display', 'none');
         // $("#area").val(region[$("#imgType").val()][0][0]);
         var url = file.indexOf('runtimes') != -1 ? ('//' + window.location.host.replace('www', 'data') + '/') : ('//' + window.location.host.replace('www', 'api'));
         $.ajax({
@@ -506,6 +546,7 @@ function setModelsListener() {
                 html = '';
                 let hours = getModelForecastHours($("#model").val(), latest[0], fp[img[0][0][0]], false);
                 __hours = hours;
+                __hoursFull = getModelForecastHours($("#model").val(), latest[0], fp[img[0][0][0]], true);
                 for (let i = 0; i < hours.length; i++) {
                     html += '<button type="button" class="hbtn" onclick="changeFcstHourValue(\'' + hours[i].toString() + '\', false);" value=' + hours[i].toString() + '>' + hours[i].toString() + '</button>';
                 }
@@ -520,14 +561,94 @@ function setModelsListener() {
                 }
                 $("#imgType").html(html);
                 $("#imgType").val(img[0][0][0]);
+                html = '';
                 changeFcstHourValue(hours[0], false);
-                submit_data($("#model").val(), $("#runtime").val(), $("#hourSelected").val(), $("#area").val(), $("#imgType").val());
+                if (__ignore_auto_update && $("#region").val()) {
+                    $("#update-image").addClass('blinking_button');
+                    setTimeout(function() {$("#update-image").removeClass('blinking_button')}, 3000);
+                }
+                if (!__ignore_auto_update) submit_data($("#model").val(), $("#runtime").val(), $("#hourSelected").val(), $("#area").val(), $("#imgType").val());
             },
             dataType: "text",
             error: function() {
-                $("#image").html("<div class=\"ace-container\">网络出错了，无返回数据</div>");
+                $("#image").html("<div class=\"ace-container\">网页出错了，无返回数据</div>");
             }
         });
+    });
+    $("#imgType").change(function(){
+        ClearLoadImagesStatus();
+        if (__ignore_auto_update && $("#region").val()) {
+            $("#update-image").addClass('blinking_button');
+            setTimeout(function() {$("#update-image").removeClass('blinking_button')}, 3000);
+        }
+        if (!__ignore_auto_update) submit_data($("#model").val(), $("#runtime").val(), $("#hourSelected").val(), $("#area").val(), $("#imgType").val(), false);
+    });
+    $("#imgType").change(function(){
+        ClearLoadImagesStatus();
+        var html = '';
+        var {'img': img, 'imgTitle': imgTitle, 'region': region, 'file': file} = _getModelSettings($("#model").val());
+        var hours = getModelForecastHours($("#model").val(), $("#runtime").val(), fp[$("#imgType").val()], false);
+        __hours = hours;
+        __hoursFull = getModelForecastHours($("#model").val(), $("#runtime").val(), fp[$("#imgType").val()], true);
+        for (var i = 0; i < hours.length; i++) {
+            html += '<button type="button" class="hbtn" onclick="changeFcstHourValue(\'' + hours[i].toString() + '\', false);" value=' + hours[i].toString() + '>' + hours[i].toString() + '</button>';
+        }
+        $("#hours").html(html);
+        changeFcstHourValue(hours[0], false);
+        html = '';
+        var val = $("#area").val();
+        for (var i = 0; i < region[$("#imgType").val()][0].length; i++) {
+            html += "<option value=\"" + region[$("#imgType").val()][0][i] + "\">" + region[$("#imgType").val()][1][i] + "</option>";
+        }
+        onMatch = html.includes(val);
+        if (html != $("#area").html()) {
+            $("#area").html(html);
+            if (!onMatch) {
+                $("#area").attr("value", 'china');
+                val = $("#area").val();
+                $("#area").find("option[value='" + val + "']").attr("selected", true);
+            } else {
+                $("#area").attr("value", val);
+                $("#area").find("option[value='" + val + "']").attr("selected", true);
+            }
+            if ($("#area").val() != 'customize') {
+                $("#customize").css('display', 'none');
+                $("#customize").html('');
+            }
+        }
+        if (__ignore_auto_update && $("#region").val()) {
+            $("#update-image").addClass('blinking_button');
+            setTimeout(function() {$("#update-image").removeClass('blinking_button')}, 3000);
+        }
+        if (!__ignore_auto_update) submit_data($("#model").val(), $("#runtime").val(), $("#hourSelected").val(), $("#area").val(), $("#imgType").val());
+    });
+    $("#area").change(function(){
+        ClearLoadImagesStatus();
+        if ($("#area").val() == 'customize') {
+            $("#customize").css('display', 'block');
+            $("#update-image").css('display', 'block');
+            __ignore_auto_update = true;
+        } else {
+            $("#customize").css('display', 'none');
+            $("#update-image").css('display', 'none');
+            __ignore_auto_update = false;
+            submit_data($("#model").val(), $("#runtime").val(), $("#hourSelected").val(), $("#area").val(), $("#imgType").val());
+        }
+    });
+    $("#region").change(function(){
+        ClearLoadImagesStatus();
+        if (__ignore_auto_update && $("#region").val()) {
+            $("#update-image").addClass('blinking_button');
+            setTimeout(function() {$("#update-image").removeClass('blinking_button')}, 3000);
+        }
+    });
+    $("#region").on('input', () => {
+        $("#update-image").removeClass('blinking_button');
+    });
+    $("#update-image").on('click', () => {
+        ClearLoadImagesStatus();
+        $("#update-image").removeClass('blinking_button');
+        submit_data($("#model").val(), $("#runtime").val(), $("#hourSelected").val(), 'customize', $("#imgType").val(), false);
     });
     $("#modelHourBack").on('click', () => {
         let index = __hours.findIndex((value) => value == $("#hourSelected").val());
@@ -558,29 +679,28 @@ function setModelsListener() {
     });
 }
 
-function getImageryCacheURL(model, runtime, fcsthour, imgType, area, protocol) {
+function getImageryCacheURL(model, runtime, fcsthour, imgType, area) {
     let format;
     let geo = area == 'customize' ? georange[area]().split(',') : georange[area].split(',');
     let geoFormat = lodash.includes(['chinamerc', 'northpolar', 'southpolar', 'euroasia', 'europe', 'northamerica'], area) ? georange[area].split(',').join("_") : $.sprintf('%.1f_%.1f_%.1f_%.1f', geo[0], geo[1], geo[2], geo[3]);
     switch (model) {
         case 'GFS':
-            format = $.sprintf('%s//data.dapiya.net:1234/satellite/%s/data/%s_%s_f%03d_%s_%s.png', protocol, model.toLowerCase(), model.toLowerCase(), fp[imgType], fcsthour, runtime, geoFormat, );
+            format = $.sprintf('//data.dapiya.top/satellite/%s/data/%s_%s_f%03d_%s_%s.png', model.toLowerCase(), model.toLowerCase(), fp[imgType], fcsthour, runtime, geoFormat);
             break;
         case 'ICON':
-            format = $.sprintf('%s//data.dapiya.net:1234/satellite/%s/data/%s_%s_f%03d_%s_%s.png', protocol, model.toLowerCase(), model.toLowerCase(), fp[imgType], fcsthour, runtime, geoFormat, );
+            format = $.sprintf('//data.dapiya.top/satellite/%s/data/%s_%s_f%03d_%s_%s.png', model.toLowerCase(), model.toLowerCase(), fp[imgType], fcsthour, runtime, geoFormat);
             break;
         case 'CMC':
-            format = $.sprintf('%s//data.dapiya.net:1234/satellite/%s/data/gem_%s_f%03d_%s_%s.png', protocol, model.toLowerCase(), fp[imgType], fcsthour, runtime, geoFormat, );
+            format = $.sprintf('//data.dapiya.top/satellite/%s/data/gem_%s_f%03d_%s_%s.png', model.toLowerCase(), fp[imgType], fcsthour, runtime, geoFormat);
             break;
         case 'ECMWF':
             let initHour = runtime.slice(runtime.length - 2, runtime.length);
             let mode = lodash.includes(['06', '18'], initHour) ? 'scda' : 'oper';
-            format = $.sprintf('%s//data.dapiya.net:1234/satellite/%s/data/%s0000_%dh_%s_fc_%s_%s.png', protocol, model.toLowerCase(), runtime, fcsthour, mode, fp[imgType], geoFormat, );
+            format = $.sprintf('//data.dapiya.top/satellite/%s/data/%s0000_%dh_%s_fc_%s_%s.png', model.toLowerCase(), runtime, fcsthour, mode, fp[imgType], geoFormat);
             break;
         default:
             format = '';
     }
-    if (protocol.includes('https')) format = format.replace('net:1234', 'top')
     return format;
 }
 
@@ -615,7 +735,11 @@ function setFullForecastTimeInModalBox(boxID) {
     $("#checkButton").click(function() {
         $("#" + boxID).modal('hide');
         $("#hourSelected").val($("#hourSelectedFull").val());
-        submit_data($("#model").val(), $("#runtime").val(), $("#hourSelected").val(), $("#area").val(), $("#imgType").val());
+        if (__ignore_auto_update && $("#region").val()) {
+            $("#update-image").addClass('blinking_button');
+            setTimeout(function() {$("#update-image").removeClass('blinking_button')}, 3000);
+        }
+        if (!__ignore_auto_update) submit_data($("#model").val(), $("#runtime").val(), $("#hourSelected").val(), $("#area").val(), $("#imgType").val());
         if (!lodash.includes(notIncludeHours, parseInt($("#hourSelected").val()))) {
             $("#more").html($.sprintf("+%03dH", $("#hourSelected").val()));
             $("#more").addClass('active');
@@ -633,4 +757,253 @@ function setFullForecastTimeInModalBox(boxID) {
         $("button.hbtn[value=" + $("#hourSelected").val() + "]").addClass("active");
     });
     $("#" + boxID).modal('show');
+}
+
+function showGIFGeneratorWindow() {
+    var GIFWindowContent = `
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true" id="CloseGIFWindow" onclick="openWindowStatus = false;">&times;</button>
+        <h4 class="modal-title" id="GIFWindowLabel">GIF制作选项</h4>
+    </div>
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label for="StartHour" class="control-label">起始预报时间</label>
+                <input type="text" class="form-control" id="StartHour" placeholder="Start Hour" value="0">
+            </div>
+            <div class="form-group">
+                <label for="EndHour" class="control-label">终止预报时间</label>
+                <input type="text" class="form-control" id="EndHour" placeholder="End Hour" value="384">
+            </div>
+            <div class="form-group">
+                <label for="IntervalHour" class="control-label">预报时间间隔（小时）</label>
+                <input type="text" class="form-control" id="IntervalHour" placeholder="Interval Hour" value="24">
+            </div>
+            <div class="form-group">
+                <label for="IntervalSecond" class="control-label">每帧切换延迟（秒）</label>
+                <input type="text" class="form-control" id="IntervalSecond" placeholder="Interval Each Step (Second)" value="0.1">
+            </div>
+            <div class="form-group">
+                <label for="NumberofWorkers" class="control-label">同时制作GIF的脚本数量</label>
+                <input type="text" class="form-control" id="NumberofWorkers" placeholder="Number of Workers" value="2">
+            </div>
+        </form>
+        <div>
+            <label for="GIFprogress"><span id="LoadingType">图片加载</span>进度:</label>
+            <div class="progress" role="progressbar" aria-label="Animated progressbar">
+                <div class="progress-bar progress-bar-striped active" style="min-width: 2em;" id="GIFprogress">0%</div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-primary" onclick="LoadImages(model.value, runtime.value, area.value, imgType.value, parseInt(StartHour.value), parseInt(EndHour.value), parseInt(IntervalHour.value), parseFloat(IntervalSecond.value), parseInt(NumberofWorkers.value));" id="CreateGIFButton">制作GIF</button>
+    </div>
+    `;
+    if (!intervalList.hasOwnProperty('ImageLoader')) {
+        $('#GIFGeneratorContent').html(GIFWindowContent);
+    }
+    $('#GIFWindow').modal('show');
+    openWindowStatus = true;
+}
+
+function ClearLoadImagesStatus() {
+    openWindowStatus = false;
+    if (loadImageStatus) {
+        loadImageStatus = false;
+        Object.keys(intervalList).forEach(function(IntervalName) {
+            clearInterval(intervalList[IntervalName]); // 清除计时器
+            delete(intervalList[IntervalName]); // 删除键值对
+        });
+    }
+}
+
+function LoadImages(model, runtime, area, imgType, StartHour, EndHour, IntervalHour, IntervalSecond, NumberofWorkers) {
+    $("#StartHour").attr('disabled', 'disabled');
+    $("#EndHour").attr('disabled', 'disabled');
+    $("#IntervalHour").attr('disabled', 'disabled');
+    $("#IntervalSecond").attr('disabled', 'disabled');
+    $("#NumberofWorkers").attr('disabled', 'disabled');
+    $("#CreateGIFButton").attr('disabled', 'disabled');
+    // check configs
+    if (typeof(StartHour) != 'number' ||
+        typeof(EndHour) != 'number' ||
+        typeof(IntervalHour) != 'number' ||
+        typeof(IntervalSecond) != 'number' ||
+        typeof(NumberofWorkers) != 'number') {
+        alert("参数必须为数字类型。");
+        $("#StartHour").removeAttr('disabled');
+        $("#EndHour").removeAttr('disabled');
+        $("#IntervalHour").removeAttr('disabled');
+        $("#IntervalSecond").removeAttr('disabled');
+        $("#NumberofWorkers").removeAttr('disabled');
+        $("#CreateGIFButton").removeAttr('disabled');
+        return false;
+    }
+    if (isNaN(StartHour) || isNaN(EndHour) || isNaN(IntervalHour) ||
+        isNaN(IntervalSecond) || isNaN(NumberofWorkers)) {
+        alert("参数必须为数字类型。");
+        $("#StartHour").removeAttr('disabled');
+        $("#EndHour").removeAttr('disabled');
+        $("#IntervalHour").removeAttr('disabled');
+        $("#IntervalSecond").removeAttr('disabled');
+        $("#NumberofWorkers").removeAttr('disabled');
+        $("#CreateGIFButton").removeAttr('disabled');
+        return false;
+    }
+    // check hours
+    var gif_hours = [], check_status = true;
+    for (var i = StartHour; i <= EndHour; i = i + IntervalHour) {
+        if (!lodash.includes(__hoursFull, i)) {
+            check_status = false;
+            break;
+        }
+        gif_hours.push(i);
+    }
+    if (!check_status || gif_hours.length == 0) {
+        alert("指定的预报时间的其中之一不存在于可获取的时间内。");
+        $("#StartHour").removeAttr('disabled');
+        $("#EndHour").removeAttr('disabled');
+        $("#IntervalHour").removeAttr('disabled');
+        $("#IntervalSecond").removeAttr('disabled');
+        $("#NumberofWorkers").removeAttr('disabled');
+        $("#CreateGIFButton").removeAttr('disabled');
+        return false;
+    }
+    // load images
+    gif_blobList = {};
+    loadImageStatus = true;
+    var startTime = new Date();
+    var imageObjList = [], imageObjIndexList = [];
+    for (var i = 0; i < gif_hours.length; i++) {
+        submit_data(model, runtime, gif_hours[i], area, imgType, true);
+    }
+    var __interval = setInterval(function() {
+        var successCount = 0, isFailed = false;
+        for (var j = 0; j < gif_hours.length; j++) {
+            var cacheURL = getImageryCacheURL(model, runtime, gif_hours[j], imgType, area);
+            if (gif_blobList.hasOwnProperty(cacheURL)) {
+                isFailed = (gif_blobList[cacheURL] == '');
+                if (isFailed) break;
+                if (gif_blobList[cacheURL] == 'USED') {
+                    // 成功计数+1
+                    successCount++;
+                    continue;
+                }
+                // 创建Image对象，为GIF提供数据
+                if (imageObjIndexList.indexOf(j) == -1) {
+                    var imageObj = new Image();
+                    imageObj.crossOrigin = "Anonymous";
+                    imageObj.style = "position: fixed; opacity: 0;";
+                    imageObj.src = gif_blobList[cacheURL];
+                    imageObjList.push(imageObj);
+                    imageObjIndexList.push(j);
+                    // 标记已使用的键值对
+                    gif_blobList[cacheURL] = 'USED';
+                    // 成功计数+1
+                    successCount++;
+                }
+            }
+        }
+        if (isFailed && openWindowStatus) {
+            clearInterval(intervalList['ImageLoader']); // 清除计时器
+            delete(intervalList['ImageLoader']); // 删除键值对
+            loadImageStatus = false;
+            alert("下载图像失败。");
+            // 恢复窗口状态
+            $("#StartHour").removeAttr('disabled');
+            $("#EndHour").removeAttr('disabled');
+            $("#IntervalHour").removeAttr('disabled');
+            $("#IntervalSecond").removeAttr('disabled');
+            $("#NumberofWorkers").removeAttr('disabled');
+            $("#CreateGIFButton").removeAttr('disabled');
+            // 重置进度条
+            $('#GIFprogress').css('width', '0%');
+            $('#GIFprogress').html('0%');
+            return false;
+        }
+        var progress = lodash.floor((successCount / gif_hours.length) * 100);
+        $('#GIFprogress').css('width', progress.toString() + '%');
+        $('#GIFprogress').html(progress.toString() + '%');
+        if (successCount == gif_hours.length && openWindowStatus) {
+            // 对数组排序
+            imageObjList = lodash.sortBy(imageObjList, function(o) { return imageObjIndexList[imageObjList.indexOf(o)] });
+            clearInterval(intervalList['ImageLoader']); // 清除计时器
+            delete(intervalList['ImageLoader']); // 删除键值对
+            // 清空key-value cache
+            gif_blobList = {};
+            // 提前阻止窗口关闭
+            $("#CloseGIFWindow").css('display', 'none');
+            setTimeout(function() {
+                // 重置进度条
+                $('#GIFprogress').css('width', '0%');
+                $('#GIFprogress').html('0%');
+                // 开始制作GIF
+                $('#LoadingType').html('GIF制作');
+                GIFGenerator(imageObjList, startTime, IntervalSecond, NumberofWorkers);
+            }, 1000);
+        }
+    }, 3000);
+    intervalList['ImageLoader'] = __interval;
+}
+
+function GIFGenerator(imageObjList, startTime, IntervalSecond, NumberofWorkers) {
+    loadImageStatus = false;
+    // repeat latest images for stopping GIF
+    var last_imageObj = imageObjList[imageObjList.length - 1];
+    for (var i = 0; i < parseInt(1 / IntervalSecond); i++) {
+        imageObjList.push(last_imageObj);
+    }
+    var imageWidth = parseInt(imageObjList[0].width * 0.75);
+    var imageHeight = parseInt(imageObjList[0].height * 0.75);
+    gifshot.createGIF({
+        'gifWidth': imageWidth,
+        'gifHeight': imageHeight,
+        'images': imageObjList,
+        'interval': IntervalSecond,
+        'frameDuration': 1,
+        'sampleInterval': 10,
+        'numWorkers': NumberofWorkers,
+        'progressCallback': function(captureProgress) {
+            var progress = lodash.floor(captureProgress * 100);
+            $('#GIFprogress').css('width', progress.toString() + '%');
+            $('#GIFprogress').html(progress.toString() + '%');
+        }
+    }, function (obj) {
+        console.log(obj);
+        var endTime = new Date();
+        console.log('[GIF Generator] Used time: ' + ((endTime - startTime) / 1000).toString() + ' s');
+        if (!obj.error) {
+            setTimeout(function() {
+                // 恢复窗口状态
+                $("#CloseGIFWindow").css('display', 'block');
+                $("#StartHour").removeAttr('disabled');
+                $("#EndHour").removeAttr('disabled');
+                $("#IntervalHour").removeAttr('disabled');
+                $("#IntervalSecond").removeAttr('disabled');
+                $("#NumberofWorkers").removeAttr('disabled');
+                $("#CreateGIFButton").removeAttr('disabled');
+                // 重置进度条
+                $('#LoadingType').html('Image Loading');
+                $('#GIFprogress').css('width', '0%');
+                $('#GIFprogress').html('0%');
+                var imageBlob = Base64toBlob(obj.image);
+                window.open(blob2URL.createObjectURL(imageBlob));
+                saveAs(imageBlob, "NumericalModelsGIF.png");
+            }, 1000);
+        } else {
+            alert(obj.errorCode + ': ' + obj.errorMsg);
+            // 恢复窗口状态
+            $("#CloseGIFWindow").css('display', 'block');
+            $("#StartHour").removeAttr('disabled');
+            $("#EndHour").removeAttr('disabled');
+            $("#IntervalHour").removeAttr('disabled');
+            $("#IntervalSecond").removeAttr('disabled');
+            $("#NumberofWorkers").removeAttr('disabled');
+            $("#CreateGIFButton").removeAttr('disabled');
+            // 重置进度条
+            $('#LoadingType').html('图片加载');
+            $('#GIFprogress').css('width', '0%');
+            $('#GIFprogress').html('0%');
+        }
+    });
 }
