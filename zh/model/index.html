@@ -41,6 +41,7 @@
                         html = '';
                         var hours = getModelForecastHours($("#model").val(), latest[0], fp[img[0][0][0]], false);
                         __hours = hours;
+                        __hoursFull = getModelForecastHours($("#model").val(), latest[0], fp[img[0][0][0]], true);
                         for (var i = 0; i < hours.length; i++) {
                             html += '<button type="button" class="hbtn" onclick="changeFcstHourValue(\'' + hours[i].toString() + '\', false);" value=' + hours[i].toString() + '>' + hours[i].toString() + '</button>';
                         }
@@ -60,140 +61,172 @@
                             html += "<option value=\"" + region[$("#imgType").val()][0][i] + "\">" + region[$("#imgType").val()][1][i] + "</option>";
                         }
                         $("#area").html(html);
-                        $("#imgType").change(function(){
-                            var html = '';
-                            var {'img': img, 'imgTitle': imgTitle, 'region': region, 'file': file} = _getModelSettings($("#model").val());
-                            var hours = getModelForecastHours($("#model").val(), $("#runtime").val(), fp[$("#imgType").val()], false);
-                            __hours = hours;
-                            for (var i = 0; i < hours.length; i++) {
-                                html += '<button type="button" class="hbtn" onclick="changeFcstHourValue(\'' + hours[i].toString() + '\', false);" value=' + hours[i].toString() + '>' + hours[i].toString() + '</button>';
-                            }
-                            $("#hours").html(html);
-                            changeFcstHourValue(hours[0], false);
-                            html = '';
-                            var val = $("#area").val();
-                            for (var i = 0; i < region[$("#imgType").val()][0].length; i++) {
-                                html += "<option value=\"" + region[$("#imgType").val()][0][i] + "\">" + region[$("#imgType").val()][1][i] + "</option>";
-                            }
-                            onMatch = html.includes(val);
-                            if (html != $("#area").html()) {
-                                $("#area").html(html);
-                                if (!onMatch) {
-                                    $("#area").attr("value", 'china');
-                                    val = $("#area").val();
-                                    $("#area").find("option[value='" + val + "']").attr("selected", true);
-                                } else {
-                                    $("#area").attr("value", val);
-                                    $("#area").find("option[value='" + val + "']").attr("selected", true);
-                                }
-                                if ($("#area").val() != 'customize') {
-                                    $("#customize").css('display', 'none');
-                                    $("#customize").html('');
-                                }
-                            }
-                            submit_data($("#model").val(), $("#runtime").val(), $("#hourSelected").val(), $("#area").val(), $("#imgType").val());
-                        });
-                        $("#area").change(function(){
-                            if ($("#area").val() == 'customize') {
-                                $("#customize").css('display', 'block');
-                                $("#gfsimg").css('display', 'block');
-                            } else {
-                                $("#customize").css('display', 'none');
-                                $("#gfsimg").css('display', 'none');
-                                submit_data($("#model").val(), $("#runtime").val(), $("#hourSelected").val(), $("#area").val(), $("#imgType").val());
-                            }
-                        });
                         setModelsListener();
                         changeFcstHourValue(hours[0], false);
                     },
                     dataType: "text",
                     error: function(e) {
                         console.log(e.statusText);
-                        $("#image").html("<div class=\"ace-container\">网络出错了，无返回数据</div>");
+                        $("#image").html("<div class=\"ace-container\">网页出错了，无返回数据</div>");
                     }
                 });
             });
-            function submit_data(model, runtime, fcsthour, area, imgType) {
-                // abort ajax request
-                if (__ajaxRequestHistory) __ajaxRequestHistory.abort();
-                var cmap, url = window.location.protocol;
-                if (imgType.substr(0,2) == 'ir' && lodash.includes(['GFS', 'CMC'], model)) {
-                    cmap = img_cmap[imgType];
-                } else {
-                    cmap = 'NONE';
+            function all_equal(model, runtime, fcsthour, area, imgType) {
+                return (fcsthour == $("#hourSelected").val() &&
+                       runtime == $("#runtime").val() &&
+                       model == $("#model").val() &&
+                       area == $("#area").val() &&
+                       imgType == $("#imgType").val());
+            }
+            function submit_data(model, runtime, fcsthour, area, imgType, gif_only) {
+                var cacheURL = getImageryCacheURL(model, runtime, fcsthour, imgType, area);
+                if (blobList.hasOwnProperty(cacheURL)) {
+                    if (!gif_only && all_equal(model, runtime, fcsthour, area, imgType)) $("#image").html("<img class=\"img-responsive center-block\" src=\"" + blobList[cacheURL] + "\" alt=\"No data\">");
+                    if (gif_only) gif_blobList[cacheURL] = blobList[cacheURL];
+                    return false;
                 }
-                var cache_url = getImageryCacheURL(model, runtime, fcsthour, imgType, area, window.location.protocol);
-                // var _cacheQueryResult = loadImageryData('//api.dapiya.top/model/checkFile', cache_url);
-                __ajaxRequestHistory = $.ajax({
-                    url: '//api.dapiya.top/model/checkFile',
-                    data: {'url': cache_url},
+                $.ajax({
                     type: 'GET',
-                    success: function(data) {
-                        if (data == '200') {
-                            $("#image").html("<img class=\"img-responsive center-block\" src=\"" + cache_url + "\" alt=\"No data\">");
-                            return false;
-                        } else {
-                            let lola__ = area == 'customize' ? ar[area]() : ar[area];
-                            $("#image").html("<div class=\"ace-container\">Downloading imagery...</div>");
-                            url += $.sprintf('//api.dapiya.top/%s/dwn', model.toLowerCase());
-                            let __data = {
-                                'type': fp[imgType],
-                                'lonlat': lola__,
-                                'fcsttime': fcsthour,
-                                'time': runtime
-                            };
-                            __ajaxRequestHistory = $.ajax({
-                                type: 'GET',
-                                url: url,
-                                timeout: 120000,
-                                data: __data,
-                                success: function(data) {
-                                    if (data == ',' || data == '/satellite/' + model.toLowerCase() + '/404.png') {
-                                        $("#image").html("<img class=\"img-responsive center-block\" src=\"//data.dapiya.top/satellite/" + model.toLowerCase() + "/404.png\" alt=\"No data\">");
-                                        $("#gfsimg").removeAttr('disabled');
-                                    } else {
-                                        var path = data.split(',');
-                                        let __data = {
-                                            'type': fp[imgType],
-                                            'lonlat': lola__,
-                                            'fcsttime': fcsthour,
-                                            'time': runtime,
-                                            'cmap': cmap,
-                                            'fpath': path[0],
-                                            'spath': path[1]
-                                        }
-                                        __ajaxRequestHistory = $.ajax({
-                                            type: 'GET',
-                                            url: '//api.dapiya.top/' + model.toLowerCase() + '/mkpic',
-                                            data: __data,
-                                            timeout: 300000,
-                                            success: function(data) {
-                                                $("#image").html("<img class=\"img-responsive center-block\" src=\"//data.dapiya.top" + data + "\" alt=\"No data\">");
-                                                $("#gfsimg").removeAttr('disabled');
-                                            },
-                                            dataType: "text",
-                                            error: function(e) {
-                                                console.log(e.statusText);
-                                                if (e.statusText != 'abort') $("#image").html("<div class=\"ace-container\">网络出错了，无返回数据</div>");
-                                                return false;
-                                            }
-                                        });
-                                    }
-                                },
-                                dataType: "text",
-                                error: function(e) {
-                                    console.log(e.statusText);
-                                    if (e.statusText != 'abort') $("#image").html("<div class=\"ace-container\">网络出错了，无返回数据</div>");
-                                    return false;
-                                }
-                            });
+                    url: cacheURL,
+                    async: true,
+                    xhrFields: { responseType: "blob" },
+                    success: function(blob) {
+                        var blob_url = blob2URL.createObjectURL(blob);
+                        blobList[cacheURL] = blob_url;
+                        if (gif_only) gif_blobList[cacheURL] = blob_url;
+                        if (!gif_only && all_equal(model, runtime, fcsthour, area, imgType)) {
+                            $("#image").html("<img class=\"img-responsive center-block\" src=\"" + blob_url + "\" alt=\"No data\">");
                         }
                     },
-                    dataType: "text",
                     error: function(e) {
-                        console.log(e.statusText);
-                        if (e.statusText != 'abort') $("#image").html("<div class=\"ace-container\">网络出错了，无返回数据</div>");
-                        return false;
+                        let lola__ = area == 'customize' ? ar[area]() : ar[area];
+                        if (!gif_only && all_equal(model, runtime, fcsthour, area, imgType)) $("#image").html("<div class=\"ace-container\">Downloading imagery...</div>");
+                        var url = $.sprintf('//api.dapiya.top/%s/dwn', model.toLowerCase());
+                        let __data = {
+                            'type': fp[imgType],
+                            'lonlat': lola__,
+                            'fcsttime': fcsthour,
+                            'time': runtime
+                        };
+                        $.ajax({
+                            type: 'POST',
+                            url: url,
+                            timeout: 120000,
+                            data: __data,
+                            success: function(data) {
+                                if (data == ',' || data == '/satellite/' + model.toLowerCase() + '/404.png') {
+                                    if (gif_only) gif_blobList[cacheURL] = '';
+                                    if (!gif_only && all_equal(model, runtime, fcsthour, area, imgType)) {
+                                        $("#image").html("<img class=\"img-responsive center-block\" src=\"//data.dapiya.top/satellite/" + model.toLowerCase() + "/404.png\" alt=\"No data\">");
+                                    }
+                                } else {
+                                    var path = data.split(',');
+                                    if (imgType.substr(0,2) == 'ir' && lodash.includes(['GFS', 'CMC'], model)) {
+                                        var cmap = img_cmap[imgType];
+                                    } else {
+                                        var cmap = 'NONE';
+                                    }
+                                    let __data = {
+                                        'type': fp[imgType],
+                                        'lonlat': lola__,
+                                        'fcsttime': fcsthour,
+                                        'time': runtime,
+                                        'cmap': cmap,
+                                        'fpath': path[0],
+                                        'spath': path[1]
+                                    }
+                                    $.ajax({
+                                        type: 'POST',
+                                        url: '//api.dapiya.top/' + model.toLowerCase() + '/mkpic',
+                                        data: __data,
+                                        timeout: 300000,
+                                        success: function(data) {
+                                            if (intervalList.hasOwnProperty(data.task_name)) {
+                                                return false;
+                                            }
+                                            var timeout = 0;
+                                            var __interval = setInterval(function() {
+                                                $.ajax({
+                                                    url: '//api.dapiya.top/' + model.toLowerCase() + '/mkpic/result',
+                                                    type: 'POST',
+                                                    data: {
+                                                        'task_name': data.task_name,
+                                                        'task_id': data.task_id
+                                                    },
+                                                    success: function(data) {
+                                                        if (data.status == -1 || timeout >= 300) {
+                                                            if (all_equal(model, runtime, fcsthour, area, imgType)) {
+                                                                if (!gif_only && all_equal(model, runtime, fcsthour, area, imgType)) $("#image").html("<div class=\"ace-container\">网页出错了，无返回数据</div>");
+                                                            }
+                                                            if (gif_only) gif_blobList[cacheURL] = '';
+                                                            if (__interval) clearInterval(intervalList[data.task_name]); // 清除计时器
+                                                            delete(intervalList[data.task_name]); // 删除键值对
+                                                        }
+                                                        if (data.status == 1) {
+                                                            $.ajax({
+                                                                type: 'GET',
+                                                                url: '//data.dapiya.top' + data.result,
+                                                                async: true,
+                                                                xhrFields: { responseType: "blob" },
+                                                                success: function(blob) {
+                                                                    let __url = blob2URL.createObjectURL(blob);
+                                                                    if (!blobList.hasOwnProperty(cacheURL)) {
+                                                                        blobList[cacheURL] = __url;
+                                                                    }
+                                                                    if (all_equal(model, runtime, fcsthour, area, imgType)) {
+                                                                        if (!gif_only && all_equal(model, runtime, fcsthour, area, imgType)) $("#image").html("<img class=\"img-responsive center-block\" src=\"" + __url + "\" alt=\"No data\">");
+                                                                    }
+                                                                    if (gif_only) gif_blobList[cacheURL] = __url;
+                                                                    if (__interval) clearInterval(intervalList[data.task_name]); // 清除计时器
+                                                                    delete(intervalList[data.task_name]); // 删除键值对
+                                                                },
+                                                                error: function(e) {
+                                                                    console.log(e.statusText);
+                                                                    if (e.statusText != 'abort' && fcsthour == $("#hourSelected").val()) {
+                                                                        if (!gif_only && all_equal(model, runtime, fcsthour, area, imgType)) $("#image").html("<div class=\"ace-container\">网页出错了，无返回数据</div>");
+                                                                    }
+                                                                    if (gif_only) gif_blobList[cacheURL] = '';
+                                                                    if (__interval) clearInterval(intervalList[data.task_name]); // 如果发生错误也应当清除计时器
+                                                                    delete(intervalList[data.task_name]); // 删除键值对
+                                                                }
+                                                            });
+                                                        }
+                                                    },
+                                                    error: function(e) {
+                                                        if (e.statusText != 'abort') {
+                                                            if (!gif_only && all_equal(model, runtime, fcsthour, area, imgType)) $("#image").html("<div class=\"ace-container\">网页出错了，无返回数据</div>");
+                                                        }
+                                                        if (gif_only) gif_blobList[cacheURL] = '';
+                                                        if (__interval) clearInterval(intervalList[data.task_name]); // 如果发生错误也应当清除计时器
+                                                        delete(intervalList[data.task_name]); // 删除键值对
+                                                    }
+                                                });
+                                                timeout = timeout + 3;
+                                            }, 3000);
+                                            intervalList[data.task_name] = __interval;
+                                        },
+                                        dataType: "json",
+                                        error: function(e) {
+                                            console.log(e.statusText);
+                                            if (e.statusText != 'abort') {
+                                                if (!gif_only && all_equal(model, runtime, fcsthour, area, imgType)) $("#image").html("<div class=\"ace-container\">网页出错了，无返回数据</div>");
+                                            }
+                                            if (gif_only) gif_blobList[cacheURL] = '';
+                                            return false;
+                                        }
+                                    });
+                                }
+                            },
+                            dataType: "text",
+                            error: function(e) {
+                                console.log(e.statusText);
+                                if (e.statusText != 'abort') {
+                                    if (!gif_only && all_equal(model, runtime, fcsthour, area, imgType)) $("#image").html("<div class=\"ace-container\">网页出错了，无返回数据</div>");
+                                }
+                                if (gif_only) gif_blobList[cacheURL] = '';
+                                return false;
+                            }
+                        });
                     }
                 });
             }
@@ -297,7 +330,8 @@
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">数值预报<span class="caret"></span></a>
                                 <ul class="dropdown-menu">
                                     <li class="active"><a href="/zh/model/">传统数值预报</a></li>
-                                    <li><a href="https://pangu.dapiya.top/" target="_blank">盘古气象大模型</a></li>
+                                    <li><a href="https://pangu.dapiya.top/" target="_blank">盘古气象大模型 (华为)</a></li>
+                                    <li><a href="https://graphcast.dapiya.top/" target="_blank">GraphCast气象大模型 (谷歌)</a></li>
                                 </ul>
                             </li>
                             <li class="dropdown">
@@ -313,7 +347,7 @@
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">友情链接<span class="caret"></span></a>
                                 <ul class="dropdown-menu">
-                                    <li><a href="https://www.tybbs.org.cn/" target="_blank">BBS Typhoon | 台风论坛</a></li>
+                                    <li><a href="https://www.tyboard.net/" target="_blank">TY Board</a></li>
                                     <li><a href="https://weather-models.info/" target="_blank">Weather Models (日本)</a></li>
                                     <li><a href="https://www.tropicaltidbits.com/" target="_blank">Tropical Tidbits</a></li>
                                     <li><a href="https://cyclonicwx.com/" target="_blank">CyclonicWx</a></li>
@@ -373,6 +407,7 @@
                     </div>
                     <div class="text-center">
                         <button type="button" class="ibtn btn-sm" id="more" onclick="javascript:setFullForecastTimeInModalBox('selfModal');">更多</button>
+                        <button type="button" class="ibtn btn-sm" id="update-gif" onclick="showGIFGeneratorWindow(); return false;">制作GIF</button>
                     </div>
                     <div id="hours" class="ihour"></div>
                     <input type="text" class="rput" style="display: none;" id="hourSelected">
@@ -398,7 +433,12 @@
                     <div class="small-title"><span class="glyphicon glyphicon-cog small-icon"></span>绘制要素</div>
                     <select class="islt" id="imgType"></select>
                     <hr class="nohr">
-                    <button type="button" class="ibtn btn-md" style="display: none;" id="gfsimg" onclick="javascript:submit_data(model.value, runtime.value, hourSelected.value, 'customize', imgType.value);" data-cf-modified-=""><i class="glyphicon glyphicon-save small-icon"></i>更新图片</button>
+                    <button type="button" class="field" style="display: none;" id="update-image"><i class="glyphicon glyphicon-save small-icon"></i>更新图片</button>
+                </div>
+                <div class="modal fade" id="GIFWindow" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="GIFWindowLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content" id="GIFGeneratorContent"></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -407,12 +447,17 @@
                 <div class="row">
                     <hr>
                     <div class='footScript'>
-                        <p>Copyright © 2020-2023 Dapiya Team. All Rights Reserved.</p>
+                        <p>Copyright © 2020-<span id="c_year"></span> Dapiya Team. All Rights Reserved.</p>
                         <p>Contact: <a href="mailto:dapiya@qq.com">dapiya@qq.com</a></p>
                     </div>
                 </div>
             </div>
         </div>
+        <!-- Set year on copyright -->
+        <script>
+            var d = new Date();
+            document.getElementById("c_year").innerHTML = d.getFullYear();
+        </script>
         <div class="modal fade" id="selfModal" tabindex="-1" role="dialog" aria-labelledby="selfModalTitle" aria-hidden="true" data-backdrop="static" data-keyboard="false">
             <div class="modal-dialog">
                 <div class="modal-content">
