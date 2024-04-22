@@ -271,8 +271,25 @@
             }
             // preload images
             function preloadImage(src_arr) {
-                var img;
                 var j = 0;
+                var img, imgObjectList = [];
+                var loadWorkerNum = src_arr.length < 6 ? src_arr.length : 6;
+                for (var i = 0; i < loadWorkerNum; i++) {
+                    img = new Image();
+                    img.className = 'img-responsive center-block';
+                    img.alt = 'No data';
+                    if (img.addEventListener) {
+                        img.addEventListener("load", loadHandler, false);
+                        img.addEventListener("error", loadErrorHandler, false);
+                    } else if (img.attachEvent) {
+                        img.attachEvent("onload", loadHandler);
+                        img.attachEvent("onerror", loadErrorHandler);
+                    } else {
+                        img["onload"] = loadHandler;
+                        img["onerror"] = loadErrorHandler;
+                    }
+                    img.src = src_arr[i];
+                }
                 function loadHandler() {
                     if (imgSrcLoaded_arr.indexOf(this.src) == -1) {
                         var _time = new Date();
@@ -281,8 +298,13 @@
                         timeDelta.push(parseInt(_time - time_start) / 1000);
                     }
                     j++;
-                    if (j >= src_arr.length) return false;
-                    this.src = src_arr[j];
+                    // calculate parallel index
+                    var nodeIndex = j % loadWorkerNum;
+                    var t = lodash.floor(j / loadWorkerNum);
+                    if (t == 0) t++;
+                    var finalIndex = loadWorkerNum * t + nodeIndex - 1;
+                    if (finalIndex >= src_arr.length) return false;
+                    this.src = src_arr[finalIndex];
                     return false;
                 }
                 function loadErrorHandler() {
@@ -315,22 +337,6 @@
                         $('#notLoadedNoticeCN').html('网络错误，请您刷新页面重试');
                     }
                     return false;
-                }
-                for (var i = 0; i < src_arr.length; i++) {
-                    img = new Image();
-                    img.className = 'img-responsive center-block';
-                    img.alt = 'No data';
-                    if (img.addEventListener) {
-                        img.addEventListener("load", loadHandler, false);
-                        img.addEventListener("error", loadErrorHandler, false);
-                    } else if (img.attachEvent) {
-                        img.attachEvent("onload", loadHandler);
-                        img.attachEvent("onerror", loadErrorHandler);
-                    } else {
-                        img["onload"] = loadHandler;
-                        img["onerror"] = loadErrorHandler;
-                    }
-                    img.src = src_arr[i];
                 }
             }
             // slider changed function
@@ -773,7 +779,7 @@
                 var startTime = new Date();
                 if (preloadImages) {
                     var __loadNum = 0;
-                    var workersNumber = GroupPreload ? lodash.floor(gif_pic_list.length / 2) : gif_pic_list.length;
+                    var workersNumber = GroupPreload ? 6 : gif_pic_list.length;
                     var preloadWorkers = new Array(gif_pic_list.length).fill(null);
                     var workersNumList = new Array(gif_pic_list.length).fill(null);
                     var blobURLList = [];
@@ -1144,7 +1150,8 @@
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Models<span class="caret"></span></a>
                                 <ul class="dropdown-menu">
                                     <li><a href="/model/">Numerical Models</a></li>
-                                    <li><a href="https://pangu.dapiya.top/" target="_blank">Pangu-Weather Model</a></li>
+                                    <li><a href="https://pangu.dapiya.top/" target="_blank">Pangu-Weather Model (Huawei)</a></li>
+                                    <li><a href="https://graphcast.dapiya.top/" target="_blank">GraphCast Model (Google)</a></li>
                                 </ul>
                             </li>
                             <li class="dropdown">
@@ -1160,7 +1167,7 @@
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Friend-link<span class="caret"></span></a>
                                 <ul class="dropdown-menu">
-                                    <li><a href="https://www.tybbs.org.cn/" target="_blank">BBS Typhoon | 台风论坛</a></li>
+                                    <li><a href="https://www.tyboard.net/" target="_blank">TY Board</a></li>
                                     <li><a href="https://weather-models.info/" target="_blank">Weather Models (Japan)</a></li>
                                     <li><a href="https://www.tropicaltidbits.com/" target="_blank">Tropical Tidbits</a></li>
                                     <li><a href="https://cyclonicwx.com/" target="_blank">CyclonicWx</a></li>
@@ -1259,12 +1266,17 @@
                 <div class="row">
                     <hr>
                     <div class='footScript'>
-                        <p>Copyright © 2020-2023 Dapiya Team. All Rights Reserved.</p>
+                        <p>Copyright © 2020-<span id="c_year"></span> Dapiya Team. All Rights Reserved.</p>
                         <p>Contact: <a href="mailto:dapiya@qq.com">dapiya@qq.com</a></p>
                     </div>
                 </div>
             </div>
         </div>
+        <!-- Set year on copyright -->
+        <script>
+            var d = new Date();
+            document.getElementById("c_year").innerHTML = d.getFullYear();
+        </script>
         <div class="modal fade" id="notLoadedWindow" tabindex="-1" role="dialog" aria-labelledby="notLoadedWindowLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
             <div class="modal-dialog">
                 <div class="modal-content">
