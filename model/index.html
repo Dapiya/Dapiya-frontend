@@ -165,6 +165,8 @@
                                                             delete(intervalList[data.task_name]); // 删除键值对
                                                         }
                                                         if (data.status == 1) {
+                                                            if (__interval) clearInterval(intervalList[data.task_name]); // 清除计时器
+                                                            delete(intervalList[data.task_name]); // 删除键值对
                                                             $.ajax({
                                                                 type: 'GET',
                                                                 url: '//data.dapiya.top' + data.result,
@@ -179,8 +181,6 @@
                                                                         if (!gif_only && all_equal(model, runtime, fcsthour, area, imgType)) $("#image").html("<img class=\"img-responsive center-block\" src=\"" + __url + "\" alt=\"No data\">");
                                                                     }
                                                                     if (gif_only) gif_blobList[cacheURL] = __url;
-                                                                    if (__interval) clearInterval(intervalList[data.task_name]); // 清除计时器
-                                                                    delete(intervalList[data.task_name]); // 删除键值对
                                                                 },
                                                                 error: function(e) {
                                                                     console.log(e.statusText);
@@ -188,8 +188,6 @@
                                                                         if (!gif_only && all_equal(model, runtime, fcsthour, area, imgType)) $("#image").html("<div class=\"ace-container\">Data not found.</div>");
                                                                     }
                                                                     if (gif_only) gif_blobList[cacheURL] = '';
-                                                                    if (__interval) clearInterval(intervalList[data.task_name]); // 如果发生错误也应当清除计时器
-                                                                    delete(intervalList[data.task_name]); // 删除键值对
                                                                 }
                                                             });
                                                         }
