@@ -136,6 +136,10 @@ var fp = {
     'rhw850': 'rhw850',
     'rhw700': 'rhw700',
     'rhw1000': 'rhw1000',
+    'qflux850': 'qflux850',
+    'qflux700': 'qflux700',
+    'qflux1000': 'qflux1000',
+    'qfluxwl': 'qfluxwl',
     'apcp': 'apcp',
     'prate': 'prate',
     'cape': 'cape',
@@ -241,6 +245,7 @@ function _getModelSettings(model) {
         img_temp = ['t2m', 'dt2m', 't850w', 't700w', 'z500t850', 'z100t850', 'zw200', 'z10t10', 'ttropo', 'h0'];
         img_wp = ['pres', 'wp', 'sgust', 'z500_mslp', 'w200pres', 'sh200-850pres'];
         img_rhw = ['rhw850', 'rhw700', 'rhw1000'];
+        img_qflux = ['qflux850', 'qflux700', 'qflux1000', 'qfluxwl'];
         img_vort = ['z500rvw850', 'rvw700_pres', 'zrv500w200'];
         img_anom = ['t2ma', 't850a', 'z500a', 'z10t10a'];
         img_other = ['refc', 'sweat', 'tt', 'ki', 'thetae', 'cape', 'ow', 'tcdc'];
@@ -249,6 +254,7 @@ function _getModelSettings(model) {
         imgName_temp = ['2m Air Temp.', '2m DP Temp.', '850mb Temp. & Wind', '700mb Temp. & Wind', '500mb HGT & 850mb Temp.', '100mb HGT & 850mb Temp.', '200mb HGT & Wind', '10mb HGT & Temp.', 'Tropopause Temperature', 'Highest Tropospheric Freezing Level'];
         imgName_wp = ['Mean Sea Level Pressure', '10m Wind & MSLP', 'Surface Wind Gust', '500mb HGT & MSLP', '200mb Wind & MSLP', '200-850mb Wind Shear & MSLP'];
         imgName_rhw = ['850mb RH. & Wind', '700mb RH. & Wind', '1000mb RH. & Wind'];
+        imgName_qflux = ['850mb Vapor Flux', '700mb Vapor Flux', '1000mb Vapor Flux', 'Integrated Vapor Transport'];
         imgName_vort = ['500mb HGT & 850mb Vort. & Wind', '700mb Vort. & Wind & MSLP', '500mb HGT & Vort. & 200mb Wind'];
         imgName_anom = ['2m Air Temp. Anomaly', '850mb Temp. Anomaly', '500mb HGT Anomaly', '10mb HGT & Temp. Anomaly'];
         imgName_other = ['Composite Reflectivity', 'SWEAT Index', 'Total Totals Index', 'K-Index', '850mb Theta-E', 'Convective Available Potential Energy', '850mb Okubo-Weiss', 'Total Cloud Cover'];
@@ -258,11 +264,12 @@ function _getModelSettings(model) {
             [img_ir, imgName_ir],
             [img_prec, imgName_prec],
             [img_rhw, imgName_rhw],
+            [img_qflux, imgName_qflux],
             [img_vort, imgName_vort],
             [img_anom, imgName_anom],
             [img_other, imgName_other]
         ];
-        imgTitle = ['Temperature', 'Wind / MSLP', 'Simulated IR', 'Precipitation', 'RH. & Wind', 'Vorticity', 'Anomalies', 'Others'];
+        imgTitle = ['Temperature', 'Wind / MSLP', 'Simulated IR', 'Precipitation', 'RH. & Wind', 'Vapor Flux', 'Vorticity', 'Anomalies', 'Others'];
         region = {
             'ir0': _region,
             'ir1': _region,
@@ -294,6 +301,10 @@ function _getModelSettings(model) {
             'rhw850': _region,
             'rhw700': _region,
             'rhw1000': _region,
+            'qflux850': _region,
+            'qflux700': _region,
+            'qflux1000': _region,
+            'qfluxwl': _region,
             'apcp': _region,
             'snodWE': _region,
             'prate': _region,
@@ -436,6 +447,7 @@ function _getModelSettings(model) {
         img_temp = ['t2m', 't850w', 't700w', 'z500t850', 'zw200'];
         img_wp = ['pres', 'wp', 'z500_mslp', 'w200pres', 'sh200-850pres'];
         img_rhw = ['rhw850', 'rhw700', 'rhw1000'];
+        img_qflux = ['qflux850', 'qflux700', 'qflux1000', 'qfluxwl'];
         img_vort = ['z500rvw850', 'rvw700_pres', 'zrv500w200'];
         img_anom = ['t2ma', 't850a', 'z500a'];
         img_other = ['sweat', 'tt', 'ki', 'thetae', 'ow'];
@@ -443,6 +455,7 @@ function _getModelSettings(model) {
         imgName_temp = ['2m Air Temp.', '850mb Temp. & Wind', '700mb Temp. & Wind', '500mb HGT & 850mb Temp.', '200mb HGT & Wind'];
         imgName_wp = ['Mean Sea Level Pressure', '10m Wind & MSLP', '500mb HGT & MSLP', '200mb Wind & MSLP', '200-850mb Wind Shear & MSLP'];
         imgName_rhw = ['850mb RH. & Wind', '700mb RH. & Wind', '1000mb RH. & Wind'];
+        imgName_qflux = ['850mb Vapor Flux', '700mb Vapor Flux', '1000mb Vapor Flux', 'Integrated Vapor Transport'];
         imgName_vort = ['500mb HGT & 850mb Vort. & Wind', '700mb Vort. & Wind & MSLP', '500mb HGT & Vort. & 200mb Wind'];
         imgName_anom = ['2m Air Temp. Anomaly', '850mb Temp. Anomaly', '500mb HGT Anomaly'];
         imgName_other = ['SWEAT Index', 'Total Totals Index', 'K-Index', '850mb Theta-E', '850mb Okubo-Weiss'];
@@ -451,11 +464,12 @@ function _getModelSettings(model) {
             [img_wp, imgName_wp],
             [img_prec, imgName_prec],
             [img_rhw, imgName_rhw],
+            [img_qflux, imgName_qflux],
             [img_vort, imgName_vort],
             [img_anom, imgName_anom],
             [img_other, imgName_other]
         ];
-        imgTitle = ['Temperature', 'Wind / MSLP', 'Precipitation', 'RH. & Wind', 'Vorticity', 'Anomalies', 'Others'];
+        imgTitle = ['Temperature', 'Wind / MSLP', 'Precipitation', 'RH. & Wind', 'Vapor Flux', 'Vorticity', 'Anomalies', 'Others'];
         region = {
             't2m': _region,
             't850w': _region,
@@ -480,6 +494,10 @@ function _getModelSettings(model) {
             'rhw850': _region,
             'rhw700': _region,
             'rhw1000': _region,
+            'qflux850': _region,
+            'qflux700': _region,
+            'qflux1000': _region,
+            'qfluxwl': _region,
             'apcp': _region,
             'ow': _region,
         };
@@ -878,7 +896,7 @@ function LoadImages(model, runtime, area, imgType, StartHour, EndHour, IntervalH
         submit_data(model, runtime, gif_hours[i], area, imgType, true);
     }
     var __interval = setInterval(function() {
-        var successCount = 0, isFailed = false;
+        var successCount = 0, isFailed = falsje;
         for (var j = 0; j < gif_hours.length; j++) {
             var cacheURL = getImageryCacheURL(model, runtime, gif_hours[j], imgType, area);
             if (gif_blobList.hasOwnProperty(cacheURL)) {
