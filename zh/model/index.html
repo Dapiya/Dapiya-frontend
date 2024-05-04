@@ -3,16 +3,11 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
         <meta name="viewport" content="width=device-width">
-        <meta name="description" content="ACE Realtime-update Page">
+        <meta name="description" content="数值预报可视化">
         <meta name="author" content="Shuitai">
         <meta name="keywords" content="Dapiya,大皮鸭,数值,数值预报,预报,GFS,ECMWF,model">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge,Chrome=1">
-        <meta http-equiv="X-UA-Compatible" content="IE=9">
-        <meta http-equiv="Expires" content="0">
-        <meta http-equiv="Pragma" content="no-cache">
-        <meta http-equiv="Cache-control" content="no-cache">
-        <meta http-equiv="Cache" content="no-cache">
-        <title>Dapiya - 数值预报</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=10,IE=11,IE=edge,Chrome=1">
+        <title>Dapiya - 数值预报可视化</title>
         <link rel="stylesheet" href="//libs.dapiya.top/css/bootstrap.min.css">
         <link rel="shortcut icon" type="image" href="//libs.dapiya.top/img/favicon.ico">
         <script src="//libs.dapiya.top/js/jquery.min.js" type="text/javascript"></script>
@@ -81,7 +76,9 @@
             function submit_data(model, runtime, fcsthour, area, imgType, gif_only) {
                 var cacheURL = getImageryCacheURL(model, runtime, fcsthour, imgType, area);
                 if (blobList.hasOwnProperty(cacheURL)) {
-                    if (!gif_only && all_equal(model, runtime, fcsthour, area, imgType)) $("#image").html("<img class=\"img-responsive center-block\" src=\"" + blobList[cacheURL] + "\" alt=\"No data\">");
+                    if (!gif_only && all_equal(model, runtime, fcsthour, area, imgType)) {
+                        $("#image").html("<img class=\"img-responsive center-block\" src=\"" + blobList[cacheURL] + "\" alt=\"No data\">");
+                    }
                     if (gif_only) gif_blobList[cacheURL] = blobList[cacheURL];
                     return false;
                 }
@@ -100,7 +97,9 @@
                     },
                     error: function(e) {
                         let lola__ = area == 'customize' ? ar[area]() : ar[area];
-                        if (!gif_only && all_equal(model, runtime, fcsthour, area, imgType)) $("#image").html("<div class=\"ace-container\">Downloading imagery...</div>");
+                        if (!gif_only && all_equal(model, runtime, fcsthour, area, imgType)) {
+                            $("#image").html("<div class=\"ace-container\">下载图片中...</div>");
+                        }
                         var url = $.sprintf('//api.dapiya.top/%s/dwn', model.toLowerCase());
                         let __data = {
                             'type': fp[imgType],
@@ -114,10 +113,10 @@
                             timeout: 120000,
                             data: __data,
                             success: function(data) {
-                                if (data == ',' || data == '/satellite/' + model.toLowerCase() + '/404.png') {
+                                if (data == ',' || data == '/models/' + model.toLowerCase() + '/404.png') {
                                     if (gif_only) gif_blobList[cacheURL] = '';
                                     if (!gif_only && all_equal(model, runtime, fcsthour, area, imgType)) {
-                                        $("#image").html("<img class=\"img-responsive center-block\" src=\"//data.dapiya.top/satellite/" + model.toLowerCase() + "/404.png\" alt=\"No data\">");
+                                        $("#image").html("<img class=\"img-responsive center-block\" src=\"//data.dapiya.top/models/" + model.toLowerCase() + "/404.png\" alt=\"No data\">");
                                     }
                                 } else {
                                     var path = data.split(',');
@@ -141,7 +140,8 @@
                                         data: __data,
                                         timeout: 300000,
                                         success: function(data) {
-                                            if (intervalList.hasOwnProperty(data.task_name)) {
+                                            var __interval_name = gif_only ? data.task_name + "_gif_only" : data.task_name;
+                                            if (intervalList.hasOwnProperty(__interval_name)) {
                                                 return false;
                                             }
                                             var timeout = 0;
@@ -156,15 +156,17 @@
                                                     success: function(data) {
                                                         if (data.status == -1 || timeout >= 300) {
                                                             if (all_equal(model, runtime, fcsthour, area, imgType)) {
-                                                                if (!gif_only && all_equal(model, runtime, fcsthour, area, imgType)) $("#image").html("<div class=\"ace-container\">网页出错了，无返回数据</div>");
+                                                                if (!gif_only && all_equal(model, runtime, fcsthour, area, imgType)) {
+                                                                    $("#image").html("<div class=\"ace-container\">网页出错了，无返回数据</div>");
+                                                                }
                                                             }
                                                             if (gif_only) gif_blobList[cacheURL] = '';
-                                                            if (__interval) clearInterval(intervalList[data.task_name]); // 清除计时器
-                                                            delete(intervalList[data.task_name]); // 删除键值对
+                                                            if (__interval) clearInterval(intervalList[__interval_name]); // 清除计时器
+                                                            delete(intervalList[__interval_name]); // 删除键值对
                                                         }
                                                         if (data.status == 1) {
-                                                            if (__interval) clearInterval(intervalList[data.task_name]); // 清除计时器
-                                                            delete(intervalList[data.task_name]); // 删除键值对
+                                                            if (__interval) clearInterval(intervalList[__interval_name]); // 清除计时器
+                                                            delete(intervalList[__interval_name]); // 删除键值对
                                                             $.ajax({
                                                                 type: 'GET',
                                                                 url: '//data.dapiya.top' + data.result,
@@ -176,14 +178,18 @@
                                                                         blobList[cacheURL] = __url;
                                                                     }
                                                                     if (all_equal(model, runtime, fcsthour, area, imgType)) {
-                                                                        if (!gif_only && all_equal(model, runtime, fcsthour, area, imgType)) $("#image").html("<img class=\"img-responsive center-block\" src=\"" + __url + "\" alt=\"No data\">");
+                                                                        if (!gif_only && all_equal(model, runtime, fcsthour, area, imgType)) {
+                                                                            $("#image").html("<img class=\"img-responsive center-block\" src=\"" + __url + "\" alt=\"No data\">");
+                                                                        }
                                                                     }
                                                                     if (gif_only) gif_blobList[cacheURL] = __url;
                                                                 },
                                                                 error: function(e) {
                                                                     console.log(e.statusText);
                                                                     if (e.statusText != 'abort' && fcsthour == $("#hourSelected").val()) {
-                                                                        if (!gif_only && all_equal(model, runtime, fcsthour, area, imgType)) $("#image").html("<div class=\"ace-container\">网页出错了，无返回数据</div>");
+                                                                        if (!gif_only && all_equal(model, runtime, fcsthour, area, imgType)) {
+                                                                            $("#image").html("<div class=\"ace-container\">网页出错了，无返回数据</div>");
+                                                                        }
                                                                     }
                                                                     if (gif_only) gif_blobList[cacheURL] = '';
                                                                 }
@@ -192,22 +198,26 @@
                                                     },
                                                     error: function(e) {
                                                         if (e.statusText != 'abort') {
-                                                            if (!gif_only && all_equal(model, runtime, fcsthour, area, imgType)) $("#image").html("<div class=\"ace-container\">网页出错了，无返回数据</div>");
+                                                            if (!gif_only && all_equal(model, runtime, fcsthour, area, imgType)) {
+                                                                $("#image").html("<div class=\"ace-container\">网页出错了，无返回数据</div>");
+                                                            }
                                                         }
                                                         if (gif_only) gif_blobList[cacheURL] = '';
-                                                        if (__interval) clearInterval(intervalList[data.task_name]); // 如果发生错误也应当清除计时器
-                                                        delete(intervalList[data.task_name]); // 删除键值对
+                                                        if (__interval) clearInterval(intervalList[__interval_name]); // 如果发生错误也应当清除计时器
+                                                        delete(intervalList[__interval_name]); // 删除键值对
                                                     }
                                                 });
                                                 timeout = timeout + 3;
                                             }, 3000);
-                                            intervalList[data.task_name] = __interval;
+                                            intervalList[__interval_name] = __interval;
                                         },
                                         dataType: "json",
                                         error: function(e) {
                                             console.log(e.statusText);
                                             if (e.statusText != 'abort') {
-                                                if (!gif_only && all_equal(model, runtime, fcsthour, area, imgType)) $("#image").html("<div class=\"ace-container\">网页出错了，无返回数据</div>");
+                                                if (!gif_only && all_equal(model, runtime, fcsthour, area, imgType)) {
+                                                    $("#image").html("<div class=\"ace-container\">网页出错了，无返回数据</div>");
+                                                }
                                             }
                                             if (gif_only) gif_blobList[cacheURL] = '';
                                             return false;
@@ -219,7 +229,9 @@
                             error: function(e) {
                                 console.log(e.statusText);
                                 if (e.statusText != 'abort') {
-                                    if (!gif_only && all_equal(model, runtime, fcsthour, area, imgType)) $("#image").html("<div class=\"ace-container\">网页出错了，无返回数据</div>");
+                                    if (!gif_only && all_equal(model, runtime, fcsthour, area, imgType)) {
+                                        $("#image").html("<div class=\"ace-container\">网页出错了，无返回数据</div>");
+                                    }
                                 }
                                 if (gif_only) gif_blobList[cacheURL] = '';
                                 return false;
@@ -468,5 +480,14 @@
                 </div>
             </div>
         </div>
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-22JTJ6RYJH"></script>
+        <script>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+        
+          gtag('config', 'G-22JTJ6RYJH');
+        </script>
     </body>
 </html>
