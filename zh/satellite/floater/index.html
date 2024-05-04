@@ -3,110 +3,988 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
         <meta name="viewport" content="width=device-width">
-        <meta name="description" content="Current Storms and Analysis Tools">
+        <meta name="description" content="当前热带气旋卫星云图">
         <meta name="author" content="Shuitai">
-        <meta name="keywords" content="Dapiya,大皮鸭,Typhoon,台风">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge,Chrome=1">
-        <meta http-equiv="X-UA-Compatible" content="IE=9">
-        <meta http-equiv="Expires" content="0">
-        <meta http-equiv="Pragma" content="no-cache">
-        <meta http-equiv="Cache-control" content="no-cache">
-        <meta http-equiv="Cache" content="no-cache">
-        <title>Dapiya - 当前活跃热带气旋信息及分析工具</title>
-        <link rel="stylesheet" href="//libs.dapiya.top/css/bootstrap.min.css">
+        <meta name="keywords" content="Dapiya,大皮鸭,Typhoon,satellite,台风,云图,热带气旋实时云图">
+        <meta http-equiv="X-UA-Compatible" content="IE=10,IE=11,IE=edge,Chrome=1">
+        <title>Dapiya - 当前热带气旋卫星云图</title>
         <link rel="shortcut icon" type="image" href="//libs.dapiya.top/img/favicon.ico">
-        <script src="//libs.dapiya.top/js/jquery.js" type="text/javascript"></script>
-        <script src="//libs.dapiya.top/js/bootstrap.js" type="text/javascript"></script>
-        <script src="//libs.dapiya.top/js/imageSelector.js" type="text/javascript"></script>
+        <link rel="stylesheet" href="//libs.dapiya.top/css/bootstrap.min.css">
+        <script src="//libs.dapiya.top/js/jquery.min.js" type="text/javascript"></script>
+        <script src="//libs.dapiya.top/js/bootstrap.min.js" type="text/javascript"></script>
+        <script src="//libs.dapiya.top/js/lodash.min.js" type="text/javascript"></script>
+        <script src="//libs.dapiya.top/js/gifshot.min.js" type="text/javascript"></script>
         <script src="//libs.dapiya.top/js/auto-notice.js" type="text/javascript"></script>
         <script src="//libs.dapiya.top/js/cookie.js" type="text/javascript"></script>
         <script type="text/javascript">
-            /* aceUpdate.js */
+            function name2ID(name) {
+                // 92W -> WP92
+                var _stormID = name.substr(0,3);
+                var _stormAREA = _stormID.substr(2,1);
+                var _stormNUM = _stormID.substr(0,2);
+                var stormID = '';
+                if (_stormAREA == 'W') {
+                    stormID = 'WP' + _stormNUM;
+                    return stormID;
+                } else if (_stormAREA == 'E') {
+                    stormID = 'EP' + _stormNUM;
+                    return stormID;
+                } else if (_stormAREA == 'C') {
+                    stormID = 'CP' + _stormNUM;
+                    return stormID;
+                } else if (_stormAREA == 'L') {
+                    stormID = 'AL' + _stormNUM;
+                    return stormID;
+                } else if (_stormAREA == 'Q') {
+                    stormID = 'LS' + _stormNUM;
+                    return stormID;
+                } else if (_stormAREA == 'A' || _stormAREA == 'B') {
+                    stormID = 'IO' + _stormNUM;
+                    return stormID;
+                } else if (_stormAREA == 'S' || _stormAREA == 'P') {
+                    stormID = 'SH' + _stormNUM;
+                    return stormID;
+                } else {
+                    stormID = 'NAXX';
+                    return stormID;
+                }
+            }
+        </script>
+        <script type="text/javascript">
             // TODO
-            var storms = [], page = false, finalLoc = 0;
-            $(document).ready(function() {
+            var sID = ''; // record storm ID
+            var sTID = ''; // record storm image type ID
+            var GIFLink = ''; // record pre-made GIF link & GIF blob-link
+            $(document).ready(function(){
                 autoNotice('//api.dapiya.top', 'w', "#notice");
-                $("#ace-data").val("");
                 $.ajax({
                     type: 'GET',
-                    url: '//api.dapiya.top/typhoon/ace',
-                    success: function(data){
-                        if (!data) {
-                            $("#list").html('<div class="ace-container"><div style="text-align:center"><span>当前无热带气旋或系统信息</span></div></div>');
+                    url: '//api.dapiya.top/typhoon/meso/all',
+                    data: {},
+                    success: function(data) {
+                        if (data == 'NO ATCF DATA') {
+                            $("#storm").html("<div style=\"text-align: center;color: rgba(0,0,0,0.4);font-size: 13px;font-family: \'consolas\', \'sans-serif\';\">SELECT STORM NAME</div><select class=\"form-control input-sm\" id=\"s_storm\"></select>");
+                            $("#image").html("<div class=\"ace-container\">当前无活跃的热带气旋或系统</div>");
+                            return false;
                         }
-                        storms = data.split('EOF');
-                        if (storms.length > 2) {
-                            page = true;
-                            finalLoc = 1;
-                        }
-                        for (var i = 0; i < storms.length; i++) {
-                            if (i <= 1) $("#list").html($("#list").html() + storms[i]);
-                        }
-                        if (page) $("#nextPage").css('display', 'block');
-                    },
-                    dataType: "html",
-                    error: function(){
-                        $("#list").html('<div class="ace-container"><div style="text-align:center"><span>当前无热带气旋或系统信息</span></div></div>');
-                    },
-                    complete: function(){
-                        $.ajax({
-                            type: 'GET',
-                            url: '//data.dapiya.top/MSG_HEAD.txt',
-                            success: function(data){
-                                head = data.split(',');
-                                MSG_HEAD = {'A': head[0].substr(2,4), 'B': head[1].substr(2,4)}
-                            },
-                            dataType: "text",
-                            error: function(){
-                                $("#list").html('<div class="ace-container"><div style="text-align:center"><span>当前无热带气旋或系统信息</span></div></div>');
-                            },
-                            complete: function(){
-                                for (var i = 0; i < image.length; i++) {
-                                    iName = imageSelector[image[i]];
-                                    $("#image_selector").html($("#image_selector").html() + "<option value=\"" + image[i] + "\">" + iName + "</option>");
+                        var html = "<div style=\"text-align: center;color: rgba(0,0,0,0.4);font-size: 13px;font-family: \'consolas\', \'sans-serif\';\">热带气旋列表</div><select class=\"form-control input-sm\" id=\"s_storm\" onchange=\"cS(s_storm.value);\"></select>";
+                        var id, list, meso, tv;
+                        var t0 = -1;
+                        var imgTitle = ['Mesoscale', 'Floater'];
+                        list = data.split('\n');
+                        $("#storm").html(html);
+                        for (var i = 0; i < list.length; i++) {
+                            if (list[i] != '') {
+                                if (imgTitle[i] == 'Mesoscale') {
+                                    id = 'meso';
+                                } else {
+                                    id = 'floater';
                                 }
-                                changeType(image[0]);
+                                $("#s_storm").html($("#s_storm").html() + "<optgroup style=\"font-size: 16px; font-weight: 650; font-style: italic;\" label=\"" + imgTitle[i] + "\">");
+                                meso = list[i].split('|');
+                                if (t0 != 0) {
+                                    tv = meso[0]
+                                    t0 = 0
+                                }
+                                for (var j = 0; j < meso.length; j++) {
+                                    $("#s_storm").html($("#s_storm").html() + "<option id=\"" + id + "\" value=\"" + meso[j] + "\">" + meso[j] + "</option>");
+                                }
+                                $("#s_storm").html($("#s_storm").html() + "</optgroup>");
                             }
-                        });
-                    }
+                        }
+                        cS(tv);
+                    },
+                    dataType: "text",
+                    error: function() {
+                        $("#storm").html("<div style=\"text-align: center;color: rgba(0,0,0,0.4);font-size: 13px;font-family: \'consolas\', \'sans-serif\';\">热带气旋列表</div><select class=\"form-control input-sm\" id=\"s_storm\"></select>");
+                        $("#image").html("<div class=\"ace-container\">当前无活跃的热带气旋或系统</div>");
+                    },
                 });
             });
-            function changePage() {
-                var loc_temp = finalLoc + 2;
-                if (finalLoc == storms.length - 1) {
-                    finalLoc = 1;
-                } else if (loc_temp > storms.length - 1) {
-                    finalLoc = storms.length - 1;
+            // storm list changed function
+            function cS(sT) {
+                $("#satImageType").html('\
+                    <div class="row">\
+                        <div style="text-align: center;color: rgba(0,0,0,0.4);font-size: 13px;font-family: \'consolas\', \'sans-serif\';">卫星云图类型</div>\
+                        <div class="hidden-md hidden-lg">\
+                            <div class="col-lg-12 col-md-12 col-sm-3 col-xs-3"><div class="row"><button type="button" class="imagetype" id="VIS_TYPE" onclick="javascript:cTM(\'VIS\', \'' + sT + '\')">可见光</button></div></div>\
+                            <div class="col-lg-12 col-md-12 col-sm-3 col-xs-3"><div class="row"><button type="button" class="imagetype" id="IR_TYPE" onclick="javascript:cTM(\'IR\', \'' + sT + '\')">红外</button></div></div>\
+                            <div class="col-lg-12 col-md-12 col-sm-3 col-xs-3"><div class="row"><button type="button" class="imagetype" id="WV_TYPE" onclick="javascript:cTM(\'WV\', \'' + sT + '\')">水蒸汽</button></div></div>\
+                            <div class="col-lg-12 col-md-12 col-sm-3 col-xs-3"><div class="row"><button type="button" class="imagetype" id="RGB_TYPE" onclick="javascript:cTM(\'RGB\', \'' + sT + '\')">彩色</button></div></div>\
+                        </div>\
+                        <div class="hidden-xs hidden-sm">\
+                            <div class="col-lg-12 col-md-12 col-sm-3 col-xs-3"><div class="row"><button type="button" class="imagetype" id="VIS" onclick="javascript:cTW(\'VIS\', \'' + sT + '\')">VIS</button></div></div>\
+                            <div class="col-lg-12 col-md-12 col-sm-3 col-xs-3"><div class="row"><button type="button" class="imagetype" id="EVIS" onclick="javascript:cTW(\'EVIS\', \'' + sT + '\')">EVIS</button></div></div>\
+                            <div class="col-lg-12 col-md-12 col-sm-3 col-xs-3"><div class="row"><button type="button" class="imagetype" id="RGB" onclick="javascript:cTW(\'RGB\', \'' + sT + '\')">RGB</button></div></div>\
+                            <div class="col-lg-12 col-md-12 col-sm-3 col-xs-3"><div class="row"><button type="button" class="imagetype" id="TRUECOLOR" onclick="javascript:cTW(\'TRUECOLOR\', \'' + sT + '\')">TRUE COLOR</button></div></div>\
+                            <div class="col-lg-12 col-md-12 col-sm-3 col-xs-3"><div class="row"><button type="button" class="imagetype" id="SANDWICH" onclick="javascript:cTW(\'SANDWICH\', \'' + sT + '\')">SANDWICH</button></div></div>\
+                            <div class="col-lg-12 col-md-12 col-sm-3 col-xs-3"><div class="row"><button type="button" class="imagetype" id="AIRMASS" onclick="javascript:cTW(\'AIRMASS\', \'' + sT + '\')">AIRMASS</button></div></div>\
+                            <div class="col-lg-12 col-md-12 col-sm-3 col-xs-3"><div class="row"><button type="button" class="imagetype" id="BW" onclick="javascript:cTW(\'BW\', \'' + sT + '\')">IR-BW</button></div></div>\
+                            <div class="col-lg-12 col-md-12 col-sm-3 col-xs-3"><div class="row"><button type="button" class="imagetype" id="BDL" onclick="javascript:cTW(\'BDL\', \'' + sT + '\')">IR-BDL</button></div></div>\
+                            <div class="col-lg-12 col-md-12 col-sm-3 col-xs-3"><div class="row"><button type="button" class="imagetype" id="BD" onclick="javascript:cTW(\'BD\', \'' + sT + '\')">IR-BD</button></div></div>\
+                            <div class="col-lg-12 col-md-12 col-sm-3 col-xs-3"><div class="row"><button type="button" class="imagetype" id="CC" onclick="javascript:cTW(\'CC\', \'' + sT + '\')">IR-CC</button></div></div>\
+                            <div class="col-lg-12 col-md-12 col-sm-3 col-xs-3"><div class="row"><button type="button" class="imagetype" id="RAMMB" onclick="javascript:cTW(\'RAMMB\', \'' + sT + '\')">IR-RAMMB</button></div></div>\
+                            <div class="col-lg-12 col-md-12 col-sm-3 col-xs-3"><div class="row"><button type="button" class="imagetype" id="OTT" onclick="javascript:cTW(\'OTT\', \'' + sT + '\')">IR-OTT</button></div></div>\
+                            <div class="col-lg-12 col-md-12 col-sm-3 col-xs-3"><div class="row"><button type="button" class="imagetype" id="RBTOP" onclick="javascript:cTW(\'RBTOP\', \'' + sT + '\')">IR-RBTOP</button></div></div>\
+                            <div class="col-lg-12 col-md-12 col-sm-3 col-xs-3"><div class="row"><button type="button" class="imagetype" id="CA" onclick="javascript:cTW(\'CA\', \'' + sT + '\')">IR-CA</button></div></div>\
+                            <div class="col-lg-12 col-md-12 col-sm-3 col-xs-3"><div class="row"><button type="button" class="imagetype" id="AWV" onclick="javascript:cTW(\'AWV\', \'' + sT + '\')">AVG-WV</button></div></div>\
+                            <div class="col-lg-12 col-md-12 col-sm-3 col-xs-3"><div class="row"><button type="button" class="imagetype" id="WV" onclick="javascript:cTW(\'WV\', \'' + sT + '\')">WV-SSD</button></div></div>\
+                            <div class="col-lg-12 col-md-12 col-sm-3 col-xs-3"><div class="row"><button type="button" class="imagetype" id="DIAS" onclick="javascript:cTW(\'DIAS\', \'' + sT + '\')">IR-DIAS</button></div></div>\
+                        </div>\
+                    </div>\
+                    <hr class="nohr">\
+                    <div class="row">\
+                        <div style="text-align: center;color: rgba(0,0,0,0.4);font-size: 13px;font-family: \'consolas\', \'sans-serif\';">数值预报类型</div>\
+                        <div class="col-lg-12 col-md-12 col-sm-3 col-xs-3"><div class="row"><button type="button" class="imagetype" id="models" onclick="javascript:cTW(\'models\', \'' + sT + '\')">GUID</button></div></div>\
+                        <div class="col-lg-12 col-md-12 col-sm-3 col-xs-3"><div class="row"><button type="button" class="imagetype" id="gefs" onclick="javascript:cTW(\'gefs\', \'' + sT + '\')">GEFS</button></div></div>\
+                        <div class="col-lg-12 col-md-12 col-sm-3 col-xs-3"><div class="row"><button type="button" class="imagetype" id="geps" onclick="javascript:cTW(\'geps\', \'' + sT + '\')">GEPS</button></div></div>\
+                        <div class="col-lg-12 col-md-12 col-sm-3 col-xs-3"><div class="row"><button type="button" class="imagetype" id="nvgs" onclick="javascript:cTW(\'nvgs\', \'' + sT + '\')">NAVGEM</button></div></div>\
+                    </div>\
+                ');
+                cTW("VIS", sT, "VIS");
+            }
+            function cTM(sType, sT) {
+                if (sType == 'VIS') {
+                    $("#imageType").html('\
+                        <div class="col-12"><div class="row"><button type="button" class="imagetype" id="VIS" onclick="javascript:cTW(\'VIS\', \'' + sT + '\', \'' + sType + '\')">VIS</button></div></div>\
+                        <div class="col-12"><div class="row"><button type="button" class="imagetype" id="EVIS" onclick="javascript:cTW(\'EVIS\', \'' + sT + '\', \'' + sType + '\')">EVIS</button></div></div>\
+                    ');
+                } else if (sType == 'IR') {
+                    $("#imageType").html('\
+                        <div class="col-12"><div class="row"><button type="button" class="imagetype" id="BW" onclick="javascript:cTW(\'BW\', \'' + sT + '\', \'' + sType + '\')">IR-BW</button></div></div>\
+                        <div class="col-12"><div class="row"><button type="button" class="imagetype" id="BDL" onclick="javascript:cTW(\'BDL\', \'' + sT + '\', \'' + sType + '\')">IR-BDL</button></div></div>\
+                        <div class="col-12"><div class="row"><button type="button" class="imagetype" id="BD" onclick="javascript:cTW(\'BD\', \'' + sT + '\', \'' + sType + '\')">IR-BD</button></div></div>\
+                        <div class="col-12"><div class="row"><button type="button" class="imagetype" id="CC" onclick="javascript:cTW(\'CC\', \'' + sT + '\', \'' + sType + '\')">IR-CC</button></div></div>\
+                        <div class="col-12"><div class="row"><button type="button" class="imagetype" id="RAMMB" onclick="javascript:cTW(\'RAMMB\', \'' + sT + '\', \'' + sType + '\')">IR-RAMMB</button></div></div>\
+                        <div class="col-12"><div class="row"><button type="button" class="imagetype" id="OTT" onclick="javascript:cTW(\'OTT\', \'' + sT + '\', \'' + sType + '\')">IR-OTT</button></div></div>\
+                        <div class="col-12"><div class="row"><button type="button" class="imagetype" id="RBTOP" onclick="javascript:cTW(\'RBTOP\', \'' + sT + '\', \'' + sType + '\')">IR-RBTOP</button></div></div>\
+                        <div class="col-12"><div class="row"><button type="button" class="imagetype" id="CA" onclick="javascript:cTW(\'CA\', \'' + sT + '\', \'' + sType + '\')">IR-CA</button></div></div>\
+                        <div class="col-12"><div class="row"><button type="button" class="imagetype" id="DIAS" onclick="javascript:cTW(\'DIAS\', \'' + sT + '\', \'' + sType + '\')">IR-DIAS</button></div></div>\
+                    ');
+                } else if (sType == 'WV') {
+                    $("#imageType").html('\
+                        <div class="col-12"><div class="row"><button type="button" class="imagetype" id="AWV" onclick="javascript:cTW(\'AWV\', \'' + sT + '\', \'' + sType + '\')">AVG-WV</button></div></div>\
+                        <div class="col-12"><div class="row"><button type="button" class="imagetype" id="WV" onclick="javascript:cTW(\'WV\', \'' + sT + '\', \'' + sType + '\')">WV-SSD</button></div></div>\
+                    ');
+                } else if (sType == 'RGB') {
+                    $("#imageType").html('\
+                        <div class="col-12"><div class="row"><button type="button" class="imagetype" id="RGB" onclick="javascript:cTW(\'RGB\', \'' + sT + '\', \'' + sType + '\')">RGB</button></div></div>\
+                        <div class="col-12"><div class="row"><button type="button" class="imagetype" id="TRUECOLOR" onclick="javascript:cTW(\'TRUECOLOR\', \'' + sT + '\', \'' + sType + '\')">TRUE COLOR</button></div></div>\
+                        <div class="col-12"><div class="row"><button type="button" class="imagetype" id="SANDWICH" onclick="javascript:cTW(\'SANDWICH\', \'' + sT + '\', \'' + sType + '\')">SANDWICH</button></div></div>\
+                        <div class="col-12"><div class="row"><button type="button" class="imagetype" id="AIRMASS" onclick="javascript:cTW(\'AIRMASS\', \'' + sT + '\', \'' + sType + '\')">AIRMASS</button></div></div>\
+                    ');
                 } else {
-                    finalLoc = loc_temp;
+                    $("#imageType").html("<div class=\"ace-container\">无匹配的卫星云图类型</div>");
                 }
-                $("#list").html('');
-                for (var i = finalLoc - 1; i <= finalLoc; i++) {
-                    $("#list").html($("#list").html() + storms[i]);
+                $("#SatelliteImageryTypeWindow").modal('show');
+            }
+            // image type changed function
+            function cTW(sT, sT1, sType) {
+                $("#SatelliteImageryTypeWindow").modal('hide');
+                if (timer) clearInterval(timer); timer = null;
+                if (timeouter) clearTimeout(timeouter); timeouter = null;
+                if (pgsBarTimer) clearInterval(pgsBarTimer); pgsBarTimer = null;
+                if (pgsBarTimeouter) clearTimeout(pgsBarTimeouter); pgsBarTimeouter = null;
+                $('#progress').css('width', '0%');
+                $('#progress').html('0%');
+                $('#waitingTime').html('');
+                $('#progressBarBlock').css('display', 'none');
+                if ($("#loopReset").html() == 'stop') {
+                    _slider('reset-toggle');
+                }
+                var stormID = sT1.substr(0,3);
+                if (sT == 'models' || sT == 'gefs' || sT == 'geps' || sT == 'nvgs') {
+                    stormID = name2ID(stormID);
+                }
+                sID = stormID;
+                sTID = sT;
+                if ($("#image").html() != "<div class=\"ace-container\">当前无活跃的热带气旋或系统</div>") {
+                    $("button.imagetype").removeClass("active");
+                    $("#" + sType + "_TYPE").addClass("active");
+                    $("#" + sT).addClass("active");
+                    $("#loop").html("<button type=\"button\" class=\"imagetype transparent\" onclick=\"GIFOption();\"><ins>制作GIF</ins></button>");
+                    if (sT == 'models' || sT == 'gefs' || sT == 'geps' || sT == 'nvgs') {
+                        $("#image").html("<img class=\"img-responsive center-block\" src=\"//data.dapiya.top/history/" + sT1.substr(0,3) + '/' + stormID + "_" + sT + ".png\" alt=\"No data\">");
+                        $('#imageLoopButton button').attr("disabled", "disabled");
+                    } else {
+                        $("#image").html("<img class=\"img-responsive center-block\" src=\"//data.dapiya.top/history/" + stormID + '/' + sT + '/' + stormID + "_" + sT + ".png\" alt=\"No data\">");
+                        $('#imageLoopButton button').removeAttr("disabled");
+                        GIFLink = '//data.dapiya.top/history/' + stormID + '/' + stormID + "_" + sT + '.gif';
+                    }
                 }
             }
-            /* fdUpdate.js */
-            // TODO
-            function changeType(value) {
-                // <select class="form-control input-sm" id="image_selector" onchange="changeType(image_selector.value);"></select>
-                var name = '';
-                $("#type_selector").html('');
-                for (var i = 0; i < typeSelector['name'][value].length; i++) {
-                    name = typeSelector['name'][value][i];
-                    $("#type_selector").html($("#type_selector").html() + "<option value=\"" + name + "\">" + name.toUpperCase() + "</option>");
-                }
-                changeImage(typeSelector['html'][value][typeSelector['name'][value][0]])
+        </script>
+        <script type="text/javascript">
+            /* Slider.js for Dapiya Satellite Floater Page */
+            // loading image list
+            var time_start;
+            var status = 0; // 0 - done, 1 - getting, -1 - error
+            var hasFirstLoad = {};
+            var pic_list = [];
+            var imgLoaded_arr = [];
+            var imgSrcLoaded_arr = [];
+            var timeDelta = [];
+            var waitTimeTimeout = 0;
+            var pastLength = 0;
+            var pastWaitTimeTimeout = [];
+            var timer;
+            var timeouter;
+            var pgsBarTimer;
+            var pgsBarTimeouter;
+            function loadImageList(stormID, sT) {
+                status = 1;
+                hasFirstLoad = {}; // to fix a unknown bug
+                hasFirstLoad[stormID + "_" + sT] = true;
+                $("#loopReset-button").html('Loading...');
+                $.ajax({
+                    type: 'GET',
+                    url: '//api.dapiya.top/typhoon/' + stormID + '/piclist/' + sT + '/' + location.protocol + '/' + location.host + '/42',
+                    data: {},
+                    async: false,
+                    success: function(data) {
+                        pic_list = data.split(',');
+                        document.getElementById("slide").max = pic_list.length - 1;
+                        document.getElementById("slide").value = pic_list.length - 1;
+                        status = 0;
+                        time_start = new Date();
+                        timeDelta = [];
+                        waitTimeTimeout = 0;
+                        pastLength = 0;
+                        pastWaitTimeTimeout = [];
+                        if (pic_list.length != 0) preloadImage(pic_list);
+                    },
+                    dataType: "text",
+                    error: function() {
+                        document.getElementById("slide").value = 0;
+                        status = -1;
+                        hasFirstLoad[stormID + "_" + sT] = false;
+                    },
+                    complete: function() {
+                        $("#loopReset-button").html('<span class="glyphicon glyphicon-play" aria-hidden="true"></span> 图片轮播');
+                    }
+                });
             }
-            function changeImage(value) {
-                // <select class="form-control input-sm" id="type_selector" onchange="changeImage(typeSelector['html'][image_selector.value][type_selector.value]);"></select>
-                if (type_selector.value == 'msg-io') {
-                    value = value.replace('MSG_IO', MSG_HEAD['A']);
+            // preload images
+            function preloadImage(src_arr) {
+                var j = 0;
+                var img, imgObjectList = [];
+                var loadWorkerNum = src_arr.length < 6 ? src_arr.length : 6;
+                for (var i = 0; i < loadWorkerNum; i++) {
+                    img = new Image();
+                    img.className = 'img-responsive center-block';
+                    img.alt = 'No data';
+                    if (img.addEventListener) {
+                        img.addEventListener("load", loadHandler, false);
+                        img.addEventListener("error", loadErrorHandler, false);
+                    } else if (img.attachEvent) {
+                        img.attachEvent("onload", loadHandler);
+                        img.attachEvent("onerror", loadErrorHandler);
+                    } else {
+                        img["onload"] = loadHandler;
+                        img["onerror"] = loadErrorHandler;
+                    }
+                    img.src = src_arr[i];
                 }
-                if (type_selector.value == 'msg-eu') {
-                    value = value.replace('MSG_EU', MSG_HEAD['B']);
+                function loadHandler() {
+                    if (imgSrcLoaded_arr.indexOf(this.src) == -1) {
+                        var _time = new Date();
+                        imgLoaded_arr.push(this.cloneNode());
+                        imgSrcLoaded_arr.push(this.src);
+                        timeDelta.push(parseInt(_time - time_start) / 1000);
+                    }
+                    j++;
+                    // calculate parallel index
+                    var nodeIndex = j % loadWorkerNum;
+                    var t = lodash.floor(j / loadWorkerNum);
+                    if (t == 0) t++;
+                    var finalIndex = loadWorkerNum * t + nodeIndex - 1;
+                    if (finalIndex >= src_arr.length) return false;
+                    this.src = src_arr[finalIndex];
+                    return false;
                 }
-                $('#image').html(value);
-                return true
+                function loadErrorHandler() {
+                    if (this.removeEventListener) {
+                        this.removeEventListener("load", loadHandler);
+                    } else {
+                        this.detachEvent("onload", loadHandler);
+                    }
+                    time_start = null;
+                    hasFirstLoad = {};
+                    pic_list = [];
+                    timeDelta = [];
+                    waitTimeTimeout = 0;
+                    pastLength = 0;
+                    pastWaitTimeTimeout = [];
+                    // img = null;
+                    imgLoaded_arr = [];
+                    imgSrcLoaded_arr = [];
+                    if (pgsBarTimer) clearInterval(pgsBarTimer); pgsBarTimer = null;
+                    if (pgsBarTimeouter) clearTimeout(pgsBarTimeouter); pgsBarTimeouter = null;
+                    $('#progress').css('width', '0%');
+                    $('#progress').html('0%');
+                    $('#waitingTime').html('');
+                    $('#progressBarBlock').css('display', 'none');
+                    if (pic_list.length == 0 && status == 0) {
+                        $('#notLoadedNoticeENG').html('There is no imagery for sliding, please reload this page then retry');
+                        $('#notLoadedNoticeCN').html('暂无可滚动播放的图片，请您刷新页面重试');
+                    } else {
+                        $('#notLoadedNoticeENG').html('Encountered network error, please reload this page then retry');
+                        $('#notLoadedNoticeCN').html('网络错误，请您刷新页面重试');
+                    }
+                    return false;
+                }
+            }
+            // slider changed function
+            function _slider(id){
+                switch (id) {
+                    case 'left':
+                        if (timer) clearInterval(timer); timer = null;
+                        if (timeouter) clearTimeout(timeouter); timeouter = null;
+                        if (Number(document.getElementById("slide").value) - 1 < 0) {
+                            document.getElementById("slide").value = pic_list.length - 1;
+                        } else {
+                            document.getElementById("slide").value--;
+                        }
+                        $("#image").html("<img class=\"img-responsive center-block\" src=\"" + pic_list[document.getElementById("slide").value] + "\" alt=\"No data\">");
+                        $('#toggle').html('<span class="glyphicon glyphicon-play" aria-hidden="true"></span><p style="display: none;">start</p>');
+                        $("#loopReset").html('stop');
+                        break;
+                    case 'right':
+                        if (timer) clearInterval(timer); timer = null;
+                        if (timeouter) clearTimeout(timeouter); timeouter = null;
+                        if (Number(document.getElementById("slide").value) + 1 > pic_list.length - 1) {
+                            document.getElementById("slide").value = 0;
+                         } else {
+                             document.getElementById("slide").value++;
+                         }
+                        $("#image").html("<img class=\"img-responsive center-block\" src=\"" + pic_list[document.getElementById("slide").value] + "\" alt=\"No data\">");
+                        $('#toggle').html('<span class="glyphicon glyphicon-play" aria-hidden="true"></span><p style="display: none;">start</p>');
+                        $("#loopReset").html('stop');
+                        break;
+                    case 'start':
+                        function changeImage() {
+                            if (document.getElementById("slide").value >= pic_list.length - 1) {
+                                changeTimeout();
+                            }
+                            document.getElementById("slide").value = Number(document.getElementById("slide").value) + 1;
+                            $("#image").html("<img class=\"img-responsive center-block\" src=\"" + pic_list[document.getElementById("slide").value] + "\" alt=\"No data\">");
+                        }
+                        function changeTimeout() {
+                            clearInterval(timer);
+                            timer = null;
+                            timeouter = setTimeout(function(){
+                                document.getElementById("slide").value = 0;
+                                $("#image").html("<img class=\"img-responsive center-block\" src=\"" + pic_list[document.getElementById("slide").value] + "\" alt=\"No data\">");
+                                timer = setInterval(changeImage, 120);
+                            }, 1000);
+                        }
+                        if (timer) clearInterval(timer); timer = null;
+                        if (timeouter) clearTimeout(timeouter); timeouter = null;
+                        $('#toggle').html('<span class="glyphicon glyphicon-pause" aria-hidden="true"></span><p style="display: none;">stop</p>');
+                        $("#loopReset").html('stop');
+                        if (document.getElementById("slide").value >= pic_list.length - 1) {
+                            document.getElementById("slide").value = 0;
+                        }
+                        timer = setInterval(changeImage, 120);
+                        break;
+                    case 'stop':
+                        if (timer) clearInterval(timer); timer = null;
+                        if (timeouter) clearTimeout(timeouter); timeouter = null;
+                        $('#toggle').html('<span class="glyphicon glyphicon-play" aria-hidden="true"></span><p style="display: none;">start</p>');
+                        $("#loopReset").html('stop');
+                        break;
+                    case 'changeImage':
+                        if (timer) clearInterval(timer); timer = null;
+                        if (timeouter) clearTimeout(timeouter); timeouter = null;
+                        $('#toggle').html('<span class="glyphicon glyphicon-play" aria-hidden="true"></span><p style="display: none;">start</p>');
+                        $("#loopReset").html('stop');
+                        $("#image").html("<img class=\"img-responsive center-block\" src=\"" + pic_list[document.getElementById("slide").value] + "\" alt=\"No data\">");
+                        break;
+                    case 'reset-toggle':
+                        function searchImageList() {
+                            var result_arr = [];
+                            for (var i = 0; i < pic_list.length; i++) {
+                                for (var j = 0; j < imgSrcLoaded_arr.length; j++) {
+                                    if (pic_list[i] == imgSrcLoaded_arr[j]) {
+                                        result_arr.push(imgSrcLoaded_arr[j]);
+                                    }
+                                }
+                            }
+                            return result_arr;
+                        }
+                        function getWaitingTime(lengthDelta) {
+                            var td_avg = 0;
+                            var wt_avg = 0;
+                            for (var i = 0; i < pastWaitTimeTimeout.length; i++) {
+                                wt_avg += pastWaitTimeTimeout[i];
+                            }
+                            wt_avg /= pastWaitTimeTimeout.length;
+                            if (isNaN(wt_avg)) wt_avg = 0;
+                            for (var i = 0; i < timeDelta.length; i++) {
+                                td_avg += timeDelta[i];
+                                if (i != 0) td_avg -= timeDelta[i - 1];
+                            }
+                            td_avg /= timeDelta.length;
+                            var waitTime = (td_avg + wt_avg) * lengthDelta;
+                            if (isNaN(waitTime)) waitTime = 0;
+                            return waitTime
+                        }
+                        function timeTransform(time_second, fixedDegree) {
+                            var time_result;
+                            var time_unit = 'seconds';
+                            if (time_second >= 60 && time_second < 3600) {
+                                time_result = time_second / 60;
+                                time_unit = 'minutes';
+                            } else if (time_second >= 3600) {
+                                time_result = time_second / 3600;
+                                time_unit = 'hours';
+                            } else {
+                                time_result = time_second;
+                            }
+                            return time_result.toFixed(fixedDegree).toString() + ' ' + time_unit;
+                        }
+                        function changeProgressBar() {
+                            var imgLoaded = searchImageList();
+                            var stage = (imgLoaded.length / pic_list.length * 100).toFixed(0);
+                            if (imgLoaded.length != pastLength && imgLoaded.length != 0 && waitTimeTimeout > 1) {
+                                pastWaitTimeTimeout.push(waitTimeTimeout);
+                                waitTimeTimeout = 0;
+                            }
+                            var lengthDelta = pic_list.length - imgLoaded.length;
+                            var waitTime = getWaitingTime(lengthDelta, 0);
+                            if (imgLoaded.length == pastLength) {
+                                waitTimeTimeout += 500 / 1000;
+                                if (pastWaitTimeTimeout.length == 0) waitTime += waitTimeTimeout * lengthDelta;
+                            }
+                            pastLength = imgLoaded.length;
+                            $('#progress').css('width', stage.toString() + '%');
+                            $('#progress').html(stage.toString() + '%');
+                            $('#waitingTime').html('(Time left: ' + timeTransform(waitTime, 1) + ')');
+                            if (imgLoaded.length == pic_list.length) {
+                                changeProgressBarStage();
+                            }
+                        }
+                        function changeProgressBarStage() {
+                            clearInterval(pgsBarTimer);
+                            pgsBarTimer = null;
+                            pgsBarTimeouter = setTimeout(function(){
+                                $('#notLoadedWindow').modal('hide');
+                                document.getElementById("slide").value = 0;
+                                $("#loopReset-button").html('<span class="glyphicon glyphicon-stop" aria-hidden="true"></span> 最新图片');
+                                $('#imageLoop').toggle();
+                                _slider($("#loopReset").html());
+                                $("#loopReset").html('stop');
+                                hasFirstLoad[sID + "_" + sTID] = false;
+                            }, 1000);
+                        }
+                        if (timer) clearInterval(timer); timer = null;
+                        if (timeouter) clearTimeout(timeouter); timeouter = null;
+                        if ($("#loopReset").html() == 'start') {
+                            $('#progressBarBlock').css('display', 'none');
+                            if (!hasFirstLoad[sID + "_" + sTID]) {
+                                $('#progress').css('width', '0%');
+                                $('#progress').html('0%');
+                                $('#waitingTime').html('');
+                                loadImageList(sID, sTID);
+                            }
+                            var imgLoaded = searchImageList();
+                            var stage = (imgLoaded.length / pic_list.length * 100).toFixed(0);
+                            if (pic_list.length == 0 || status != 0 || imgLoaded.length != pic_list.length) {
+                                $('#notLoadedWindow').modal('show');
+                                if (pic_list.length == 0) {
+                                    $('#notLoadedNoticeENG').html('There is no imagery for sliding, please reload this page then retry');
+                                    $('#notLoadedNoticeCN').html('暂无可滚动播放的图片，请您刷新页面重试');
+                                }
+                                if (status != 0) {
+                                    switch (status) {
+                                        case -1:
+                                            $('#notLoadedNoticeENG').html('Encountered network error, please reload this page then retry');
+                                            $('#notLoadedNoticeCN').html('网络错误，请您刷新页面重试');
+                                            break;
+                                        case 1:
+                                            $('#notLoadedNoticeENG').html('Data has not been loaded, please wait a minute');
+                                            $('#notLoadedNoticeCN').html('数据未加载完成，请您稍等片刻');
+                                            break;
+                                        default: break;
+                                    }
+                                }
+                                if (imgLoaded.length != pic_list.length) {
+                                    $('#notLoadedNoticeENG').html('The imagery has not been loaded, please wait a minute');
+                                    $('#notLoadedNoticeCN').html('图片未加载完成，请您稍等片刻');
+                                    $('#progressBarBlock').css('display', 'block');
+                                    if (!pgsBarTimer) {
+                                        pgsBarTimer = setInterval(changeProgressBar, 500);
+                                        $('#notLoadedWindow').on('hidden.bs.modal', function (e) {
+                                            if (pgsBarTimer) clearInterval(pgsBarTimer); pgsBarTimer = null;
+                                            if (pgsBarTimeouter) clearTimeout(pgsBarTimeouter); pgsBarTimeouter = null;
+                                            $('#progress').css('width', '0%');
+                                            $('#progress').html('0%');
+                                            $('#waitingTime').html('');
+                                            $('#progressBarBlock').css('display', 'none');
+                                        });
+                                    }
+                                }
+                                break;
+                            } else {
+                                document.getElementById("slide").value = 0;
+                                $("#loopReset-button").html('<span class="glyphicon glyphicon-stop" aria-hidden="true"></span> 最新图片');
+                                $('#imageLoop').toggle();
+                                _slider($("#loopReset").html());
+                                $("#loopReset").html('stop');
+                                hasFirstLoad[sID + "_" + sTID] = false;
+                            }
+                        } else {
+                            document.getElementById("slide").value = pic_list.length - 1;
+                            $("#loopReset-button").html('<span class="glyphicon glyphicon-play" aria-hidden="true"></span> 图片轮播');
+                            $('#imageLoop').toggle();
+                            _slider($("#loopReset").html());
+                            $("#loopReset").html('start');
+                        }
+                        $("#image").html("<img class=\"img-responsive center-block\" src=\"" + pic_list[document.getElementById("slide").value] + "\" alt=\"No data\">");
+                        break;
+                    default: return false;
+                }
+            }
+        </script>
+        <script type="text/javascript">
+            /* Utils.js for Dapiya Satellite Floater Page */
+            var lodash = _;
+            var blob2URL = window.URL || window.webkitURL;
+            var Base64toBlob = function(base64){
+                var base64Arr = base64.split(',');
+                var imgtype = '';
+                var base64String = '';
+                if (base64Arr.length > 1) {
+                    base64String = base64Arr[1];
+                    imgtype = base64Arr[0].substring(base64Arr[0].indexOf(':')+1, base64Arr[0].indexOf(';'));
+                }
+                var bytes = window.atob(base64String);
+                var bytesCode = new ArrayBuffer(bytes.length);
+                var byteArray = new Uint8Array(bytesCode);
+                for (var i = 0; i < bytes.length; i++) {
+                    byteArray[i] = bytes.charCodeAt(i);
+                }
+                return new Blob([bytesCode], {type: imgtype});
+            };
+            /* gif.js for Dapiya Satellite Floater Page */
+            var stopPreloadImage = false;
+            var GIFOptionsHTML = '\
+                        <div class="modal-header">\
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>\
+                            <h4 class="modal-title" id="GIFWindowLabel">GIF制作选项</h4>\
+                        </div>\
+                        <div class="modal-body">\
+                            <form class="form-horizontal">\
+                                <div class="form-group">\
+                                    <label for="NumberofFrames" class="col-sm-4 control-label">\
+                                        图片数量<br>\
+                                        实际图片数量: <span id="actualNumberofFrames">10</span>\
+                                    </label>\
+                                    <div class="col-sm-8">\
+                                        <input type="text" class="form-control" id="NumberofFrames" placeholder="图片数量" value="10">\
+                                    </div>\
+                                </div>\
+                                <div class="form-group">\
+                                    <label for="IntervalSecond" class="col-sm-4 control-label">每帧间隔 (秒)</label>\
+                                    <div class="col-sm-8">\
+                                        <input type="text" class="form-control" id="IntervalSecond" placeholder="间隔 (秒)" value="0.1">\
+                                    </div>\
+                                </div>\
+                                <div class="form-group">\
+                                    <label for="SkipEvery" class="col-sm-4 control-label">跳过图片数量</label>\
+                                    <div class="col-sm-8">\
+                                        <input type="text" class="form-control" id="SkipEvery" placeholder="跳过图片数量" value="0">\
+                                    </div>\
+                                </div>\
+                                <div class="form-group">\
+                                    <label for="NumberofWorkers" class="col-sm-4 control-label">制作线程数量</label>\
+                                    <div class="col-sm-8">\
+                                        <input type="text" class="form-control" id="NumberofWorkers" placeholder="制作线程数量" value="2">\
+                                    </div>\
+                                </div>\
+                                <div class="form-group">\
+                                    <div class="col-sm-offset-4 col-sm-8">\
+                                        <div class="checkbox">\
+                                            <label><input type="checkbox" id="preloadImages" checked="checked" onclick="changeGroupPreload(\'preloadImages\');">&nbsp;预加载图片 (推荐)</label>\
+                                        </div>\
+                                    </div>\
+                                </div>\
+                                <div class="form-group">\
+                                    <div class="col-sm-offset-4 col-sm-8">\
+                                        <div class="checkbox">\
+                                            <label><input type="checkbox" id="GroupPreload" checked="checked" onclick="changeGroupPreload(\'GroupPreload\');">&nbsp;使用组预载 (推荐)</label>\
+                                        </div>\
+                                    </div>\
+                                </div>\
+                                <div class="form-group">\
+                                    <div class="col-sm-offset-4 col-sm-8">\
+                                        <button type="button" class="btn btn-default" onclick="GIFGenerator(document.getElementById(\'actualNumberofFrames\').innerHTML, IntervalSecond.value, SkipEvery.value, NumberofWorkers.value);" id="CreateGIFButton">制作GIF</button>\
+                                        <button type="button" class="btn btn-default" onclick="window.open(GIFLink);">跳转至预制作GIF链接</button>\
+                                    </div>\
+                                </div>\
+                            </form>\
+                        </div>\
+                        <div class="modal-footer">\
+                            <button type="button" class="btn btn-primary" data-dismiss="modal">关闭</button>\
+                        </div>';
+            var GIFGeneratorHTML = '\
+                        <div class="modal-header">\
+                            <button type="button" class="close" onclick="javascript: stopPreloadImage = true;" id="stopPreloadImageButton">&times;</button>\
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="display: none;" id="GIFclose">&times;</button>\
+                            <h4 class="modal-title" id="GIFWindowLabel">GIF制作窗口</h4>\
+                        </div>\
+                        <div class="modal-body">\
+                            <p id="GIFNoticeENG">GIF image is generating, please wait a minute</p>\
+                            <p id="GIFNoticeCN">GIF图片正在制作，请您稍等片刻</p>\
+                            <div style="display: none;" id="GIFprogressBarBlock">\
+                                <p>Latest progress of GIF generating: | 当前GIF制作进度：<span id="preloadImageNumber"></span></p>\
+                                <div class="progress"><div class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="min-width: 2em;" id="GIFprogress">0%</div></div>\
+                            </div>\
+                            <img class="img-responsive center-block" style="display: none; border: 1px solid" id="GIFplayer" src="">\
+                        </div>\
+                        <div class="modal-footer" style="text-align: left;">\
+                            <p style="color: red;">NOTICE: In order to prevent the occurrence of bugs, we have prohibited the closing function of this modal box when the GIF image is generating.</p>\
+                            <p style="color: red;">注：为防止BUG发生，我们在GIF图片生成时禁止了本模态框的关闭功能，敬请谅解。</p>\
+                        </div>';
+            function changeGroupPreload(obj) {
+                var preloadImages = $('#preloadImages').prop("checked");
+                var GroupPreload = $('#GroupPreload').prop("checked");
+                var checkboxNames = ['GroupPreload', 'preloadImages'];
+                if (!preloadImages && GroupPreload && lodash.includes(checkboxNames, obj)) {
+                    $('#GroupPreload').prop("checked", false);
+                } else if (preloadImages && !GroupPreload && obj == 'preloadImages') {
+                    $('#GroupPreload').prop("checked", true);
+                }
+                return false;
+            }
+            function GIFOption() {
+                $('#GIFGeneratorContent').html(GIFOptionsHTML);
+                $('#GIFWindow').modal('show');
+                $('#NumberofFrames').change(function() {
+                    let a__ = parseInt($('#NumberofFrames').val()) * (parseInt($('#SkipEvery').val()) + 1);
+                    $('#actualNumberofFrames').html(
+                        isNaN(a__) ? '0' : a__.toString()
+                    );
+                });
+                $('#SkipEvery').change(function() {
+                    let a__ = parseInt($('#NumberofFrames').val()) * (parseInt($('#SkipEvery').val()) + 1);
+                    $('#actualNumberofFrames').html(
+                        isNaN(a__) ? '0' : a__.toString()
+                    );
+                });
+                return false;
+            }
+            function GIFGenerator(NumberofFrames, IntervalSecond, SkipEvery, NumberofWorkers) {
+                $('#CreateGIFButton').attr('disabled', 'disabled');
+                // If the current browser supports creating animated GIFs from existing images (e.g. jpeg, png, gif)
+                if (!gifshot.isExistingImagesGIFSupported()) {
+                    alert('Your browser does not support gitshot module, you will be rediected to a pre-made GIF link.\
+                            \n您的浏览器不支持gifshot模块，将跳转至预制作的GIF链接');
+                    $('#CreateGIFButton').removeAttr('disabled');
+                    window.open(GIFLink);
+                    return false;
+                }
+                // check if option settings are right
+                if (isNaN(Number(NumberofFrames)) || isNaN(Number(IntervalSecond)) || isNaN(Number(SkipEvery)) || isNaN(Number(NumberofWorkers))) {
+                    alert('All of settings should input number that larger than zero.\
+                            \n所有设置皆应输入大于0的数字');
+                    $('#CreateGIFButton').removeAttr('disabled');
+                    return false;
+                } else if (Number(NumberofFrames) <= 0 || Number(IntervalSecond) <= 0 || Number(SkipEvery) < 0 || Number(NumberofWorkers) <= 0) {
+                    alert('All of settings should input number that bigger than zero.\
+                            \n所有设置皆应输入大于或等于0的数字');
+                    $('#CreateGIFButton').removeAttr('disabled');
+                    return false;
+                } else if (NumberofFrames.indexOf('.') != -1) {
+                    alert('Settings of Number of Frames should input positive integer.\
+                            \nNumber of Frames设置应输入正整数');
+                    $('#CreateGIFButton').removeAttr('disabled');
+                    return false;
+                } else if (Number(IntervalSecond) < 0.1) {
+                    alert('Settings of Interval should input a number that not smaller than 0.1.\
+                            \nInterval设置过小，请输入不小于0.1的数字');
+                    $('#CreateGIFButton').removeAttr('disabled');
+                    return false;
+                } else if (SkipEvery.indexOf('.') != -1) {
+                    alert('Settings of Skip Every should input positive integer.\
+                            \nSkip Every设置应输入正整数');
+                    $('#CreateGIFButton').removeAttr('disabled');
+                    return false;
+                } else if (NumberofWorkers.indexOf('.') != -1) {
+                    alert('Settings of Number of Workers should input positive integer.\
+                            \nNumber of Workers设置应输入正整数');
+                    $('#CreateGIFButton').removeAttr('disabled');
+                    return false;
+                } else {
+                    NumberofFrames = parseInt(Number(NumberofFrames));
+                    IntervalSecond = Number(IntervalSecond);
+                    SkipEvery = parseInt(Number(SkipEvery));
+                    NumberofWorkers = parseInt(Number(NumberofWorkers));
+                }
+                // var base64TransformIntoBlob = $('#transfromToBlob').prop("checked");
+                stopPreloadImage = false;
+                var preloadImages = $('#preloadImages').prop("checked");
+                var GroupPreload = $('#GroupPreload').prop("checked");
+                var __gpl, imageWidth, imageHeight;
+                $.ajax({
+                    type: 'GET',
+                    url: '//api.dapiya.top/typhoon/' + sID + '/piclist/' + sTID + '/' + location.protocol + '/' + location.host + '/' + NumberofFrames,
+                    data: {},
+                    async: false,
+                    success: function(data) {
+                        __gpl = data.split(',');
+                    },
+                    dataType: "text",
+                    error: function() {
+                        alert('Image list is not loaded due to your network issues, you will be rediected to a pre-made GIF link.\
+                            \n由于网络问题，图像列表未能成功加载，将跳转至预制作的GIF链接');
+                        window.open(GIFLink);
+                        $('#CreateGIFButton').removeAttr('disabled');
+                        $('#GIFWindow').modal('hide');
+                        return false;
+                    }
+                });
+                // check if number of frame lower than settings
+                if (__gpl.length < NumberofFrames) {
+                    alert('The number of images is less than default settings expected (' + __gpl.length.toString() + '/' + NumberofFrames.toString() + '), will stop the generating progress of GIF.\
+                            \n图片数量少于设置要求(' + __gpl.length.toString() + '/' + NumberofFrames.toString() + ')，将停止GIF的制作');
+                    $('#CreateGIFButton').removeAttr('disabled');
+                    return false;
+                }
+                // skip option
+                var gif_pic_list = []
+                if (SkipEvery > 0) {
+                    for (var i = 0; i < __gpl.length; i = i + (1 + SkipEvery)) {
+                        gif_pic_list.push(__gpl[i]);
+                    }
+                } else {
+                    gif_pic_list = __gpl;
+                }
+                // check if number of frame less than the lowset settings
+                if (gif_pic_list.length < 5) {
+                    alert('The number of images is less than the lowest expected (' + gif_pic_list.length.toString() + '/5), will stop the generating progress of GIF.\
+                            \n图片数量少于最低要求(' + gif_pic_list.length.toString() + '/5)，将停止GIF的制作');
+                    $('#CreateGIFButton').removeAttr('disabled');
+                    return false;
+                }
+                $('#GIFGeneratorContent').html(GIFGeneratorHTML);
+                $('#GIFprogress').css('width', '0%');
+                $('#GIFprogress').html('0%');
+                $('#GIFprogressBarBlock').css('display', 'block');
+                var startTime = new Date();
+                if (preloadImages) {
+                    var __loadNum = 0;
+                    var workersNumber = GroupPreload ? 6 : gif_pic_list.length;
+                    var preloadWorkers = new Array(gif_pic_list.length).fill(null);
+                    var workersNumList = new Array(gif_pic_list.length).fill(null);
+                    var blobURLList = [];
+                    var ajaxRequestList = [];
+                    __preloadImage(gif_pic_list);
+                    var __timer = setInterval(__t, 500);
+                    $('#stopPreloadImageButton').css('display', 'block');
+                } else {
+                    GIFMaker(gif_pic_list, IntervalSecond, NumberofFrames, NumberofWorkers, false);
+                }
+                // timer function
+                function __t() {
+                    $('#preloadImageNumber').html('(Loaded: ' + __loadNum + '/' + gif_pic_list.length + ')');
+                    if (__loadNum == gif_pic_list.length) {
+                        __c();
+                    }
+                }
+                function __c() {
+                    clearInterval(__timer);
+                    setTimeout(function(){
+                        $('#preloadImageNumber').html('');
+                        GIFMaker(gif_pic_list, IntervalSecond, NumberofFrames, NumberofWorkers, true);
+                    }, 1000);
+                }
+                // preload images function
+                function __preloadImage(src_arr) {
+                    // stop function
+                    function __stopPreloadImage() {
+                        if (lodash.inRange(__loadNum, 0, gif_pic_list.length) && __eTimer && __timer) {
+                            clearInterval(__eTimer);
+                            for (var i = 0; i < ajaxRequestList.length; i++) {
+                                if (ajaxRequestList[i]) ajaxRequestList[i].abort();
+                            }
+                            lodash.each(blobURLList, function(blobURL) {
+                                if (!lodash.isNil(blobURL)) blob2URL.revokeObjectURL(blobURL);
+                            });
+                            clearInterval(__timer);
+                            preloadWorkers = null;
+                            $('#preloadImageNumber').html('');
+                            $('#GIFGeneratorContent').html(GIFOptionsHTML);
+                        } else {
+                            stopPreloadImage = false;
+                        }
+                        return false;
+                    }
+                    // error timer
+                    function __et() {
+                        if (stopPreloadImage) __stopPreloadImage();
+                        if (preLoadError && !stopPreloadImage) __e(); 
+                    }
+                    function __e() {
+                        stopPreloadImage = true;
+                        clearInterval(__eTimer);
+                        for (var i = 0; i < ajaxRequestList.length; i++) {
+                            if (ajaxRequestList[i]) ajaxRequestList[i].abort();
+                        }
+                        lodash.each(blobURLList, function(blobURL) {
+                            if (!lodash.isNil(blobURL)) blob2URL.revokeObjectURL(blobURL);
+                        });
+                        alert('Image is not loaded due to your network issues.\
+                            \n由于网络问题，图像未能成功加载');
+                        preloadWorkers = null;
+                        $('#preloadImageNumber').html('');
+                        $('#GIFWindow').modal('hide');
+                        $('#GIFGeneratorContent').html('');
+                        return false;
+                    }
+                    function loadHandler() {
+                        if (__loadNum == src_arr.length) return false;
+                        if (!stopPreloadImage) __loadNum++;
+                        if (overLoad) {
+                            var nodeIndex = __loadNum % workersNumber;
+                            var loadT = lodash.floor(__loadNum / workersNumber);
+                            if (loadT == 0) loadT++;
+                            var finalIndex = workersNumber * loadT + nodeIndex - 1;
+                            if (finalIndex >= src_arr.length) return false;
+                            if (__finalIndex.indexOf(finalIndex) == -1) {
+                                __finalIndex.push(finalIndex);
+                                assignHandler(finalIndex, src_arr[finalIndex]);
+                            }
+                        }
+                        return false;
+                    }
+                    function loadErrorHandler() {
+                        clearInterval(__timer);
+                        preLoadError = true;
+                        return false;
+                    }
+                    function assignHandler(index, imgSrc) {
+                        if (!stopPreloadImage && !lodash.isNil(preloadWorkers[index])) {
+                            downloadFile2blobURL(imgSrc, index, function (_index, _src) {
+                                if (!stopPreloadImage && !lodash.isNil(preloadWorkers[_index])) { // 双重判定防止出现无法中止xhr请求的情况
+                                    preloadWorkers[_index].src = _src;
+                                    workersNumList[_index] = _index;
+                                }
+                            });
+                        }
+                        return false;
+                    }
+                    function downloadFile2blobURL(url, index, callback) {
+                        if (stopPreloadImage) { callback(index, ''); return false; }
+                        let successLoading = true;
+                        let __url;
+                        let ajaxRequest = {
+                            url,
+                            type: 'get',
+                            async: true,
+                            xhrFields: { responseType: "blob" },
+                            success: function(blob) {
+                                __url = blob2URL.createObjectURL(blob);
+                            },
+                            error: function(err) {
+                                successLoading = false;
+                                console.log(err.statusText);
+                            },
+                            complete: function() {
+                                if (successLoading) {
+                                    blobURLList.push(__url);
+                                    callback(index, __url);
+                                    if (!stopPreloadImage) loadHandler();
+                                } else {
+                                    callback(index, '');
+                                    if (!stopPreloadImage) loadErrorHandler();
+                                }
+                            }
+                        }
+                        if (typeof callback === 'function') {
+                            let __ajaxRequest = $.ajax(ajaxRequest);
+                            ajaxRequestList.push(__ajaxRequest);
+                        } else {
+                            throw new Error("Callback should be a function");
+                        }
+                    }
+                    if (GroupPreload) var __finalIndex = [];
+                    var preLoadError = false;
+                    var overLoad = GroupPreload;
+                    for (var i = 0; i < preloadWorkers.length; i++) {
+                        preloadWorkers[i] = new Image();
+                        preloadWorkers[i].crossOrigin = "Anonymous";
+                        preloadWorkers[i].style = "position: fixed; opacity: 0;";
+                    }
+                    for (var j = 0; j < workersNumber; j++) {
+                        assignHandler(j, src_arr[j]);
+                    }
+                    var __eTimer = setInterval(__et, 100);
+                }
+                // GIF Generator function
+                function GIFMaker(gif_pic_list, IntervalSecond, NumberofFrames, NumberofWorkers, hasPreload) {
+                    $('#stopPreloadImageButton').css('display', 'none');
+                    if (hasPreload) {
+                        workersNumList = lodash.uniq(workersNumList);
+                        if (workersNumList.length != gif_pic_list.length) {
+                            alert('GIF images length not equal (' + workersNumList.length + '/' + gif_pic_list.length + ')');
+                            preloadWorkers = workersNumList = [];
+                            lodash.each(blobURLList, function(blobURL) { blob2URL.revokeObjectURL(blobURL); })
+                            $('#GIFWindow').modal('hide');
+                            $('#GIFGeneratorContent').html('');
+                            return false;
+                        }
+                        gif_pic_list = lodash.cloneDeep(preloadWorkers);
+                        gif_pic_list = lodash.sortBy(gif_pic_list, function(o) { return workersNumList[gif_pic_list.indexOf(o)] });
+                        preloadWorkers = [];
+                    }
+                    // repeat latest images for stopping GIF
+                    for (var i = 0; i < parseInt(1 / IntervalSecond); i++) {
+                        gif_pic_list.push(gif_pic_list[gif_pic_list.length - 1]);
+                    }
+                    imageWidth = gif_pic_list[0].width * 0.6;
+                    imageHeight = gif_pic_list[0].height * 0.6;
+                    gifshot.createGIF({
+                        'gifWidth': imageWidth,
+                        'gifHeight': imageHeight,
+                        'images': gif_pic_list,
+                        'interval': IntervalSecond,
+                        'frameDuration': 1,
+                        'sampleInterval': 10,
+                        'numWorkers': NumberofWorkers,
+                        'progressCallback': function(captureProgress) {
+                            $('#GIFprogress').css('width', lodash.floor(captureProgress * 100).toString() + '%');
+                            $('#GIFprogress').html(lodash.floor(captureProgress * 100).toString() + '%');
+                        }
+                    }, function (obj) {
+                        console.log(obj);
+                        var endTime = new Date();
+                        console.log('[GIF Generator] Used time: ' + ((endTime - startTime) / 1000).toString() + ' second');
+                        if (!obj.error) {
+                            setTimeout(function() {
+                                $('#GIFNoticeENG').html('GIF image has generated, long press or right click can save it');
+                                $('#GIFNoticeCN').html('GIF图片制作完成，长按或右键即可保存');
+                                $('#GIFclose').css('display', 'block');
+                                $('#GIFplayer').css('display', 'block');
+                                $('#GIFprogress').css('width', '0%');
+                                $('#GIFprogress').html('0%');
+                                $('#GIFprogressBarBlock').css('display', 'none');
+                                var image = blob2URL.createObjectURL(Base64toBlob(obj.image));
+                                gif_pic_list = lodash.cloneDeep([]);
+                                lodash.each(blobURLList, function(blobURL) { blob2URL.revokeObjectURL(blobURL); })
+                                $('#GIFplayer').attr('src', image);
+                                $('#GIFWindow').on('hidden.bs.modal', function (e) {
+                                    blob2URL.revokeObjectURL(image);
+                                    $('#GIFclose').css('display', 'none');
+                                    $('#GIFplayer').css('display', 'none');
+                                    $('#GIFGeneratorContent').html('');
+                                });
+                            }, 1000);
+                        } else {
+                            alert(obj.errorCode + ': ' + obj.errorMsg);
+                        }
+                    });
+                }
             }
         </script>
         <style>
@@ -158,115 +1036,8 @@
                 display: block;
                 font-family: "sans-serif", "consolas";
                 box-sizing: inherit;
-                margin-bottom: 8px;
-            }
-            div.ace-title-block {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                font-family: "sans-serif", "consolas";
-                box-sizing: inherit;
-                margin: 7px;
-            }
-            div.ace-title {
-                display: flex;
-                align-items: center;
-                justify-content: flex-start;
-                font-family: "sans-serif", "consolas";
-                text-rendering: optimizeLegibility;
-                padding-bottom: 3px;
-            }
-            span.ace-area-WPAC-title {
-                background-color: #3399FF;
-                display: inline-flex;
-                align-items: center;
-                padding: .75rem;
-                height: 2em;
-                border-radius: 290486px;
-                font-family: "sans-serif", "consolas";
-                font-size: 14px;
-                text-rendering: optimizeLegibility;
-                color: white;
-            }
-            span.ace-area-EPAC-title {
-                background-color: #339933;
-                display: inline-flex;
-                align-items: center;
-                padding: .75rem;
-                height: 2em;
-                border-radius: 290486px;
-                font-family: "sans-serif", "consolas";
-                font-size: 14px;
-                text-rendering: optimizeLegibility;
-                color: white;
-            }
-            span.ace-area-CPAC-title {
-                background-color: #47CB89;
-                display: inline-flex;
-                align-items: center;
-                padding: .75rem;
-                height: 2em;
-                border-radius: 290486px;
-                font-family: "sans-serif", "consolas";
-                font-size: 14px;
-                text-rendering: optimizeLegibility;
-                color: white;
-            }
-            span.ace-area-ATL-title {
-                background-color: #CC3333;
-                display: inline-flex;
-                align-items: center;
-                padding: .75rem;
-                height: 2em;
-                border-radius: 290486px;
-                font-family: "sans-serif", "consolas";
-                font-size: 14px;
-                text-rendering: optimizeLegibility;
-                color: white;
-            }
-            span.ace-area-NIO-title {
-                background-color: #009999;
-                display: inline-flex;
-                align-items: center;
-                padding: .75rem;
-                height: 2em;
-                border-radius: 290486px;
-                font-family: "sans-serif", "consolas";
-                font-size: 14px;
-                text-rendering: optimizeLegibility;
-                color: white;
-            }
-            span.ace-area-SHEM-title {
-                background-color: #FF00CC;
-                display: inline-flex;
-                align-items: center;
-                padding: .75rem;
-                height: 2em;
-                border-radius: 290486px;
-                font-family: "sans-serif", "consolas";
-                font-size: 14px;
-                text-rendering: optimizeLegibility;
-                color: white;
-            }
-            span.ace-number-title {
-                display: flex;
-                align-items: center;
-                padding-left: 7px;
-                justify-content: flex-start;
-                font-family: "sans-serif";
-                text-rendering: optimizeLegibility;
-                font-size: 14px;
-            }
-            span.ace-time-title {
-                display: flex;
-                align-items: center;
-                justify-content: flex-start;
-                float: right;
-                font-family: "sans-serif";
-                font-size: .75em;
-                text-rendering: optimizeLegibility;
-                color: #b5b5b5;
-                padding-left: 10px;
+                margin: 8px auto;
+                padding: 6px;
             }
             div.ace-container {
                 background: rgb(243,243,243);
@@ -276,7 +1047,7 @@
                 border-radius: 20px;
                 font-family: "sans-serif", "consolas";
                 font-size: 17px;
-                text-align: left;
+                text-align: center;
                 word-break: break-all;
             }
             button.imagetype {
@@ -290,20 +1061,53 @@
                 padding-right: 10px;
                 background-color: rgba(0,0,0,0.1);
                 border-width: 0px;
+                font-size: 13px;
                 transition: all .2s;
             }
             button.imagetype:hover,button.imagetype:active,button.active {
                 background-color: #47CB89;
                 color: white;
             }
-            .btn-group-justified {
-                -webkit-overflow-scrolling: touch;
-                align-items: stretch;
-                display: inline-block;
-                overflow: hidden;
-                overflow-x: hidden;
-                overflow-x: auto;
-                white-space: nowrap;
+            button.transparent {
+                background-color: transparent;
+            }
+            #satImageType button, #imageLoopButton button {
+                width: 100%;
+            }
+            #imageType button {
+                width: 95%;
+            }
+            hr.nohr {
+                border-width: 0px;
+                margin-top: 7px;
+                margin-bottom: 7px;
+            }
+            .slider {
+                -webkit-appearance: none;
+                float: left;
+                clear: auto;
+                width: 100%;
+                height: 10px;
+                margin: 20px auto;
+                outline: none;
+                border-radius: 10px;
+                background: rgba(0, 0, 0, 0.2);
+            }
+            .slider::-webkit-slider-thumb {
+                -webkit-appearance: none;
+                appearance: none;
+                width: 20px;
+                height: 20px;
+                border-radius: 50%; 
+                background: rgb(250,187,92);
+                cursor: pointer;
+            }
+            .slider::-moz-range-thumb {
+                width: 20px;
+                height: 20px;
+                border-radius: 50%;
+                background: rgb(250,187,92);
+                cursor: pointer;
             }
         </style>
     </head>
@@ -326,11 +1130,11 @@
                     </div>
                     <div class="collapse navbar-collapse" id="collapse">
                         <ul class="nav navbar-nav">
-                            <li class="active"><a href="/zh/">当前热带气旋</a></li>
-                            <li class="dropdown">
+                            <li><a href="/zh/">当前热带气旋</a></li>
+                            <li class="dropdown active">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">气象卫星云图<span class="caret"></span></a>
                                 <ul class="dropdown-menu">
-                                    <li><a href="/zh/satellite/floater/">热带气旋气象卫星云图</a></li>
+                                    <li class="active"><a href="/zh/satellite/floater/">热带气旋气象卫星云图</a></li>
                                     <li><a href="//roi.dapiya.top/">热点区域气象卫星云图</a></li>
                                     <li><a href="//data.dapiya.top/product/" target="_blank">气象卫星产品</a></li>
                                     <li role="separator" class="divider"></li>
@@ -388,8 +1192,8 @@
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Language | 语言<span class="caret"></span></a>
                                 <ul class="dropdown-menu">
-                                    <li><a href="/zh/">简体中文</a></li>
-                                    <li><a href="/">English</a></li>
+                                    <li><a href="/zh/satellite/floater/">简体中文</a></li>
+                                    <li><a href="/satellite/floater/">English</a></li>
                                 </ul>
                             </li>
                         </ul>
@@ -397,50 +1201,58 @@
                 </div>
             </nav>
             <div id="notice"></div>
-            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                <div class="row row-no-gutters">
-                    <div class="panel panel-info">
-                        <div class="panel-heading">
-                            区域分析图像
+            <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12">
+                <div id="storm" style="text-align: center;"></div>
+                <hr class="nohr">
+                <div id="satImageType" style="text-align: center;"></div>
+            </div>
+            <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
+                <div class="row">
+                    <hr class="nohr">
+                    <div id="imageLoop" style="display: none;">
+                        <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+                            <div class="row row-no-gutters">
+                                <div class="btn-group btn-group-justified" role="group">
+                                    <div class="btn-group" role="group">
+                                        <button type="button" class="btn btn-default" id="left" onclick="_slider('left')">
+                                            <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+                                        </button>
+                                    </div>
+                                    <div class="btn-group" role="group">
+                                        <button type="button" class="btn btn-default" id="toggle" onclick="_slider($('#toggle p').html())">
+                                            <span class="glyphicon glyphicon-play" aria-hidden="true"></span><p style="display: none;">start</p>
+                                        </button>
+                                    </div>
+                                    <div class="btn-group" role="group">
+                                        <button type="button" class="btn btn-default" id="right" onclick="_slider('right')">
+                                            <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="panel-body">
-                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
-                                <div class="row row-no-gutters">
-                                    <select class="form-control input-sm" id="image_selector" onchange="changeType(image_selector.value);"></select>
-                                </div>
+                        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                            <div class="row row-no-gutters">
+                                <input class="slider" step="1" min="0" max="0" type="range" id="slide" onchange="_slider('changeImage')" oninput="_slider('changeImage')">
                             </div>
-                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
-                                <div class="row row-no-gutters">
-                                    <select class="form-control input-sm" id="type_selector" onchange="changeImage(typeSelector['html'][image_selector.value][type_selector.value]);"></select>
-                                </div>
-                            </div>
-                            <div id="image"></div>
                         </div>
                     </div>
                     <hr class="nohr">
-                    <div class="panel panel-success">
-                        <div class="panel-heading">
-                            全球分析图像
-                        </div>
-                        <div class="panel-body">
-                            <img class="img-responsive center-block" src="//data.dapiya.top/satellite/data/oisst_sst.png" alt="No data">
-                            <img class="img-responsive center-block" src="//data.dapiya.top/satellite/data/oisst_ssta.png" alt="No data">
-                        </div>
+                    <div class="ace-stromList-block">
+                        <div id="image"></div>
                     </div>
                 </div>
             </div>
-            
-            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                <div class="row row-no-gutters">
-                    <div class="panel panel-primary">
-                        <div class="panel-heading">
-                            当前活跃的热带气旋
-                            <button class="btn btn-xs btn-primary" style="float: right; display: none" onclick="changePage();" id="nextPage">>> 下一页</button>
-                        </div>
-                        <div class="panel-body">
-                            <div class="ace-stromList-block" id="list"></div>
-                        </div>
+            <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12" id="imageLoopButton">
+                <div class="row">
+                    <hr class="nohr">
+                    <div id="sliderloop">
+                        <button type="button" class="imagetype" onclick="_slider('reset-toggle');" id="loopReset-button">
+                            <span class="glyphicon glyphicon-play" aria-hidden="true"></span> 图片轮播
+                        </button>
+                        <span style="display: none;" id="loopReset">start</span>
                     </div>
+                    <div id="loop"></div>
                 </div>
             </div>
         </div>
@@ -460,5 +1272,49 @@
             var d = new Date();
             document.getElementById("c_year").innerHTML = d.getFullYear();
         </script>
+        <div class="modal fade" id="notLoadedWindow" tabindex="-1" role="dialog" aria-labelledby="notLoadedWindowLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="notLoadedWindowLabel">Notice | 通知</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p id="notLoadedNoticeENG">There is no imagery for sliding or the imagery has not been loaded, please wait a minute or reload this page then retry</p>
+                        <p id="notLoadedNoticeCN">暂无可滚动播放的图片或图片未加载完成，请您稍等片刻或刷新页面重试</p>
+                        <div style="display: none;" id="progressBarBlock">
+                            <p>Latest images loaded: | 当前图片加载进度：<span id="waitingTime"></span></p>
+                            <div class="progress">
+                                <div class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="min-width: 2em;" id="progress">0%</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-dismiss="modal">关闭</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="GIFWindow" tabindex="-1" role="dialog" aria-labelledby="GIFWindowLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+            <div class="modal-dialog">
+                <div class="modal-content" id="GIFGeneratorContent"></div>
+            </div>
+        </div>
+        <div class="modal fade" id="SatelliteImageryTypeWindow" tabindex="-1" role="dialog" aria-labelledby="SatelliteImageryTypeWindowLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="SatelliteImageryTypeWindowLabel">卫星云图类型</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div id="imageType" style="text-align: center;"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-dismiss="modal">关闭</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </body>
 </html>
