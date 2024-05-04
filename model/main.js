@@ -709,16 +709,16 @@ function getImageryCacheURL(model, runtime, fcsthour, imgType, area) {
     let geoFormat = lodash.includes(['chinamerc', 'northpolar', 'southpolar', 'euroasia', 'europe', 'northamerica'], area) ? georange[area].split(',').join("_") : $.sprintf('%.1f_%.1f_%.1f_%.1f', geo[0], geo[1], geo[2], geo[3]);
     switch (model) {
         case 'GFS':
-            format = $.sprintf('//data.dapiya.net:1234/models/%s/data/%s_%s_f%03d_%s_%s.png', model.toLowerCase(), model.toLowerCase(), fp[imgType], fcsthour, runtime, geoFormat);
+            format = $.sprintf('//data.dapiya.top/models/%s/data/%s_%s_f%03d_%s_%s.png', model.toLowerCase(), model.toLowerCase(), fp[imgType], fcsthour, runtime, geoFormat);
             break;
         case 'ICON':
-            format = $.sprintf('//data.dapiya.net:1234/models/%s/data/%s_%s_f%03d_%s_%s.png', model.toLowerCase(), model.toLowerCase(), fp[imgType], fcsthour, runtime, geoFormat);
+            format = $.sprintf('//data.dapiya.top/models/%s/data/%s_%s_f%03d_%s_%s.png', model.toLowerCase(), model.toLowerCase(), fp[imgType], fcsthour, runtime, geoFormat);
             break;
         case 'CMC':
-            format = $.sprintf('//data.dapiya.net:1234/models/%s/data/gem_%s_f%03d_%s_%s.png', model.toLowerCase(), fp[imgType], fcsthour, runtime, geoFormat);
+            format = $.sprintf('//data.dapiya.top/models/%s/data/gem_%s_f%03d_%s_%s.png', model.toLowerCase(), fp[imgType], fcsthour, runtime, geoFormat);
             break;
         case 'ECMWF':
-            format = $.sprintf('//data.dapiya.net:1234/models/%s/data/ecmwf_%s_f%03d_%s_%s.png', model.toLowerCase(), fp[imgType], fcsthour, runtime, geoFormat);
+            format = $.sprintf('//data.dapiya.top/models/%s/data/ecmwf_%s_f%03d_%s_%s.png', model.toLowerCase(), fp[imgType], fcsthour, runtime, geoFormat);
             break;
         default:
             format = '';
