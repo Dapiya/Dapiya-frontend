@@ -112,6 +112,7 @@ var fp = {
     'tmax2m': 'tmax2m',
     'tmin2m': 'tmin2m',
     'dt2m': 'dt2m',
+    'tsfc': 'tsfc',
     'pres': 'pres',
     'wp': 'wind_pres',
     'sgust': 'sgust',
@@ -126,6 +127,7 @@ var fp = {
     'zw200': 'zw200',
     'z500a': 'z500a',
     'refc': 'refc',
+    'pwat': 'pwat',
     'sweat': 'sweat',
     'tt': 'tt',
     'ki': 'ki',
@@ -241,8 +243,8 @@ function _getModelSettings(model) {
     if (model == 'GFS') {
         file = 'runtimes.txt';
         img_ir = ['ir0', 'ir1', 'ir2', 'ir3'];
-        img_prec = ['prate', 'apcp'];
-        img_temp = ['t2m', 'dt2m', 't850w', 't700w', 'z500t850', 'z100t850', 'zw200', 'z10t10', 'ttropo', 'h0'];
+        img_prec = ['prate', 'apcp', 'pwat'];
+        img_temp = ['t2m', 'dt2m', 'tsfc', 't850w', 't700w', 'z500t850', 'z100t850', 'zw200', 'z10t10', 'ttropo', 'h0'];
         img_wp = ['pres', 'wp', 'sgust', 'z500_mslp', 'w200pres', 'sh200-850pres'];
         img_rhw = ['rhw850', 'rhw700', 'rhw1000'];
         img_qflux = ['qflux850', 'qflux700', 'qflux1000', 'qfluxwl'];
@@ -250,8 +252,8 @@ function _getModelSettings(model) {
         img_anom = ['t2ma', 't850a', 'z500a', 'z10t10a'];
         img_other = ['refc', 'sweat', 'tt', 'ki', 'thetae', 'cape', 'ow', 'tcdc'];
         imgName_ir = ['Simulated IR-BW', 'Simulated IR-BD', 'Simulated IR-OTT', 'Simulated IR-CA'];
-        imgName_prec = ['Precipitation Rate', 'Total Precipitation'];
-        imgName_temp = ['2m Air Temp.', '2m DP Temp.', '850mb Temp. & Wind', '700mb Temp. & Wind', '500mb HGT & 850mb Temp.', '100mb HGT & 850mb Temp.', '200mb HGT & Wind', '10mb HGT & Temp.', 'Tropopause Temperature', 'Highest Tropospheric Freezing Level'];
+        imgName_prec = ['Precipitation Rate', 'Total Precipitation', 'Precipitable Water'];
+        imgName_temp = ['2m Air Temp.', '2m DP Temp.', 'Surface Temp.', '850mb Temp. & Wind', '700mb Temp. & Wind', '500mb HGT & 850mb Temp.', '100mb HGT & 850mb Temp.', '200mb HGT & Wind', '10mb HGT & Temp.', 'Tropopause Temperature', 'Highest Tropospheric Freezing Level'];
         imgName_wp = ['Mean Sea Level Pressure', '10m Wind & MSLP', 'Surface Wind Gust', '500mb HGT & MSLP', '200mb Wind & MSLP', '200-850mb Wind Shear & MSLP'];
         imgName_rhw = ['850mb RH. & Wind', '700mb RH. & Wind', '1000mb RH. & Wind'];
         imgName_qflux = ['850mb Vapor Flux', '700mb Vapor Flux', '1000mb Vapor Flux', 'Integrated Vapor Transport'];
@@ -276,6 +278,7 @@ function _getModelSettings(model) {
             'ir2': _region,
             't2m': _region,
             'dt2m': _region,
+            'tsfc': _region,
             't850w': _region,
             't700w': _region,
             't2ma': _region,
@@ -294,6 +297,7 @@ function _getModelSettings(model) {
             'zw200': _region,
             'z500a': _region,
             'refc': _region,
+            'pwat': _region,
             'sweat': _region,
             'tt': _region,
             'ki': _region,
@@ -391,14 +395,14 @@ function _getModelSettings(model) {
         file = '/icon/latest/runs';
         // img_prec = ['prate', 'apcp'];
         img_prec = ['apcp'];
-        img_temp = ['t2m', 'tmax2m', 'tmin2m', 'dt2m', 't850w', 't700w', 'z500t850', 'z100t850', 'zw200'];
+        img_temp = ['t2m', 'tmax2m', 'tmin2m', 'dt2m', 'tsfc', 't850w', 't700w', 'z500t850', 'z100t850', 'zw200'];
         img_wp = ['pres', 'wp', 'z500_mslp', 'w200pres', 'sh200-850pres'];
         img_rhw = ['rhw850', 'rhw700', 'rhw1000'];
         img_anom = ['t2ma', 't850a', 'z500a'];
         img_other = ['sweat', 'tt', 'ki', 'thetae', 'cape'];
         // imgName_prec = ['Precipitation Rate', 'Total Precipitation'];
         imgName_prec = ['Total Precipitation'];
-        imgName_temp = ['2m Air Temp.', '2m Max. Temp.', '2m Min. Temp.', '2m DP Temp.', '850mb Temp. & Wind', '700mb Temp. & Wind', '500mb HGT & 850mb Temp.', '100mb HGT & 850mb Temp.', '200mb HGT & Wind'];
+        imgName_temp = ['2m Air Temp.', '2m Max. Temp.', '2m Min. Temp.', '2m DP Temp.', 'Surface Temp.', '850mb Temp. & Wind', '700mb Temp. & Wind', '500mb HGT & 850mb Temp.', '100mb HGT & 850mb Temp.', '200mb HGT & Wind'];
         imgName_wp = ['Mean Sea Level Pressure', '10m Wind & MSLP', '500mb HGT & MSLP', '200mb Wind & MSLP', '200-850mb Wind Shear & MSLP'];
         imgName_rhw = ['850mb RH. & Wind', '700mb RH. & Wind', '1000mb RH. & Wind'];
         imgName_anom = ['2m Air Temp. Anomaly', '850mb Temp. Anomaly', '500mb HGT Anomaly'];
@@ -417,6 +421,7 @@ function _getModelSettings(model) {
             'tmax2m': _region,
             'tmin2m': _region,
             'dt2m': _region,
+            'tsfc': _region,
             't850w': _region,
             't700w': _region,
             't2ma': _region,
@@ -444,7 +449,7 @@ function _getModelSettings(model) {
     } else if (model == 'ECMWF') {
         file = 'runtimes_ec.txt';
         img_prec = ['apcp'];
-        img_temp = ['t2m', 't850w', 't700w', 'z500t850', 'zw200'];
+        img_temp = ['t2m', 'tsfc', 't850w', 't700w', 'z500t850', 'zw200'];
         img_wp = ['pres', 'wp', 'z500_mslp', 'w200pres', 'sh200-850pres'];
         img_rhw = ['rhw850', 'rhw700', 'rhw1000'];
         img_qflux = ['qflux850', 'qflux700', 'qflux1000', 'qfluxwl'];
@@ -452,7 +457,7 @@ function _getModelSettings(model) {
         img_anom = ['t2ma', 't850a', 'z500a'];
         img_other = ['sweat', 'tt', 'ki', 'thetae', 'ow'];
         imgName_prec = ['Total Precipitation'];
-        imgName_temp = ['2m Air Temp.', '850mb Temp. & Wind', '700mb Temp. & Wind', '500mb HGT & 850mb Temp.', '200mb HGT & Wind'];
+        imgName_temp = ['2m Air Temp.', 'Surface Temp.', '850mb Temp. & Wind', '700mb Temp. & Wind', '500mb HGT & 850mb Temp.', '200mb HGT & Wind'];
         imgName_wp = ['Mean Sea Level Pressure', '10m Wind & MSLP', '500mb HGT & MSLP', '200mb Wind & MSLP', '200-850mb Wind Shear & MSLP'];
         imgName_rhw = ['850mb RH. & Wind', '700mb RH. & Wind', '1000mb RH. & Wind'];
         imgName_qflux = ['850mb Vapor Flux', '700mb Vapor Flux', '1000mb Vapor Flux', 'Integrated Vapor Transport'];
@@ -475,6 +480,7 @@ function _getModelSettings(model) {
             't850w': _region,
             't700w': _region,
             't2ma': _region,
+            'tsfc': _region,
             't850a': _region,
             'pres': _region,
             'wp': _region,
@@ -703,18 +709,16 @@ function getImageryCacheURL(model, runtime, fcsthour, imgType, area) {
     let geoFormat = lodash.includes(['chinamerc', 'northpolar', 'southpolar', 'euroasia', 'europe', 'northamerica'], area) ? georange[area].split(',').join("_") : $.sprintf('%.1f_%.1f_%.1f_%.1f', geo[0], geo[1], geo[2], geo[3]);
     switch (model) {
         case 'GFS':
-            format = $.sprintf('//data.dapiya.top/satellite/%s/data/%s_%s_f%03d_%s_%s.png', model.toLowerCase(), model.toLowerCase(), fp[imgType], fcsthour, runtime, geoFormat);
+            format = $.sprintf('//data.dapiya.top/models/%s/data/%s_%s_f%03d_%s_%s.png', model.toLowerCase(), model.toLowerCase(), fp[imgType], fcsthour, runtime, geoFormat);
             break;
         case 'ICON':
-            format = $.sprintf('//data.dapiya.top/satellite/%s/data/%s_%s_f%03d_%s_%s.png', model.toLowerCase(), model.toLowerCase(), fp[imgType], fcsthour, runtime, geoFormat);
+            format = $.sprintf('//data.dapiya.top/models/%s/data/%s_%s_f%03d_%s_%s.png', model.toLowerCase(), model.toLowerCase(), fp[imgType], fcsthour, runtime, geoFormat);
             break;
         case 'CMC':
-            format = $.sprintf('//data.dapiya.top/satellite/%s/data/gem_%s_f%03d_%s_%s.png', model.toLowerCase(), fp[imgType], fcsthour, runtime, geoFormat);
+            format = $.sprintf('//data.dapiya.top/models/%s/data/gem_%s_f%03d_%s_%s.png', model.toLowerCase(), fp[imgType], fcsthour, runtime, geoFormat);
             break;
         case 'ECMWF':
-            let initHour = runtime.slice(runtime.length - 2, runtime.length);
-            let mode = lodash.includes(['06', '18'], initHour) ? 'scda' : 'oper';
-            format = $.sprintf('//data.dapiya.top/satellite/%s/data/%s0000_%dh_%s_fc_%s_%s.png', model.toLowerCase(), runtime, fcsthour, mode, fp[imgType], geoFormat);
+            format = $.sprintf('//data.dapiya.top/models/%s/data/ecmwf_%s_f%03d_%s_%s.png', model.toLowerCase(), fp[imgType], fcsthour, runtime, geoFormat);
             break;
         default:
             format = '';
@@ -943,14 +947,13 @@ function LoadImages(model, runtime, area, imgType, StartHour, EndHour, IntervalH
         $('#GIFprogress').css('width', progress.toString() + '%');
         $('#GIFprogress').html(progress.toString() + '%');
         if (successCount == gif_hours.length && openWindowStatus) {
-            // 对数组排序
-            imageObjList = lodash.sortBy(imageObjList, function(o) { return imageObjIndexList[imageObjList.indexOf(o)] });
+            $("#CloseGIFWindow").css('display', 'none'); // 提前阻止窗口关闭
             clearInterval(intervalList['ImageLoader']); // 清除计时器
             delete(intervalList['ImageLoader']); // 删除键值对
             // 清空key-value cache
             gif_blobList = {};
-            // 提前阻止窗口关闭
-            $("#CloseGIFWindow").css('display', 'none');
+            // 对数组排序
+            imageObjList = lodash.sortBy(imageObjList, function(o) { return imageObjIndexList[imageObjList.indexOf(o)] });
             setTimeout(function() {
                 // 重置进度条
                 $('#GIFprogress').css('width', '0%');
